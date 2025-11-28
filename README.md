@@ -83,8 +83,10 @@ static/                # Static assets
 This project uses shadcn-svelte for UI components. To add new components:
 
 ```bash
-bun x shadcn-svelte@latest add [component-name]
+bun x shadcn-svelte@latest add [component-name] -y
 ```
+
+You can add `-o` to overwrite existing components if needed.
 
 Available components include buttons, forms, dialogs, and more. See [shadcn-svelte documentation](https://shadcn-svelte.com/docs) for details.
 
