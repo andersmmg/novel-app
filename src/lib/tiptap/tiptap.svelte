@@ -29,13 +29,12 @@
       ],
       editorProps: {
         attributes: {
-          class: "p-4",
+          class: "p-4 outline-none",
         },
       },
       content: `
         <h1>Hello Svelte! 🌍️ </h1>
         <p>This editor is running in Svelte.</p>
-        <p>Select some text to see the bubble menu popping up.</p>
       `,
       onTransaction: ({ editor }) => {
         // Increment the state signal to force a re-render
@@ -48,50 +47,59 @@
   });
 </script>
 
-{#if editorState.editor}
-  <div class="p-2 bg-background flex gap-2 items-center">
-    <!-- Headings -->
-    <ButtonGroup.Root>
-      <Button
-        size="sm"
-        variant="outline"
-        onclick={() =>
-          editorState.editor!.chain().focus().toggleHeading({ level: 1 }).run()}
-        ><Heading1Icon /></Button
-      >
-      <Button
-        size="sm"
-        variant="outline"
-        onclick={() =>
-          editorState.editor!.chain().focus().toggleHeading({ level: 2 }).run()}
-        ><Heading2Icon /></Button
-      >
-      <Button
-        size="sm"
-        variant="outline"
-        onclick={() => editorState.editor!.chain().focus().setParagraph().run()}
-        ><Pilcrow /></Button
-      >
-    </ButtonGroup.Root>
-    <!-- Formatting -->
-    <ButtonGroup.Root>
-      <Button
-        size="sm"
-        variant={editorState.editor.isActive("bold") ? "default" : "outline"}
-        onclick={() => editorState.editor!.chain().focus().toggleBold().run()}
-        ><BoldIcon /></Button
-      >
-      <Button
-        size="sm"
-        variant={editorState.editor.isActive("italic") ? "default" : "outline"}
-        onclick={() => editorState.editor!.chain().focus().toggleItalic().run()}
-        ><ItalicIcon /></Button
-      >
-    </ButtonGroup.Root>
-  </div>
-{/if}
+<div class="flex flex-col h-full w-full">
+  {#if editorState.editor}
+    <div class="p-2 bg-background flex gap-2 items-center border-b">
+      <!-- Headings -->
+      <ButtonGroup.Root>
+        <Button
+          size="sm"
+          variant="outline"
+          onclick={() =>
+            editorState.editor!.chain().focus().toggleHeading({ level: 1 }).run()}
+          ><Heading1Icon /></Button
+        >
+        <Button
+          size="sm"
+          variant="outline"
+          onclick={() =>
+            editorState.editor!.chain().focus().toggleHeading({ level: 2 }).run()}
+          ><Heading2Icon /></Button
+        >
+        <Button
+          size="sm"
+          variant="outline"
+          onclick={() => editorState.editor!.chain().focus().setParagraph().run()}
+          ><Pilcrow /></Button
+        >
+      </ButtonGroup.Root>
+      <!-- Formatting -->
+      <ButtonGroup.Root>
+        <Button
+          size="sm"
+          variant={editorState.editor.isActive("bold") ? "default" : "outline"}
+          onclick={() => editorState.editor!.chain().focus().toggleBold().run()}
+          ><BoldIcon /></Button
+        >
+        <Button
+          size="sm"
+          variant={editorState.editor.isActive("italic") ? "default" : "outline"}
+          onclick={() => editorState.editor!.chain().focus().toggleItalic().run()}
+          ><ItalicIcon /></Button
+        >
+      </ButtonGroup.Root>
+    </div>
+  {/if}
 
-<div
-  bind:this={element}
-  class="min-h-[400px] h-full w-full border prose **:text-foreground"
-></div>
+  <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions (only a mouse ux improvement) -->
+  <div
+    bind:this={element}
+    class="flex-1 min-h-[400px] w-full prose **:text-foreground cursor-text max-w-none"
+    onclick={() => {
+      if (editorState.editor) {
+        if (!editorState.editor.isFocused)
+          editorState.editor.chain().focus('end').run();
+      }
+    }}
+  ></div>
+</div>
