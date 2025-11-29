@@ -22,17 +22,6 @@
             <Sidebar.MenuButton>
               {#snippet child({ props })}
                 <a href="/" {...props}>
-                  <House class="size-4" />
-                  <span>Dashboard</span>
-                </a>
-              {/snippet}
-            </Sidebar.MenuButton>
-          </Sidebar.MenuItem>
-
-          <Sidebar.MenuItem>
-            <Sidebar.MenuButton>
-              {#snippet child({ props })}
-                <a href="/novels" {...props}>
                   <Book class="size-4" />
                   <span>My Novels</span>
                 </a>
