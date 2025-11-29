@@ -11,8 +11,7 @@
     ItalicIcon,
     Pilcrow,
   } from "@lucide/svelte";
-  import { TrailingNode } from "@tiptap/extensions/trailing-node";
-    import { Placeholder } from "@tiptap/extensions/placeholder";
+  import { Placeholder } from "@tiptap/extensions/placeholder";
 
   let element = $state<HTMLElement>();
   let editorState = $state({ editor: null as Editor | null });
@@ -21,7 +20,7 @@
       element: element,
       extensions: [
         Placeholder.configure({
-          placeholder: 'Start typing...',
+          placeholder: "Start typing...",
         }),
         StarterKit.configure({
           horizontalRule: {
@@ -36,7 +35,7 @@
           class: "px-4 outline-none",
         },
       },
-      content: '',
+      content: "",
       onTransaction: ({ editor }) => {
         // Increment the state signal to force a re-render
         editorState = { editor };
@@ -57,20 +56,27 @@
           size="sm"
           variant="outline"
           onclick={() =>
-            editorState.editor!.chain().focus().toggleHeading({ level: 1 }).run()}
-          ><Heading1Icon /></Button
+            editorState
+              .editor!.chain()
+              .focus()
+              .toggleHeading({ level: 1 })
+              .run()}><Heading1Icon /></Button
         >
         <Button
           size="sm"
           variant="outline"
           onclick={() =>
-            editorState.editor!.chain().focus().toggleHeading({ level: 2 }).run()}
-          ><Heading2Icon /></Button
+            editorState
+              .editor!.chain()
+              .focus()
+              .toggleHeading({ level: 2 })
+              .run()}><Heading2Icon /></Button
         >
         <Button
           size="sm"
           variant="outline"
-          onclick={() => editorState.editor!.chain().focus().setParagraph().run()}
+          onclick={() =>
+            editorState.editor!.chain().focus().setParagraph().run()}
           ><Pilcrow /></Button
         >
       </ButtonGroup.Root>
@@ -84,8 +90,11 @@
         >
         <Button
           size="sm"
-          variant={editorState.editor.isActive("italic") ? "default" : "outline"}
-          onclick={() => editorState.editor!.chain().focus().toggleItalic().run()}
+          variant={editorState.editor.isActive("italic")
+            ? "default"
+            : "outline"}
+          onclick={() =>
+            editorState.editor!.chain().focus().toggleItalic().run()}
           ><ItalicIcon /></Button
         >
       </ButtonGroup.Root>
@@ -99,7 +108,7 @@
     onclick={() => {
       if (editorState.editor) {
         if (!editorState.editor.isFocused)
-          editorState.editor.chain().focus('end').run();
+          editorState.editor.chain().focus("end").run();
       }
     }}
   ></div>
