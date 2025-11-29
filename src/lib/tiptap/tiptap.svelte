@@ -33,7 +33,7 @@
       ],
       editorProps: {
         attributes: {
-          class: "p-4 outline-none",
+          class: "px-4 outline-none",
         },
       },
       content: '',

@@ -1,18 +1,21 @@
 <script lang="ts">
   import * as Menubar from "$lib/components/ui/menubar";
-  import * as Sidebar from "$lib/components/ui/sidebar";
   import { mode, resetMode, setMode } from "mode-watcher";
   import PanelLeftIcon from "@lucide/svelte/icons/panel-left";
   import Button from "./ui/button/button.svelte";
+  import AppWindowcontrols from "./app-windowcontrols.svelte";
 
   let { sidebarOpen = $bindable(true) } = $props();
 </script>
 
-<Menubar.Root class="rounded-none border-l-0 border-t-0 border-r-0">
+<Menubar.Root
+  class="rounded-none border-l-0 border-t-0 border-r-0"
+  data-tauri-drag-region
+>
   <div class="flex items-center">
     <Button
       variant="ghost"
-      size="icon"
+      size="icon-sm"
       onclick={() => (sidebarOpen = !sidebarOpen)}
     >
       <PanelLeftIcon />
@@ -85,4 +88,5 @@
       </Menubar.Content>
     </Menubar.Menu>
   </div>
+  <AppWindowcontrols />
 </Menubar.Root>

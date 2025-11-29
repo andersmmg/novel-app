@@ -8,7 +8,7 @@
     PenTool,
     Bookmark,
     Search,
-    Home,
+    House,
   } from "@lucide/svelte";
 </script>
 
@@ -22,7 +22,7 @@
             <Sidebar.MenuButton>
               {#snippet child({ props })}
                 <a href="/" {...props}>
-                  <Home class="size-4" />
+                  <House class="size-4" />
                   <span>Dashboard</span>
                 </a>
               {/snippet}
