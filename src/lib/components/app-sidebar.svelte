@@ -119,13 +119,9 @@
     <Sidebar.Footer>
       <Sidebar.Menu>
         <Sidebar.MenuItem>
-          <Sidebar.MenuButton>
-            <span class="text-xs text-muted-foreground">v1.0.0</span>
-          </Sidebar.MenuButton>
+          <span class="text-xs text-muted-foreground p-2 cursor-default">v{__APP_VERSION__}</span>
         </Sidebar.MenuItem>
       </Sidebar.Menu>
     </Sidebar.Footer>
   </Sidebar.Content>
-
-  <!-- <Sidebar.Rail /> -->
 </Sidebar.Root>

@@ -11,6 +11,9 @@ export default defineConfig(async () => ({
     sveltekit(),
     tailwindcss(),
   ],
+  define: {
+      '__APP_VERSION__': JSON.stringify(process.env.npm_package_version),
+  },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
