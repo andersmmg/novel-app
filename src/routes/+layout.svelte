@@ -15,7 +15,7 @@
 
 <Sidebar.Provider open={sidebarOpen}  class="min-h-[calc(100svh-2.25rem)]">
   <AppSidebar />
-  <main>
+  <main class="w-full">
     {@render children?.()}
   </main>
 </Sidebar.Provider>

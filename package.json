@@ -13,9 +13,16 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@tabler/icons-svelte": "^3.35.0",
+    "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.17",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
+    "@tiptap/core": "^3.11.1",
+    "@tiptap/extension-bubble-menu": "^3.11.1",
+    "@tiptap/extensions": "^3.11.1",
+    "@tiptap/pm": "^3.11.1",
+    "@tiptap/starter-kit": "^3.11.1",
     "mode-watcher": "^1.1.0",
     "tailwindcss": "^4.1.17"
   },
