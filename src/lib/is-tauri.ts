@@ -1,5 +1,5 @@
 /** Running on a desktop app or a mobile app, but not in the browser */
-export const isTauri = '__TAURI_INTERNALS__' in window;
+export const isTauri = "__TAURI_INTERNALS__" in window;
 
 /** Running in the browser on either desktop or mobile, but not as a tauri app */
 export const isWeb = !isTauri;
