@@ -13,7 +13,7 @@
 </script>
 
 <Sidebar.Root class="mt-9">
-  <Sidebar.Content>
+  <Sidebar.Content class="border-l">
     <Sidebar.Group>
       <Sidebar.GroupLabel>Navigation</Sidebar.GroupLabel>
       <Sidebar.GroupContent>
@@ -32,7 +32,7 @@
           <Sidebar.MenuItem>
             <Sidebar.MenuButton>
               {#snippet child({ props })}
-                <a href="/chapters" {...props}>
+                <a href="/test" {...props}>
                   <FileText class="size-4" />
                   <span>Chapters</span>
                 </a>

@@ -13,9 +13,9 @@
 <ModeWatcher />
 <AppMenubar bind:sidebarOpen />
 
-<Sidebar.Provider open={sidebarOpen} class="min-h-[calc(100svh-2.25rem)]">
+<Sidebar.Provider open={sidebarOpen} class="min-h-[calc(100svh-2.25rem)] max-h-[calc(100svh-2.25rem)]">
   <AppSidebar />
-  <Sidebar.Inset class="w-full">
+  <Sidebar.Inset class="w-full overflow-y-auto max-h-full border-r border-b">
     {@render children?.()}
   </Sidebar.Inset>
 </Sidebar.Provider>
