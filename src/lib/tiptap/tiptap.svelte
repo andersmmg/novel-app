@@ -12,6 +12,7 @@
     Pilcrow,
   } from "@lucide/svelte";
   import { TrailingNode } from "@tiptap/extensions/trailing-node";
+    import { Placeholder } from "@tiptap/extensions/placeholder";
 
   let element = $state<HTMLElement>();
   let editorState = $state({ editor: null as Editor | null });
@@ -19,6 +20,9 @@
     editorState.editor = new Editor({
       element: element,
       extensions: [
+        Placeholder.configure({
+          placeholder: 'Start typing...',
+        }),
         StarterKit.configure({
           horizontalRule: {
             HTMLAttributes: {
@@ -32,10 +36,7 @@
           class: "p-4 outline-none",
         },
       },
-      content: `
-        <h1>Hello Svelte! 🌍️ </h1>
-        <p>This editor is running in Svelte.</p>
-      `,
+      content: '',
       onTransaction: ({ editor }) => {
         // Increment the state signal to force a re-render
         editorState = { editor };
