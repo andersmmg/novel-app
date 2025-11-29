@@ -12,15 +12,8 @@
   } from "@lucide/svelte";
 </script>
 
-<Sidebar.Root>
+<Sidebar.Root class="mt-9">
   <Sidebar.Content>
-    <Sidebar.Header>
-      <Sidebar.MenuButton>
-        <Book class="size-4" />
-        <span>Novel Writer</span>
-      </Sidebar.MenuButton>
-    </Sidebar.Header>
-
     <Sidebar.Group>
       <Sidebar.GroupLabel>Navigation</Sidebar.GroupLabel>
       <Sidebar.GroupContent>
@@ -145,5 +138,5 @@
     </Sidebar.Footer>
   </Sidebar.Content>
 
-  <Sidebar.Rail />
+  <!-- <Sidebar.Rail /> -->
 </Sidebar.Root>
