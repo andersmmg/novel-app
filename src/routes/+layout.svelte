@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { ModeWatcher } from "mode-watcher";
 	import * as Sidebar from "$lib/components/ui/sidebar";
+	import { saveConfig } from "$lib/config-store.svelte";
+	import { Window } from "@tauri-apps/api/window";
+	import { onMount } from "svelte";
 
 	let { children } = $props();
 	import "../app.css";
@@ -8,6 +11,22 @@
 	import AppMenubar from "$lib/components/app-menubar.svelte";
 
 	let sidebarOpen = $state(true);
+
+	onMount(async () => {
+		// Get the main window
+		const appWindow = new Window("main");
+
+		// Listen for close request
+		await appWindow.onCloseRequested(async () => {
+			try {
+				await saveConfig();
+			} catch (error) {
+				console.error("Failed to save config before closing:", error);
+			}
+			// Destroy the window to close
+			await appWindow.destroy();
+		});
+	});
 </script>
 
 <ModeWatcher />

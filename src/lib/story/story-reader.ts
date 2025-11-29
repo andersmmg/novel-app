@@ -1,7 +1,7 @@
 import JSZip from "jszip";
 import { parse as parseYaml } from "yaml";
 import { Story } from "./story";
-import type { StoryFile, StoryFolder } from "./story";
+import type { StoryFile, StoryFolder, StoryMetadata } from "./story";
 
 function extractTitle(content: string): string {
 	const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
@@ -23,18 +23,18 @@ function extractTitle(content: string): string {
 	return "";
 }
 
-function parseMetadata(content: string): any {
+function parseMetadata(content: string): StoryMetadata | undefined {
 	const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
 	if (frontmatterMatch) {
 		try {
-			return convertDates(parseYaml(frontmatterMatch[1]));
+			return convertDates(parseYaml(frontmatterMatch[1])) || {};
 		} catch (e) {
 			return {};
 		}
 	}
 
 	try {
-		return convertDates(parseYaml(content));
+		return convertDates(parseYaml(content)) || {};
 	} catch (e) {
 		return {};
 	}
@@ -180,7 +180,7 @@ export async function readStoryFile(file: File): Promise<Story> {
 	const zipContent = await zip.loadAsync(file);
 
 	const files: (StoryFile & { isDirectory: boolean })[] = [];
-	let storyMetadata = null;
+	let storyMetadata: StoryMetadata | null = null;
 
 	for (const [relativePath, zipObject] of Object.entries(zipContent.files)) {
 		if (zipObject.dir) {
@@ -203,10 +203,10 @@ export async function readStoryFile(file: File): Promise<Story> {
 				title,
 				metadata,
 				created:
-					metadata.created || metadata.edited
-						? new Date(metadata.created || metadata.edited)
+					metadata?.created || metadata?.edited
+						? new Date(metadata.created || metadata.edited!)
 						: undefined,
-				edited: metadata.edited ? new Date(metadata.edited) : undefined,
+				edited: metadata?.edited ? new Date(metadata.edited) : undefined,
 			};
 
 			files.push(fileData);
@@ -221,7 +221,7 @@ export async function readStoryFile(file: File): Promise<Story> {
 		}
 	}
 
-	const story = new Story(storyMetadata);
+	const story = new Story(storyMetadata || {});
 
 	// Add chapters
 	const chapters = files.filter(

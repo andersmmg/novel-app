@@ -1,18 +1,40 @@
 {
-  "$schema": "../gen/schemas/desktop-schema.json",
-  "identifier": "default",
-  "description": "Capability for the main window",
-  "windows": [
-    "main"
-  ],
-  "permissions": [
-    "core:default",
-    "opener:default",
-    "core:window:default",
-    "core:window:allow-start-dragging",
-    "core:window:allow-toggle-maximize",
-    "core:window:allow-minimize",
-    "core:window:allow-close",
-    "fs:default"
-  ]
+	"$schema": "../gen/schemas/desktop-schema.json",
+	"identifier": "default",
+	"description": "Capability for the main window",
+	"windows": [
+		"main"
+	],
+	"permissions": [
+		"core:default",
+		"opener:default",
+		"core:window:default",
+		"core:window:allow-start-dragging",
+		"core:window:allow-toggle-maximize",
+		"core:window:allow-minimize",
+		"core:window:allow-close",
+		"core:window:allow-destroy",
+		"fs:default",
+		"fs:allow-exists",
+		"fs:allow-mkdir",
+		"fs:allow-read-text-file",
+		"fs:allow-write-text-file",
+		{
+			"identifier": "fs:scope-appdata-recursive",
+			"allow": [
+				{
+					"path": "$APPDATA"
+				}
+			]
+		},
+		{
+			"identifier": "fs:scope-appconfig-recursive",
+			"allow": [
+				{
+					"path": "$APPCONFIG"
+				}
+			]
+		},
+		"log:default"
+	]
 }
