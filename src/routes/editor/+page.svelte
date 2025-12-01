@@ -132,7 +132,7 @@
 		</div>
 	</header>
 
-	<main class="flex-1 w-full min-w-0">
+	<main class="flex-1 w-full min-w-0 overflow-y-hidden">
 		{#if appState.selectedStory && appState.currentEditedFile}
 			<Tiptap
 				currentFile={appState.currentEditedFile}

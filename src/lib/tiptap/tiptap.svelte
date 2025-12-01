@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { onMount, onDestroy } from "svelte";
-	import { Editor } from "@tiptap/core";
-	import { StarterKit } from "@tiptap/starter-kit";
 	import { Button } from "$lib/components/ui/button";
 	import * as ButtonGroup from "$lib/components/ui/button-group";
+	import type { StoryFile } from "$lib/story";
+	import { combineFrontmatter, separateFrontmatter } from "$lib/story/utils";
 	import {
 		BoldIcon,
 		Heading1Icon,
@@ -11,18 +10,22 @@
 		ItalicIcon,
 		Pilcrow,
 	} from "@lucide/svelte";
+	import { Editor } from "@tiptap/core";
 	import { Placeholder } from "@tiptap/extensions/placeholder";
 	import { Markdown } from "@tiptap/markdown";
-	import type { StoryFile } from "$lib/story";
-	import { separateFrontmatter, combineFrontmatter } from "$lib/story/utils";
-	import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
+	import { StarterKit } from "@tiptap/starter-kit";
+	import { onDestroy, onMount } from "svelte";
 
 	let {
 		currentFile,
 		onContentChange,
 	}: {
 		currentFile: StoryFile | null;
-		onContentChange?: (content: string, frontmatter: string, metadata: any) => void;
+		onContentChange?: (
+			content: string,
+			frontmatter: string,
+			metadata: any,
+		) => void;
 	} = $props();
 
 	let element = $state<HTMLElement>();
@@ -35,13 +38,15 @@
 
 		const currentFileId = currentFile?.path || null;
 		const currentFileChanged = previousFileId !== currentFileId;
-		
+
 		if (currentFileChanged) {
 			console.log("Tiptap: File changed, updating content");
 			previousFileId = currentFileId;
 
 			// Separate frontmatter from content
-			const { content: cleanContent } = separateFrontmatter(currentFile?.content || "");
+			const { content: cleanContent } = separateFrontmatter(
+				currentFile?.content || "",
+			);
 			const currentContent = editorState.editor.getMarkdown();
 
 			if (cleanContent !== currentContent) {
@@ -54,7 +59,9 @@
 
 	onMount(() => {
 		// Separate frontmatter from initial content
-		const { content: initialContent } = separateFrontmatter(currentFile?.content || "");
+		const { content: initialContent } = separateFrontmatter(
+			currentFile?.content || "",
+		);
 
 		editorState.editor = new Editor({
 			element: element,
@@ -73,7 +80,8 @@
 			],
 			editorProps: {
 				attributes: {
-					class: "px-4 outline-none",
+					class: "px-4 outline-none min-h-full",
+					style: "min-height: 100%;",
 				},
 			},
 			content: initialContent,
@@ -84,10 +92,15 @@
 			onUpdate: ({ editor }) => {
 				if (onContentChange && currentFile) {
 					const newContent = editor.getMarkdown();
-					const { frontmatter, metadata } = separateFrontmatter(currentFile.content || "");
-					
+					const { frontmatter, metadata } = separateFrontmatter(
+						currentFile.content || "",
+					);
+
 					// Update with new content but preserve existing frontmatter
-					const updatedFullContent = combineFrontmatter(frontmatter, newContent);
+					const updatedFullContent = combineFrontmatter(
+						frontmatter,
+						newContent,
+					);
 					onContentChange(updatedFullContent, frontmatter, metadata);
 				}
 			},
@@ -167,7 +180,7 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions (only a mouse ux improvement) -->
 	<div
 		bind:this={element}
-		class="flex-1 min-h-[400px] w-full prose **:text-foreground cursor-text max-w-none"
+		class="flex-1 min-h-[400px] w-full prose **:text-foreground cursor-text max-w-none overflow-y-auto"
 		onmouseup={() => {
 			if (editorState.editor) {
 				if (!editorState.editor.isFocused)
