@@ -170,7 +170,7 @@
 				<div class="text-center">
 					<h2 class="text-xl font-semibold mb-2">No File Selected</h2>
 					<p class="text-muted-foreground mb-4">
-						Select a chapter, character, or note to start editing.
+						Select a chapter or note to start editing.
 					</p>
 					<Button onclick={goBack}>Go to Novels</Button>
 				</div>

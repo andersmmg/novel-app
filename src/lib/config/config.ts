@@ -12,12 +12,20 @@ import { warn, info } from "@tauri-apps/plugin-log";
 export interface AppConfig {
 	edited: Date;
 	test_name: string;
+	autosave: {
+		enabled: boolean;
+		intervalMinutes: number;
+	};
 }
 
 const CONFIG_PATH = "config.yml";
 const DEFAULT_CONFIG: AppConfig = {
 	edited: new Date(),
 	test_name: "",
+	autosave: {
+		enabled: true,
+		intervalMinutes: 5,
+	},
 };
 
 export async function loadConfig(): Promise<AppConfig> {

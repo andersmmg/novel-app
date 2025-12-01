@@ -17,7 +17,6 @@ export {
 	downloadStory,
 	createEmptyStory,
 	createChapter,
-	createCharacter,
 	createNote,
 	createNoteFolder,
 } from "./story-writer";

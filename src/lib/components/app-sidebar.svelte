@@ -363,7 +363,7 @@
 			<Sidebar.MenuItem>
 				<Sidebar.MenuButton>
 					{#snippet child({ props })}
-						<a href="/test" {...props}>
+						<a href="/settings" {...props}>
 							<Settings class="size-4" />
 							<span>Settings</span>
 						</a>
