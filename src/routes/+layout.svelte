@@ -2,7 +2,11 @@
 	import { ModeWatcher } from "mode-watcher";
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import { saveConfig } from "$lib/config";
-	import { appState, loadAvailableStories } from "$lib/app-state.svelte";
+	import {
+		appState,
+		loadAvailableStories,
+		saveCurrentStory,
+	} from "$lib/app-state.svelte";
 	import { Window } from "@tauri-apps/api/window";
 	import { onMount } from "svelte";
 
@@ -35,6 +39,11 @@
 			} catch (error) {
 				console.error("Failed to save config before closing:", error);
 			}
+			try {
+				await saveCurrentStory();
+			} catch (error) {
+				console.error("Failed to save story before closing:", error);
+			}
 			// Destroy the window to close
 			await appWindow.destroy();
 		});
@@ -50,7 +59,7 @@
 	class="min-h-[calc(100svh-2.25rem)] max-h-[calc(100svh-2.25rem)]"
 >
 	<AppSidebar />
-	<Sidebar.Inset class="w-full overflow-y-auto max-h-full border-r border-b">
+	<Sidebar.Inset class="w-full overflow-hidden max-h-full border-r border-b">
 		{@render children?.()}
 	</Sidebar.Inset>
 </Sidebar.Provider>

@@ -6,7 +6,7 @@ let autosaveInterval: ReturnType<typeof setInterval> | null = null;
 
 export async function startAutosave(): Promise<void> {
 	const config = await configStore.getConfig();
-	
+
 	if (!config.autosave.enabled) {
 		stopAutosave();
 		return;
@@ -16,20 +16,26 @@ export async function startAutosave(): Promise<void> {
 	stopAutosave();
 
 	const intervalMs = config.autosave.intervalMinutes * 60 * 1000;
-	
-	info(`Starting autosave with interval: ${config.autosave.intervalMinutes} minutes`);
-	
+
+	info(
+		`Starting autosave with interval: ${config.autosave.intervalMinutes} minutes`,
+	);
+
 	autosaveInterval = setInterval(async () => {
 		if (appState.selectedStory) {
 			try {
 				const success = await saveCurrentStory();
 				if (success) {
-					info(`Autosave completed for story: ${appState.selectedStory?.metadata.title}`);
+					info(
+						`Autosave completed for story: ${appState.selectedStory?.metadata.title}`,
+					);
 				} else {
 					warn("Autosave failed");
 				}
 			} catch (error) {
-				warn(`Autosave error: ${error instanceof Error ? error.message : String(error)}`);
+				warn(
+					`Autosave error: ${error instanceof Error ? error.message : String(error)}`,
+				);
 			}
 		}
 	}, intervalMs);

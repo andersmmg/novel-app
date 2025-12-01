@@ -6,7 +6,7 @@
 	const appWindow = getCurrentWindow();
 </script>
 
-<div class="flex items-center ml-auto">
+<div class="flex items-center ml-auto z-100 pointer-events-auto">
 	<Button
 		variant="ghost"
 		size="icon-sm"

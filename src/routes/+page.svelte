@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { appState } from "$lib/app-state.svelte";
+	import {
+		appState,
+		loadAvailableStories,
+		selectStoryById,
+	} from "$lib/app-state.svelte";
 	import { Badge } from "$lib/components/ui/badge";
-	import { Button } from "$lib/components/ui/button/index.js";
+	import { Button, buttonVariants } from "$lib/components/ui/button/index.js";
 	import {
 		Card,
 		CardContent,
@@ -10,14 +14,73 @@
 		CardHeader,
 		CardTitle,
 	} from "$lib/components/ui/card";
+	import * as Dialog from "$lib/components/ui/dialog/index.js";
 	import * as Empty from "$lib/components/ui/empty/index.js";
+	import { Input } from "$lib/components/ui/input/index.js";
+	import { Label } from "$lib/components/ui/label/index.js";
+	import * as Field from "$lib/components/ui/field/index.js";
+	import { createEmptyStory } from "$lib/story";
+	import { saveStory } from "$lib/story/story-writer";
 	import type { StoryListItem } from "$lib/story/types";
 	import BookOpenIcon from "@tabler/icons-svelte/icons/book";
 	import CalendarIcon from "@tabler/icons-svelte/icons/calendar";
 	import UserIcon from "@tabler/icons-svelte/icons/user";
+	import { BaseDirectory, exists, writeFile } from "@tauri-apps/plugin-fs";
+	import { info } from "@tauri-apps/plugin-log";
+	import { onMount } from "svelte";
+	import { Textarea } from "$lib/components/ui/textarea";
+	import { nanoid } from "nanoid";
 
-	const stories: StoryListItem[] = appState.availableStories;
-	let loading = true;
+	let loading = $state(true);
+	let creatingStory = $state(false);
+	let titleInput = $state("");
+	let authorInput = $state("");
+	let genreInput = $state("");
+	let descriptionInput = $state("");
+	let showEmptyWarning = $state(false);
+
+	const stories = $derived(appState.availableStories);
+	const canCreateStory = $derived(
+		titleInput.trim() ||
+			authorInput.trim() ||
+			genreInput.trim() ||
+			descriptionInput.trim(),
+	);
+
+	onMount(async () => {
+		loading = false;
+	});
+
+	function sanitizeFilename(title: string): string {
+		return title
+			.toLowerCase()
+			.replace(/[^a-z0-9\s]/g, "")
+			.replace(/\s+/g, "_")
+			.replace(/^_+|_+$/g, "")
+			.substring(0, 50);
+	}
+
+	async function generateUniqueFilename(title: string): Promise<string> {
+		if (!title.trim()) {
+			const id = nanoid();
+			return `${id}.story`;
+		}
+
+		const baseName = sanitizeFilename(title);
+		let filename = `${baseName}.story`;
+		let counter = 1;
+
+		while (
+			await exists(`stories/${filename}`, {
+				baseDir: BaseDirectory.AppData,
+			})
+		) {
+			filename = `${baseName}${counter}.story`;
+			counter++;
+		}
+
+		return filename;
+	}
 
 	function formatDate(date: Date): string {
 		if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
@@ -36,15 +99,147 @@
 	}
 
 	async function handleOpenStory(storyId: string) {
-		// await selectStoryById(storyId);
-		goto("/");
+		await selectStoryById(storyId);
+		// TODO: Will go to story home page
+		// goto("/editor");
 	}
 
 	function handleCardClick(story: StoryListItem) {
 		handleOpenStory(story.id);
 	}
+
+	async function handleCreateStory() {
+		if (!canCreateStory) {
+			showEmptyWarning = true;
+			setTimeout(() => (showEmptyWarning = false), 3000);
+			return;
+		}
+
+		try {
+			const storyTitle = titleInput.trim() || "Untitled Story";
+			const newStory = createEmptyStory(storyTitle);
+
+			newStory.metadata.title = storyTitle;
+			if (authorInput.trim()) {
+				newStory.metadata.author = authorInput.trim();
+			}
+			if (genreInput.trim()) {
+				newStory.metadata.genre = genreInput.trim();
+			}
+			if (descriptionInput.trim()) {
+				newStory.metadata.description = descriptionInput.trim();
+			}
+
+			const storyBlob = await saveStory(newStory);
+			const arrayBuffer = await storyBlob.arrayBuffer();
+			const uint8Array = new Uint8Array(arrayBuffer);
+			const filename = await generateUniqueFilename(titleInput.trim());
+			const path = `stories/${filename}`;
+
+			await writeFile(path, uint8Array, {
+				baseDir: BaseDirectory.AppData,
+			});
+
+			info(`Created new story: ${filename}`);
+
+			titleInput = "";
+			authorInput = "";
+			genreInput = "";
+			descriptionInput = "";
+			creatingStory = false;
+
+			await loadAvailableStories();
+			handleOpenStory(filename);
+		} catch (error) {
+			console.error("Failed to create story:", error);
+		}
+	}
+
+	function openCreateDialog() {
+		creatingStory = true;
+	}
+
+	function closeCreateDialog() {
+		creatingStory = false;
+	}
 </script>
 
+<Dialog.Root
+	bind:open={creatingStory}
+	onOpenChangeComplete={() => {
+		if (!creatingStory) {
+			titleInput = "";
+			authorInput = "";
+			genreInput = "";
+			descriptionInput = "";
+		}
+	}}
+>
+	<Dialog.Content class="sm:max-w-[425px]">
+		<Field.Set>
+			<Dialog.Header>
+				<Dialog.Title>Create Story</Dialog.Title>
+			</Dialog.Header>
+
+			{#if showEmptyWarning}
+				<div
+					class="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md"
+				>
+					<p class="text-sm text-destructive">
+						Please enter at least a title, author, genre, or
+						description to create a story.
+					</p>
+				</div>
+			{/if}
+
+			<Field.Group class="gap-2">
+				<Field.Field>
+					<Field.Label for="title">Title</Field.Label>
+					<Input
+						id="title"
+						bind:value={titleInput}
+						placeholder="Enter story title..."
+					/>
+					<Field.Description>
+						The title of your story. You can always change it later.
+					</Field.Description>
+				</Field.Field>
+				<Field.Field>
+					<Field.Label for="author">Author</Field.Label>
+					<Input
+						id="author"
+						bind:value={authorInput}
+						placeholder="Your name"
+					/>
+				</Field.Field>
+				<Field.Field>
+					<Field.Label for="genre">Genre</Field.Label>
+					<Input
+						id="genre"
+						bind:value={genreInput}
+						placeholder="Fantasy, Sci-Fi, etc."
+					/>
+				</Field.Field>
+				<Field.Field>
+					<Field.Label for="description">Description</Field.Label>
+					<Textarea
+						id="description"
+						bind:value={descriptionInput}
+						placeholder="A short description of your story..."
+					/>
+				</Field.Field>
+			</Field.Group>
+		</Field.Set>
+		<Dialog.Footer>
+			<Button variant="outline" onclick={closeCreateDialog}>
+				Cancel
+			</Button>
+			<Button onclick={handleCreateStory} disabled={!canCreateStory}>
+				Create Story
+			</Button>
+		</Dialog.Footer>
+	</Dialog.Content>
+</Dialog.Root>
 <div class="container mx-auto p-6">
 	{#if loading}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -77,7 +272,7 @@
 			</Empty.Header>
 			<Empty.Content>
 				<div class="flex gap-2">
-					<Button>Create Story</Button>
+					<Button onclick={openCreateDialog}>Create Story</Button>
 					<Button variant="outline">Import Story</Button>
 				</div>
 			</Empty.Content>
@@ -91,7 +286,7 @@
 				</p>
 			</div>
 			<div class="flex gap-2">
-				<Button>Create Story</Button>
+				<Button onclick={openCreateDialog}>Create Story</Button>
 				<Button variant="outline">Import Story</Button>
 			</div>
 		</div>
@@ -101,8 +296,8 @@
 					role="button"
 					tabindex="0"
 					class="hover:shadow-md transition-shadow cursor-pointer"
-					on:click={() => handleCardClick(story)}
-					on:keydown={(e) =>
+					onclick={() => handleCardClick(story)}
+					onkeydown={(e) =>
 						e.key === "Enter" && handleCardClick(story)}
 				>
 					<Card>
@@ -121,13 +316,11 @@
 										</CardDescription>
 									{/if}
 								</div>
-								<Badge
-									variant={story.isDirectory
-										? "secondary"
-										: "default"}
-								>
-									{story.isDirectory ? "Folder" : "File"}
-								</Badge>
+								{#if story.genre}
+									<Badge variant="outline" class="text-xs">
+										{story.genre}
+									</Badge>
+								{/if}
 							</div>
 						</CardHeader>
 						<CardContent>
@@ -140,25 +333,24 @@
 							{/if}
 
 							<div
-								class="flex items-center justify-between text-sm text-muted-foreground"
+								class="flex justify-between items-start text-sm text-muted-foreground"
 							>
+								<div class="flex items-center gap-1">
+									<CalendarIcon class="size-3" />
+									{formatDate(story.created)}
+								</div>
 								<div class="flex items-center gap-1">
 									<CalendarIcon class="size-3" />
 									{formatDate(story.edited)}
 								</div>
-								{#if story.genre}
-									<Badge variant="outline" class="text-xs">
-										{story.genre}
-									</Badge>
-								{/if}
 							</div>
 
 							<div class="mt-4 pt-4 border-t">
 								<button
 									class="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-1 rounded text-sm font-medium"
-									on:click={() => handleOpenStory(story.id)}
+									onclick={() => handleOpenStory(story.id)}
 								>
-									Open Novel
+									Open Story
 								</button>
 							</div>
 						</CardContent>

@@ -2,6 +2,7 @@ import JSZip from "jszip";
 import { stringify as stringifyYaml } from "yaml";
 import { Story } from "./story-class";
 import type { StoryFile, StoryFolder } from "./types";
+import { nanoid } from "nanoid";
 import {
 	convertDatesToStrings,
 	addFrontmatterIfNeeded,
@@ -78,14 +79,17 @@ export async function downloadStory(
 
 export function createEmptyStory(title?: string): Story {
 	const now = new Date();
-	return new Story({
-		title: title || "Untitled Story",
-		author: "",
-		genre: "",
-		description: "",
-		created: now,
-		edited: now,
-	});
+	return new Story(
+		{
+			title: title || "Untitled Story",
+			author: "",
+			genre: "",
+			description: "",
+			created: now,
+			edited: now,
+		},
+		`${nanoid()}.story`,
+	);
 }
 
 export function createChapter(title: string, content: string = ""): StoryFile {

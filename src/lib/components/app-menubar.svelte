@@ -8,8 +8,10 @@
 	import { ctrlShortcut } from "$lib/utils";
 	import { appState, saveCurrentStory } from "$lib/app-state.svelte";
 	import { onMount } from "svelte";
+	import { getCurrentWindow } from "@tauri-apps/api/window";
 
 	let { sidebarOpen = $bindable(true) } = $props();
+	const appWindow = getCurrentWindow();
 
 	async function handleSave() {
 		if (appState.selectedStory) {
@@ -21,6 +23,9 @@
 		if ((e.ctrlKey || e.metaKey) && e.key === "s") {
 			e.preventDefault();
 			handleSave();
+		} else if ((e.ctrlKey || e.metaKey) && e.key === "q") {
+			e.preventDefault();
+			appWindow.close();
 		}
 	}
 
