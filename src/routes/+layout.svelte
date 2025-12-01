@@ -11,6 +11,7 @@
 	import AppSidebar from "$lib/components/app-sidebar.svelte";
 	import AppMenubar from "$lib/components/app-menubar.svelte";
 	import { info, error } from "@tauri-apps/plugin-log";
+	import { Toaster } from "$lib/components/ui/sonner";
 
 	let sidebarOpen = $state(true);
 
@@ -41,6 +42,7 @@
 </script>
 
 <ModeWatcher />
+<Toaster />
 <AppMenubar bind:sidebarOpen />
 
 <Sidebar.Provider

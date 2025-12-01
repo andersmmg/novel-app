@@ -3,24 +3,20 @@ import type { StoryFile, StoryFolder, StoryMetadata } from "./types";
 export class Story {
 	metadata: StoryMetadata;
 	chapters: StoryFile[];
-	characters: StoryFile[];
 	notes: StoryFolder[];
 	rootNotes: StoryFile[];
+	path: string;
 
-	constructor(metadata: StoryMetadata = {}) {
+	constructor(metadata: StoryMetadata = {}, path: string = "") {
 		this.metadata = metadata;
 		this.chapters = [];
-		this.characters = [];
 		this.notes = [];
 		this.rootNotes = [];
+		this.path = path;
 	}
 
 	addChapter(file: StoryFile): void {
 		this.chapters.push(file);
-	}
-
-	addCharacter(file: StoryFile): void {
-		this.characters.push(file);
 	}
 
 	addRootNote(file: StoryFile): void {
@@ -33,10 +29,6 @@ export class Story {
 
 	getChapterByPath(path: string): StoryFile | undefined {
 		return this.chapters.find((chapter) => chapter.path === path);
-	}
-
-	getCharacterByPath(path: string): StoryFile | undefined {
-		return this.characters.find((character) => character.path === path);
 	}
 
 	findNoteByPath(path: string): StoryFile | StoryFolder | undefined {
@@ -82,28 +74,29 @@ export class Story {
 		return this.updateFileInArray(this.chapters, path, updates);
 	}
 
-	updateCharacter(path: string, updates: Partial<StoryFile>): boolean {
-		return this.updateFileInArray(this.characters, path, updates);
-	}
-
 	updateNote(path: string, updates: Partial<StoryFile>): boolean {
 		// Check root notes first
-		const rootNoteIndex = this.rootNotes.findIndex((note) => note.path === path);
+		const rootNoteIndex = this.rootNotes.findIndex(
+			(note) => note.path === path,
+		);
 		if (rootNoteIndex !== -1) {
-			this.rootNotes[rootNoteIndex] = { ...this.rootNotes[rootNoteIndex], ...updates };
+			this.rootNotes[rootNoteIndex] = {
+				...this.rootNotes[rootNoteIndex],
+				...updates,
+			};
 			return true;
 		}
 
 		// Search in note folders
 		function updateInFolder(folder: StoryFolder): boolean {
-			if (folder.path === path && 'content' in folder) {
+			if (folder.path === path && "content" in folder) {
 				// This shouldn't happen as folders don't have content, but just in case
 				return false;
 			}
 
 			for (let i = 0; i < folder.children.length; i++) {
 				const child = folder.children[i];
-				if ('children' in child) {
+				if ("children" in child) {
 					if (updateInFolder(child)) return true;
 				} else if (child.path === path) {
 					folder.children[i] = { ...child, ...updates };
@@ -135,10 +128,6 @@ export class Story {
 
 	deleteChapter(path: string): boolean {
 		return this.deleteFileFromArray(this.chapters, path);
-	}
-
-	deleteCharacter(path: string): boolean {
-		return this.deleteFileFromArray(this.characters, path);
 	}
 
 	deleteNote(path: string): boolean {
@@ -179,11 +168,7 @@ export class Story {
 	}
 
 	getAllFiles(): StoryFile[] {
-		const allFiles: StoryFile[] = [
-			...this.chapters,
-			...this.characters,
-			...this.rootNotes,
-		];
+		const allFiles: StoryFile[] = [...this.chapters, ...this.rootNotes];
 
 		function collectFilesFromFolder(folder: StoryFolder) {
 			for (const child of folder.children) {

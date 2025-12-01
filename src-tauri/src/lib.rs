@@ -8,6 +8,7 @@ fn greet(name: &str) -> String {
 pub fn run() {
     let format = time::macros::format_description!("[year]-[month]-[day] [hour]:[minute]:[second]");
     tauri::Builder::default()
+        .plugin(tauri_plugin_os::init())
         .plugin(
             tauri_plugin_log::Builder::new()
                 .format(move |out, message, record| {

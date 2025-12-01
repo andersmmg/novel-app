@@ -2,7 +2,11 @@ import JSZip from "jszip";
 import { stringify as stringifyYaml } from "yaml";
 import { Story } from "./story-class";
 import type { StoryFile, StoryFolder } from "./types";
-import { convertDatesToStrings, addFrontmatterIfNeeded, sanitizeFilename } from "./utils";
+import {
+	convertDatesToStrings,
+	addFrontmatterIfNeeded,
+	sanitizeFilename,
+} from "./utils";
 
 export async function saveStory(story: Story): Promise<Blob> {
 	const zip = new JSZip();
@@ -20,10 +24,6 @@ export async function saveStory(story: Story): Promise<Blob> {
 
 	for (const chapter of story.chapters) {
 		zip.file(chapter.path, addFrontmatterIfNeeded(chapter));
-	}
-
-	for (const character of story.characters) {
-		zip.file(character.path, addFrontmatterIfNeeded(character));
 	}
 
 	saveNotesToZip(zip, story.notes, story.rootNotes);
@@ -58,8 +58,6 @@ function saveFolderToZip(zip: JSZip, folder: StoryFolder): void {
 		}
 	}
 }
-
-
 
 export async function downloadStory(
 	story: Story,
@@ -108,27 +106,6 @@ export function createChapter(title: string, content: string = ""): StoryFile {
 	};
 }
 
-export function createCharacter(
-	name: string,
-	description: string = "",
-): StoryFile {
-	const filename = sanitizeFilename(name) + ".md";
-	const path = `characters/${filename}`;
-	const now = new Date();
-
-	return {
-		name: filename,
-		path,
-		content: description,
-		title: name,
-		created: now,
-		edited: now,
-		metadata: {
-			title: name,
-		},
-	};
-}
-
 export function createNote(title: string, content: string = ""): StoryFile {
 	const filename = sanitizeFilename(title) + ".md";
 	const path = `notes/${filename}`;
@@ -162,5 +139,3 @@ export function createNoteFolder(title: string, name?: string): StoryFolder {
 		children: [],
 	};
 }
-
-

@@ -154,7 +154,10 @@ export async function readStoryFileMetadata(
 	return null;
 }
 
-export async function readStoryFile(file: File): Promise<Story> {
+export async function readStoryFile(
+	file: File,
+	path: string = "",
+): Promise<Story> {
 	const zip = new JSZip();
 	const zipContent = await zip.loadAsync(file);
 
@@ -202,7 +205,7 @@ export async function readStoryFile(file: File): Promise<Story> {
 		}
 	}
 
-	const story = new Story(storyMetadata || {});
+	const story = new Story(storyMetadata || {}, path);
 
 	// Add chapters
 	const chapters = files.filter(
@@ -211,15 +214,6 @@ export async function readStoryFile(file: File): Promise<Story> {
 	for (const chapter of chapters) {
 		const { isDirectory, ...chapterFile } = chapter;
 		story.addChapter(chapterFile);
-	}
-
-	// Add characters
-	const characters = files.filter(
-		(f) => f.path.startsWith("characters/") && !f.isDirectory,
-	);
-	for (const character of characters) {
-		const { isDirectory, ...characterFile } = character;
-		story.addCharacter(characterFile);
 	}
 
 	// Build and add notes structure

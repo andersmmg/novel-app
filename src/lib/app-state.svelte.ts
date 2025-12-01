@@ -1,13 +1,16 @@
 import type { StoryListItem, Story, StoryFile } from "$lib/story";
 import { readStoryFile, readStoryFileMetadata } from "$lib/story/story-reader";
+import { saveStory } from "$lib/story/story-writer";
 import {
 	readDir,
 	exists,
 	readFile,
+	writeFile,
 	mkdir,
 	BaseDirectory,
 } from "@tauri-apps/plugin-fs";
-import { error, info } from "@tauri-apps/plugin-log";
+import { error as logError, info } from "@tauri-apps/plugin-log";
+import { toast } from "svelte-sonner";
 
 const STORIES_DIR = "stories";
 
@@ -68,8 +71,18 @@ export async function loadAvailableStories() {
 								author: metadata.author,
 								genre: metadata.genre,
 								description: metadata.description,
-								created: metadata.created || new Date(),
-								edited: metadata.edited || new Date(),
+								created:
+									metadata.created instanceof Date
+										? metadata.created
+										: new Date(
+												metadata.created || Date.now(),
+											),
+								edited:
+									metadata.edited instanceof Date
+										? metadata.edited
+										: new Date(
+												metadata.edited || Date.now(),
+											),
 								path: `${STORIES_DIR}/${entry.name}`,
 								id: entry.name,
 								isDirectory: false,
@@ -78,7 +91,7 @@ export async function loadAvailableStories() {
 						}
 					}
 				} catch (e) {
-					error(
+					logError(
 						`Failed to load story metadata for ${entry.name}: ${e}`,
 					);
 				}
@@ -86,12 +99,22 @@ export async function loadAvailableStories() {
 		}
 
 		// Sort stories by edited date (most recent first)
-		storyFiles.sort((a, b) => b.edited.getTime() - a.edited.getTime());
+		storyFiles.sort((a, b) => {
+			const aTime =
+				a.edited instanceof Date
+					? a.edited.getTime()
+					: new Date(a.edited).getTime();
+			const bTime =
+				b.edited instanceof Date
+					? b.edited.getTime()
+					: new Date(b.edited).getTime();
+			return bTime - aTime;
+		});
 
 		appState.availableStories = storyFiles;
 		info(`AppState: Loaded ${storyFiles.length} stories`);
 	} catch (e) {
-		error(`Failed to load available stories: ${e}`);
+		logError(`Failed to load available stories: ${e}`);
 	}
 }
 
@@ -115,15 +138,49 @@ export async function selectStoryById(storyId: string) {
 	// Load story data as Story class
 	const storyFile = await readFileAsFile(storyId);
 	if (!storyFile) {
-		error(`Failed to load story file ${storyId}`);
+		logError(`Failed to load story file ${storyId}`);
 		return;
 	}
-	const story = await readStoryFile(storyFile);
+	const storyPath = `${STORIES_DIR}/${storyId}`;
+	const story = await readStoryFile(storyFile, storyPath);
 	appState.selectedStory = story;
 }
 
 export function setCurrentEditedFile(file: StoryFile | null) {
 	appState.currentEditedFile = file;
+}
+
+export async function saveCurrentStory(): Promise<boolean> {
+	if (!appState.selectedStory) {
+		return false;
+	}
+
+	try {
+		info(`Saving story: ${appState.selectedStory.metadata.title}`);
+
+		const storyBlob = await saveStory(appState.selectedStory);
+		const arrayBuffer = await storyBlob.arrayBuffer();
+		const uint8Array = new Uint8Array(arrayBuffer);
+
+		const storyPath = appState.selectedStory.path;
+		if (!storyPath) {
+			logError("Story has no path, cannot save");
+			return false;
+		}
+
+		await writeFile(storyPath, uint8Array, {
+			baseDir: BaseDirectory.AppData,
+		});
+
+		info(`Story saved successfully to: ${storyPath}`);
+		toast.success("Story saved!");
+		return true;
+	} catch (error) {
+		logError(
+			`Failed to save story: ${error instanceof Error ? error.message : String(error)}`,
+		);
+		return false;
+	}
 }
 
 export function clearSelection() {

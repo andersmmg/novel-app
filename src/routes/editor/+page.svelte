@@ -18,8 +18,6 @@
 
 		if (file.path.startsWith("chapters/")) {
 			return { type: "Chapter", title, variant: "default" as const };
-		} else if (file.path.startsWith("characters/")) {
-			return { type: "Character", title, variant: "secondary" as const };
 		} else if (file.path.startsWith("notes/")) {
 			return { type: "Note", title, variant: "outline" as const };
 		}
@@ -47,13 +45,6 @@
 				if (chapter) {
 					chapter.title = newTitle;
 					chapter.edited = now;
-				}
-			} else if (filePath.startsWith("characters/")) {
-				const character =
-					appState.selectedStory.getCharacterByPath(filePath);
-				if (character) {
-					character.title = newTitle;
-					character.edited = now;
 				}
 			} else if (filePath.startsWith("notes/")) {
 				const note = appState.selectedStory.findNoteByPath(filePath);
@@ -162,15 +153,6 @@
 							if (chapter) {
 								chapter.content = newContent;
 								chapter.edited = now;
-							}
-						} else if (filePath.startsWith("characters/")) {
-							const character =
-								appState.selectedStory.getCharacterByPath(
-									filePath,
-								);
-							if (character) {
-								character.content = newContent;
-								character.edited = now;
 							}
 						} else if (filePath.startsWith("notes/")) {
 							const note =
