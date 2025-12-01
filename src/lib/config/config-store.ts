@@ -1,4 +1,9 @@
-import { loadConfig, saveConfig, type AppConfig } from "./config";
+import {
+	loadConfig,
+	saveConfig as saveConfigFile,
+	type AppConfig,
+} from "./config";
+import { writable, type Writable } from "svelte/store";
 
 class ConfigStore {
 	private config: AppConfig | null = null;
@@ -38,12 +43,12 @@ class ConfigStore {
 		if (!this.config) {
 			throw new Error("No config loaded to save");
 		}
-		await saveConfig(this.config);
+		await saveConfigFile(this.config);
 	}
 
 	subscribe(listener: (config: AppConfig) => void): () => void {
 		this.listeners.add(listener);
-		
+
 		if (this.config) {
 			listener(this.config);
 		}
@@ -55,7 +60,7 @@ class ConfigStore {
 
 	private notifyListeners(): void {
 		if (this.config) {
-			this.listeners.forEach(listener => listener(this.config!));
+			this.listeners.forEach((listener) => listener(this.config!));
 		}
 	}
 
@@ -65,4 +70,23 @@ class ConfigStore {
 }
 
 export const configStore = new ConfigStore();
+
+export const config: Writable<AppConfig | null> = writable(null);
+
+configStore.getConfig().then((initialConfig) => {
+	config.set(initialConfig);
+});
+
+configStore.subscribe((newConfig) => {
+	config.set(newConfig);
+});
+
+export async function updateConfig(updates: Partial<AppConfig>): Promise<void> {
+	await configStore.updateConfig(updates);
+}
+
+export async function saveConfig(): Promise<void> {
+	await configStore.saveConfig();
+}
+
 export type { AppConfig };

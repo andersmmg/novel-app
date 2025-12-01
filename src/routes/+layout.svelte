@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { ModeWatcher } from "mode-watcher";
 	import * as Sidebar from "$lib/components/ui/sidebar";
-	import { saveConfig } from "$lib/config-store.svelte";
+	import { saveConfig } from "$lib/config";
+	import { appState, loadAvailableStories } from "$lib/app-state.svelte";
 	import { Window } from "@tauri-apps/api/window";
 	import { onMount } from "svelte";
 
@@ -9,10 +10,20 @@
 	import "../app.css";
 	import AppSidebar from "$lib/components/app-sidebar.svelte";
 	import AppMenubar from "$lib/components/app-menubar.svelte";
+	import { info, error } from "@tauri-apps/plugin-log";
 
 	let sidebarOpen = $state(true);
 
 	onMount(async () => {
+		// Initialize story management after config is loaded
+		try {
+			await loadAvailableStories();
+			info("Story management initialized successfully");
+			info(`${appState.availableStories.length} stories available`);
+		} catch (_error) {
+			error("Failed to initialize story management: {_error}");
+		}
+
 		// Get the main window
 		const appWindow = new Window("main");
 

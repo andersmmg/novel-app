@@ -36,7 +36,7 @@ export async function loadConfig(): Promise<AppConfig> {
 			if (configData.edited && typeof configData.edited === "string") {
 				configData.edited = new Date(configData.edited);
 			}
-			
+
 			loadedConfig = { ...DEFAULT_CONFIG, ...configData };
 		} else {
 			warn(

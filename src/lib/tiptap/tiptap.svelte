@@ -12,15 +12,56 @@
 		Pilcrow,
 	} from "@lucide/svelte";
 	import { Placeholder } from "@tiptap/extensions/placeholder";
+	import { Markdown } from "@tiptap/markdown";
+	import type { StoryFile } from "$lib/story";
+	import { separateFrontmatter, combineFrontmatter } from "$lib/story/utils";
+	import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
+
+	let {
+		currentFile,
+		onContentChange,
+	}: {
+		currentFile: StoryFile | null;
+		onContentChange?: (content: string, frontmatter: string, metadata: any) => void;
+	} = $props();
 
 	let element = $state<HTMLElement>();
 	let editorState = $state({ editor: null as Editor | null });
+	let previousFileId = $state<string | null>(null);
+
+	// Update content when file changes, but avoid recursion
+	$effect(() => {
+		if (!editorState.editor) return;
+
+		const currentFileId = currentFile?.path || null;
+		const currentFileChanged = previousFileId !== currentFileId;
+		
+		if (currentFileChanged) {
+			console.log("Tiptap: File changed, updating content");
+			previousFileId = currentFileId;
+
+			// Separate frontmatter from content
+			const { content: cleanContent } = separateFrontmatter(currentFile?.content || "");
+			const currentContent = editorState.editor.getMarkdown();
+
+			if (cleanContent !== currentContent) {
+				editorState.editor.commands.setContent(cleanContent, {
+					contentType: "markdown",
+				});
+			}
+		}
+	});
+
 	onMount(() => {
+		// Separate frontmatter from initial content
+		const { content: initialContent } = separateFrontmatter(currentFile?.content || "");
+
 		editorState.editor = new Editor({
 			element: element,
 			extensions: [
+				Markdown,
 				Placeholder.configure({
-					placeholder: "Start typing...",
+					placeholder: "Start writing...",
 				}),
 				StarterKit.configure({
 					horizontalRule: {
@@ -35,13 +76,26 @@
 					class: "px-4 outline-none",
 				},
 			},
-			content: "",
+			content: initialContent,
+			contentType: "markdown",
 			onTransaction: ({ editor }) => {
-				// Increment the state signal to force a re-render
 				editorState = { editor };
 			},
+			onUpdate: ({ editor }) => {
+				if (onContentChange && currentFile) {
+					const newContent = editor.getMarkdown();
+					const { frontmatter, metadata } = separateFrontmatter(currentFile.content || "");
+					
+					// Update with new content but preserve existing frontmatter
+					const updatedFullContent = combineFrontmatter(frontmatter, newContent);
+					onContentChange(updatedFullContent, frontmatter, metadata);
+				}
+			},
 		});
+
+		previousFileId = currentFile?.path || null;
 	});
+
 	onDestroy(() => {
 		editorState.editor?.destroy();
 	});
@@ -49,7 +103,7 @@
 
 <div class="flex flex-col h-full w-full">
 	{#if editorState.editor}
-		<div class="p-2 bg-background flex gap-2 items-center border-b">
+		<div class="p-2 pr-4 bg-background flex gap-2 items-center border-b">
 			<!-- Headings -->
 			<ButtonGroup.Root>
 				<Button
@@ -114,7 +168,7 @@
 	<div
 		bind:this={element}
 		class="flex-1 min-h-[400px] w-full prose **:text-foreground cursor-text max-w-none"
-		onclick={() => {
+		onmouseup={() => {
 			if (editorState.editor) {
 				if (!editorState.editor.isFocused)
 					editorState.editor.chain().focus("end").run();

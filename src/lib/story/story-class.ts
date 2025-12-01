@@ -1,30 +1,4 @@
-export interface StoryFile {
-	name: string;
-	path: string;
-	content: string;
-	title?: string;
-	created?: Date;
-	edited?: Date;
-	metadata?: any;
-}
-
-export interface StoryFolder {
-	name: string;
-	path: string;
-	title?: string;
-	metadata?: any;
-	children: (StoryFile | StoryFolder)[];
-}
-
-export interface StoryMetadata {
-	title?: string;
-	author?: string;
-	genre?: string;
-	description?: string;
-	created?: Date;
-	edited?: Date;
-	[key: string]: any;
-}
+import type { StoryFile, StoryFolder, StoryMetadata } from "./types";
 
 export class Story {
 	metadata: StoryMetadata;
@@ -73,7 +47,6 @@ export class Story {
 			folder: StoryFolder,
 		): StoryFile | StoryFolder | undefined {
 			if (folder.path === path) return folder;
-
 			for (const child of folder.children) {
 				if ("children" in child) {
 					const result = searchInFolder(child);
@@ -89,29 +62,61 @@ export class Story {
 			const result = searchInFolder(folder);
 			if (result) return result;
 		}
-
 		return undefined;
 	}
 
-	updateChapter(path: string, updates: Partial<StoryFile>): boolean {
-		const index = this.chapters.findIndex(
-			(chapter) => chapter.path === path,
-		);
+	private updateFileInArray(
+		array: StoryFile[],
+		path: string,
+		updates: Partial<StoryFile>,
+	): boolean {
+		const index = array.findIndex((file) => file.path === path);
 		if (index !== -1) {
-			this.chapters[index] = { ...this.chapters[index], ...updates };
+			array[index] = { ...array[index], ...updates };
 			return true;
 		}
 		return false;
 	}
 
+	updateChapter(path: string, updates: Partial<StoryFile>): boolean {
+		return this.updateFileInArray(this.chapters, path, updates);
+	}
+
 	updateCharacter(path: string, updates: Partial<StoryFile>): boolean {
-		const index = this.characters.findIndex(
-			(character) => character.path === path,
-		);
-		if (index !== -1) {
-			this.characters[index] = { ...this.characters[index], ...updates };
+		return this.updateFileInArray(this.characters, path, updates);
+	}
+
+	updateNote(path: string, updates: Partial<StoryFile>): boolean {
+		// Check root notes first
+		const rootNoteIndex = this.rootNotes.findIndex((note) => note.path === path);
+		if (rootNoteIndex !== -1) {
+			this.rootNotes[rootNoteIndex] = { ...this.rootNotes[rootNoteIndex], ...updates };
 			return true;
 		}
+
+		// Search in note folders
+		function updateInFolder(folder: StoryFolder): boolean {
+			if (folder.path === path && 'content' in folder) {
+				// This shouldn't happen as folders don't have content, but just in case
+				return false;
+			}
+
+			for (let i = 0; i < folder.children.length; i++) {
+				const child = folder.children[i];
+				if ('children' in child) {
+					if (updateInFolder(child)) return true;
+				} else if (child.path === path) {
+					folder.children[i] = { ...child, ...updates };
+					return true;
+				}
+			}
+			return false;
+		}
+
+		for (const folder of this.notes) {
+			if (updateInFolder(folder)) return true;
+		}
+
 		return false;
 	}
 
@@ -119,26 +124,21 @@ export class Story {
 		this.metadata = { ...this.metadata, ...updates };
 	}
 
-	deleteChapter(path: string): boolean {
-		const index = this.chapters.findIndex(
-			(chapter) => chapter.path === path,
-		);
+	private deleteFileFromArray(array: StoryFile[], path: string): boolean {
+		const index = array.findIndex((file) => file.path === path);
 		if (index !== -1) {
-			this.chapters.splice(index, 1);
+			array.splice(index, 1);
 			return true;
 		}
 		return false;
 	}
 
+	deleteChapter(path: string): boolean {
+		return this.deleteFileFromArray(this.chapters, path);
+	}
+
 	deleteCharacter(path: string): boolean {
-		const index = this.characters.findIndex(
-			(character) => character.path === path,
-		);
-		if (index !== -1) {
-			this.characters.splice(index, 1);
-			return true;
-		}
-		return false;
+		return this.deleteFileFromArray(this.characters, path);
 	}
 
 	deleteNote(path: string): boolean {
@@ -175,7 +175,6 @@ export class Story {
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -199,7 +198,6 @@ export class Story {
 		for (const folder of this.notes) {
 			collectFilesFromFolder(folder);
 		}
-
 		return allFiles;
 	}
 }

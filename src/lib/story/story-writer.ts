@@ -1,28 +1,8 @@
 import JSZip from "jszip";
 import { stringify as stringifyYaml } from "yaml";
-import { Story } from "./story";
-import type { StoryFile, StoryFolder } from "./story";
-
-function convertDatesToStrings(obj: any): any {
-	if (!obj || typeof obj !== "object") return obj;
-
-	if (Array.isArray(obj)) {
-		return obj.map(convertDatesToStrings);
-	}
-
-	const result: any = {};
-	for (const [key, value] of Object.entries(obj)) {
-		if ((key === "created" || key === "edited") && value instanceof Date) {
-			result[key] = value.toISOString();
-		} else if (typeof value === "object") {
-			result[key] = convertDatesToStrings(value);
-		} else {
-			result[key] = value;
-		}
-	}
-
-	return result;
-}
+import { Story } from "./story-class";
+import type { StoryFile, StoryFolder } from "./types";
+import { convertDatesToStrings, addFrontmatterIfNeeded, sanitizeFilename } from "./utils";
 
 export async function saveStory(story: Story): Promise<Blob> {
 	const zip = new JSZip();
@@ -79,25 +59,7 @@ function saveFolderToZip(zip: JSZip, folder: StoryFolder): void {
 	}
 }
 
-function addFrontmatterIfNeeded(file: StoryFile): string {
-	const hasDates = file.created || file.edited;
-	const hasMetadata = file.metadata && Object.keys(file.metadata).length > 0;
 
-	if (!hasDates && !hasMetadata) {
-		return file.content;
-	}
-
-	if (file.content.startsWith("---\n")) {
-		return file.content;
-	}
-
-	const metadata: any = { ...file.metadata };
-	if (file.created) metadata.created = file.created;
-	if (file.edited) metadata.edited = file.edited;
-
-	const frontmatter = stringifyYaml(convertDatesToStrings(metadata));
-	return `---\n${frontmatter}\n---\n\n${file.content}`;
-}
 
 export async function downloadStory(
 	story: Story,
@@ -201,11 +163,4 @@ export function createNoteFolder(title: string, name?: string): StoryFolder {
 	};
 }
 
-function sanitizeFilename(name: string): string {
-	return name
-		.toLowerCase()
-		.replace(/[^a-z0-9\s-]/g, "")
-		.replace(/\s+/g, "-")
-		.replace(/-+/g, "-")
-		.trim();
-}
+

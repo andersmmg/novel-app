@@ -1,67 +1,26 @@
 import JSZip from "jszip";
 import { parse as parseYaml } from "yaml";
-import { Story } from "./story";
-import type { StoryFile, StoryFolder, StoryMetadata } from "./story";
+import { Story } from "./story-class";
+import { type StoryFile, type StoryFolder, type StoryMetadata } from "./types";
+import { extractTitle, parseMetadata } from "./utils";
 
-function extractTitle(content: string): string {
-	const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
-	if (frontmatterMatch) {
-		const frontmatter = frontmatterMatch[1];
-		const titleMatch = frontmatter.match(/^title:\s*["']?(.+?)["']?\s*$/m);
-		if (titleMatch) {
-			return titleMatch[1].trim();
-		}
-	}
-
+export function parseStoryYaml(content: string): StoryMetadata {
 	try {
-		const yamlData = parseYaml(content);
-		if (yamlData?.title) {
-			return yamlData.title;
-		}
-	} catch (e) {}
+		const parsed = parseYaml(content);
 
-	return "";
-}
-
-function parseMetadata(content: string): StoryMetadata | undefined {
-	const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
-	if (frontmatterMatch) {
-		try {
-			return convertDates(parseYaml(frontmatterMatch[1])) || {};
-		} catch (e) {
-			return {};
-		}
-	}
-
-	try {
-		return convertDates(parseYaml(content)) || {};
+		return {
+			title: parsed.title,
+			author: parsed.author,
+			genre: parsed.genre,
+			description: parsed.description,
+			created: parsed.created ? new Date(parsed.created) : undefined,
+			edited: parsed.edited ? new Date(parsed.edited) : undefined,
+			...parsed,
+		};
 	} catch (e) {
-		return {};
+		console.error("Failed to parse story YAML:", e);
+		throw new Error("Invalid YAML format in story.yml");
 	}
-}
-
-function convertDates(obj: any): any {
-	if (!obj || typeof obj !== "object") return obj;
-
-	if (Array.isArray(obj)) {
-		return obj.map(convertDates);
-	}
-
-	const result: any = {};
-	for (const [key, value] of Object.entries(obj)) {
-		if (
-			(key === "created" || key === "edited") &&
-			typeof value === "string"
-		) {
-			result[key] = new Date(value);
-		} else if (typeof value === "object") {
-			result[key] = convertDates(value);
-		} else {
-			result[key] = value;
-		}
-	}
-
-	return result;
 }
 
 function buildFolderStructure(
@@ -175,6 +134,26 @@ function buildFolderStructure(
 	return { folders, rootFiles };
 }
 
+export async function readStoryFileMetadata(
+	file: File,
+): Promise<StoryMetadata | null> {
+	const zip = new JSZip();
+	const zipContent = await zip.loadAsync(file);
+
+	const storyYamlObject = zipContent.files["story.yml"];
+
+	if (storyYamlObject && !storyYamlObject.dir) {
+		const content = await storyYamlObject.async("text");
+		try {
+			return parseStoryYaml(content);
+		} catch (e) {
+			console.error("Failed to parse story.yml for metadata:", e);
+		}
+	}
+
+	return null;
+}
+
 export async function readStoryFile(file: File): Promise<Story> {
 	const zip = new JSZip();
 	const zipContent = await zip.loadAsync(file);
@@ -206,14 +185,16 @@ export async function readStoryFile(file: File): Promise<Story> {
 					metadata?.created || metadata?.edited
 						? new Date(metadata.created || metadata.edited!)
 						: undefined,
-				edited: metadata?.edited ? new Date(metadata.edited) : undefined,
+				edited: metadata?.edited
+					? new Date(metadata.edited)
+					: undefined,
 			};
 
 			files.push(fileData);
 
 			if (relativePath === "story.yml") {
 				try {
-					storyMetadata = parseYaml(content);
+					storyMetadata = parseStoryYaml(content);
 				} catch (e) {
 					console.error("Failed to parse story.yml:", e);
 				}

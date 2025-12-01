@@ -23,6 +23,7 @@
     "@tiptap/core": "^3.11.1",
     "@tiptap/extension-bubble-menu": "^3.11.1",
     "@tiptap/extensions": "^3.11.1",
+    "@tiptap/markdown": "^3.11.1",
     "@tiptap/pm": "^3.11.1",
     "@tiptap/starter-kit": "^3.11.1",
     "@types/node": "^24.10.1",

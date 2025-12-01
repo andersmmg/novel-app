@@ -6,9 +6,21 @@ fn greet(name: &str) -> String {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let format = time::macros::format_description!("[year]-[month]-[day] [hour]:[minute]:[second]");
     tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::new()
+                .format(move |out, message, record| {
+                    out.finish(format_args!(
+                        "[{}][{}] {}",
+                        tauri_plugin_log::TimezoneStrategy::UseLocal
+                            .get_now()
+                            .format(&format)
+                            .unwrap(),
+                        record.level(),
+                        message
+                    ))
+                })
                 .level(tauri_plugin_log::log::LevelFilter::Info)
                 .build(),
         )

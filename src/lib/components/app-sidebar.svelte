@@ -1,27 +1,36 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
+	import {
+		appState,
+		selectStoryById,
+		setCurrentEditedFile,
+	} from "$lib/app-state.svelte";
+	import * as Collapsible from "$lib/components/ui/collapsible";
+	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+	import Tree from "$lib/components/ui/tree.svelte";
+	import type { StoryFile } from "$lib/story/types";
 	import {
 		Book,
-		FileText,
-		Users,
-		Settings,
-		PenTool,
 		Bookmark,
-		Search,
-		House,
+		ChevronDownIcon,
+		EllipsisIcon,
+		FileText,
 		Folder,
 		FolderOpen,
-		File,
+		LibraryIcon,
+		PenTool,
+		PlusIcon,
+		Search,
+		Settings,
+		Users,
 	} from "@lucide/svelte";
 
-	let notesOpen = false;
-	let subFolder1Open = false;
-	let subFolder2Open = false;
-	let subFolder3Open = false;
-
-	function toggleNotes() {
-		notesOpen = !notesOpen;
-	}
+	let notesOpen = $state(false);
+	let subFolder1Open = $state(false);
+	let subFolder2Open = $state(false);
+	let subFolder3Open = $state(false);
+	let chapterMenuOpen: string | null = null;
 
 	function toggleSubFolder1() {
 		subFolder1Open = !subFolder1Open;
@@ -34,251 +43,340 @@
 	function toggleSubFolder3() {
 		subFolder3Open = !subFolder3Open;
 	}
+
+	function toggleNotes() {
+		notesOpen = !notesOpen;
+	}
+
+	// Derive chapters from selected story
+	const chapters = $derived.by(() => {
+		if (appState.selectedStory) {
+			console.log("Sidebar: Deriving chapters from selected story");
+			const storyChapters = appState.selectedStory.chapters;
+			console.log("Sidebar: Loaded chapters:", storyChapters);
+			storyChapters.forEach((chapter, index) => {
+				console.log(
+					`Sidebar: Chapter ${index} - title:`,
+					chapter.title,
+					"name:",
+					chapter.name,
+					"path:",
+					chapter.path,
+				);
+			});
+			return storyChapters;
+		} else {
+			console.log("Sidebar: No story selected, no chapters to load");
+			return [];
+		}
+	});
+
+	// Derive notes from selected story
+	const notes = $derived.by(() => {
+		if (appState.selectedStory) {
+			console.log("Sidebar: Deriving notes from selected story");
+			const storyNotes = appState.selectedStory.notes;
+			const rootNotes = appState.selectedStory.rootNotes;
+			console.log("Sidebar: Loaded notes folders:", storyNotes);
+			console.log("Sidebar: Loaded root notes:", rootNotes);
+
+			// Combine root notes with note folders
+			const allNotes = [...rootNotes, ...storyNotes];
+			console.log("Sidebar: All notes:", allNotes);
+			return allNotes;
+		} else {
+			console.log("Sidebar: No story selected, no notes to load");
+			return null;
+		}
+	});
+
+	function openChapter(chapter: StoryFile) {
+		// Set current edited file and navigate to editor
+		setCurrentEditedFile(chapter);
+		goto("/editor");
+	}
+
+	function addChapter() {
+		// TODO: Implement chapter creation
+		console.log("Adding new chapter to story:", appState.selectedStory);
+	}
+
+	async function selectStory(storyId: string) {
+		console.log("Sidebar: Selecting story with ID:", storyId);
+		await selectStoryById(storyId);
+		console.log(
+			"Sidebar: Story selected, app state:",
+			$state.snapshot(appState),
+		);
+		goto("/");
+	}
+
+	function toggleChapterMenu(chapterPath: string) {
+		chapterMenuOpen = chapterMenuOpen === chapterPath ? null : chapterPath;
+	}
+
+	function deleteChapter(chapterPath: string) {
+		// TODO: Implement chapter deletion
+		console.log("Deleting chapter:", chapterPath);
+		chapterMenuOpen = null;
+	}
+
+	function renameChapter(chapterPath: string) {
+		// TODO: Implement chapter renaming
+		console.log("Renaming chapter:", chapterPath);
+		chapterMenuOpen = null;
+	}
 </script>
 
-<Sidebar.Root class="mt-9 max-h-[calc(100svh-2.25rem)]">
-	<Sidebar.Content class="border-l border-b  overflow-x-hidden">
-		<!-- My Novels -->
-		<Sidebar.Group>
-			<Sidebar.GroupContent>
-				<Sidebar.Menu>
-					<Sidebar.MenuItem>
-						<Sidebar.MenuButton>
+<Sidebar.Root class="mt-9 max-h-[calc(100svh-2.25rem)] border-l border-b">
+	<Sidebar.Header>
+		<Sidebar.Menu>
+			<Sidebar.MenuItem>
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger>
+						{#snippet child({ props })}
+							<Sidebar.MenuButton size="lg" {...props}>
+								{#if appState.selectedStory}
+									<Book />
+									<div
+										class="flex flex-col gap-0.5 leading-none"
+									>
+										<span class="font-medium"
+											>{appState.selectedStory.metadata
+												.title}</span
+										>
+										<span class="text-muted-foreground"
+											>{appState.selectedStory.metadata
+												.author}</span
+										>
+									</div>
+									<ChevronDownIcon class="ms-auto" />
+								{:else}
+									<LibraryIcon />
+									Select Story
+									<ChevronDownIcon class="ms-auto" />
+								{/if}
+							</Sidebar.MenuButton>
+						{/snippet}
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content
+						class="w-(--bits-dropdown-menu-anchor-width)"
+					>
+						{#each appState.availableStories as story (story.id)}
+							<DropdownMenu.Item
+								onclick={() => selectStory(story.id)}
+							>
+								<Book class="size-4" />
+								<span>{story.title}</span>
+							</DropdownMenu.Item>
+						{:else}
+							<DropdownMenu.Label>
+								<span
+									class="font-normal text-muted-foreground cursor-default"
+									>Create your first story!</span
+								>
+							</DropdownMenu.Label>
+						{/each}
+						<DropdownMenu.Separator />
+						<DropdownMenu.Item>
 							{#snippet child({ props })}
 								<a href="/" {...props}>
-									<Book class="size-4" />
-									<span>My Novels</span>
+									<LibraryIcon class="size-4" />
+									<span>Manage Stories</span>
 								</a>
 							{/snippet}
-						</Sidebar.MenuButton>
-					</Sidebar.MenuItem>
-				</Sidebar.Menu>
-			</Sidebar.GroupContent>
-		</Sidebar.Group>
+						</DropdownMenu.Item>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+			</Sidebar.MenuItem>
+		</Sidebar.Menu>
+	</Sidebar.Header>
+	<Sidebar.Content class="overflow-x-hidden">
+		{#if appState.selectedStory}
+			<!-- Chapters Group -->
+			<Collapsible.Root open class="group/collapsible">
+				<Sidebar.Group>
+					<Sidebar.GroupLabel>
+						{#snippet child({ props })}
+							<Collapsible.Trigger {...props}>
+								Chapters
+								<ChevronDownIcon
+									class="ms-auto transition-transform group-data-[state=open]/collapsible:rotate-180"
+								/>
+							</Collapsible.Trigger>
+						{/snippet}
+					</Sidebar.GroupLabel>
+					<Collapsible.Content>
+						<Sidebar.GroupContent>
+							<!-- Chapters List -->
+							<Sidebar.Menu>
+								{#each chapters as chapter (chapter.path)}
+									<Sidebar.MenuItem>
+										<Sidebar.MenuButton
+											onclick={() => openChapter(chapter)}
+										>
+											<FileText />
+											<span
+												>{chapter.title ||
+													chapter.name ||
+													"Untitled Chapter"}</span
+											>
+										</Sidebar.MenuButton>
+										<DropdownMenu.Root>
+											<DropdownMenu.Trigger>
+												{#snippet child({ props })}
+													<Sidebar.MenuAction
+														{...props}
+													>
+														<EllipsisIcon />
+													</Sidebar.MenuAction>
+												{/snippet}
+											</DropdownMenu.Trigger>
+											<DropdownMenu.Content
+												side="right"
+												align="start"
+											>
+												<DropdownMenu.Item
+													onclick={() =>
+														renameChapter(
+															chapter.path,
+														)}
+												>
+													<span>Rename</span>
+												</DropdownMenu.Item>
+												<DropdownMenu.Item
+													onclick={() =>
+														deleteChapter(
+															chapter.path,
+														)}
+												>
+													<span>Delete</span>
+												</DropdownMenu.Item>
+											</DropdownMenu.Content>
+										</DropdownMenu.Root>
+									</Sidebar.MenuItem>
+								{/each}
+								<Sidebar.MenuItem class="text-muted-foreground">
+									<Sidebar.MenuButton>
+										<PlusIcon class="size-4" />
+										<span>New Chapter</span>
+									</Sidebar.MenuButton>
+								</Sidebar.MenuItem>
+							</Sidebar.Menu>
+						</Sidebar.GroupContent>
+					</Collapsible.Content>
+				</Sidebar.Group>
+			</Collapsible.Root>
 
-		<Sidebar.Separator />
+			<!-- Notes Group -->
+			<Collapsible.Root open class="group/collapsible">
+				<Sidebar.Group>
+					<Sidebar.GroupLabel>
+						{#snippet child({ props })}
+							<Collapsible.Trigger {...props}>
+								Notes
+								<ChevronDownIcon
+									class="ms-auto transition-transform group-data-[state=open]/collapsible:rotate-180"
+								/>
+							</Collapsible.Trigger>
+						{/snippet}
+					</Sidebar.GroupLabel>
+					<Collapsible.Content>
+						<Sidebar.GroupContent>
+							<!-- Notes Tree -->
+							<Sidebar.Menu>
+								{#each notes as noteItem (noteItem.path)}
+									<Tree item={noteItem} />
+								{/each}
+								<Sidebar.MenuItem class="text-muted-foreground">
+									<Sidebar.MenuButton>
+										<PlusIcon />
+										<span>New Note</span>
+									</Sidebar.MenuButton>
+								</Sidebar.MenuItem>
+							</Sidebar.Menu>
+						</Sidebar.GroupContent>
+					</Collapsible.Content>
+				</Sidebar.Group>
+			</Collapsible.Root>
 
-		<!-- Story Elements Group -->
-		<Sidebar.Group>
-			<Sidebar.GroupLabel>Story Elements</Sidebar.GroupLabel>
-			<Sidebar.GroupContent>
-				<Sidebar.Menu>
-					<Sidebar.MenuItem>
-						<Sidebar.MenuButton>
-							{#snippet child({ props })}
-								<a href="/test" {...props}>
-									<FileText class="size-4" />
-									<span>Chapters</span>
-								</a>
-							{/snippet}
-						</Sidebar.MenuButton>
-					</Sidebar.MenuItem>
+			<Sidebar.Separator />
 
-					<Sidebar.MenuItem>
-						<Sidebar.MenuButton>
-							{#snippet child({ props })}
-								<a href="/characters" {...props}>
-									<Users class="size-4" />
-									<span>Characters</span>
-								</a>
-							{/snippet}
-						</Sidebar.MenuButton>
-					</Sidebar.MenuItem>
-
-					<Sidebar.MenuItem>
-						<button
-							class="w-full flex items-center gap-2 px-2 py-1 text-sm hover:bg-sidebar-accent rounded-md"
-							onclick={toggleNotes}
-						>
-							{#if notesOpen}
-								<FolderOpen class="size-4" />
-							{:else}
-								<Folder class="size-4" />
-							{/if}
-							<span>Notes</span>
-						</button>
-					</Sidebar.MenuItem>
-				</Sidebar.Menu>
-
-				{#if notesOpen}
-					<Sidebar.Menu class="ml-2">
+			<!-- Writing Tools -->
+			<Sidebar.Group>
+				<Sidebar.GroupLabel>Writing Tools</Sidebar.GroupLabel>
+				<Sidebar.GroupContent>
+					<Sidebar.Menu>
 						<Sidebar.MenuItem>
-							<Sidebar.MenuButton size="sm">
+							<Sidebar.MenuButton>
 								{#snippet child({ props })}
 									<a href="/editor" {...props}>
-										<FileText class="size-4" />
-										<span>Ideas</span>
+										<PenTool class="size-4" />
+										<span>Editor</span>
 									</a>
 								{/snippet}
 							</Sidebar.MenuButton>
 						</Sidebar.MenuItem>
 
 						<Sidebar.MenuItem>
-							<button
-								class="w-full flex items-center gap-2 px-2 py-1 text-xs hover:bg-sidebar-accent rounded-md"
-								onclick={toggleSubFolder1}
-							>
-								{#if subFolder1Open}
-									<FolderOpen class="size-4" />
-								{:else}
-									<Folder class="size-4" />
-								{/if}
-								<span>Magic</span>
-							</button>
+							<Sidebar.MenuButton>
+								{#snippet child({ props })}
+									<a href="/search" {...props}>
+										<Search class="size-4" />
+										<span>Search</span>
+									</a>
+								{/snippet}
+							</Sidebar.MenuButton>
 						</Sidebar.MenuItem>
-
-						{#if subFolder1Open}
-							<Sidebar.Menu class="ml-4">
-								<Sidebar.MenuItem>
-									<Sidebar.MenuButton size="sm">
-										{#snippet child({ props })}
-											<a href="#" {...props}>
-												<FileText class="size-4" />
-												<span>Spells</span>
-											</a>
-										{/snippet}
-									</Sidebar.MenuButton>
-								</Sidebar.MenuItem>
-
-								<Sidebar.MenuItem>
-									<button
-										class="w-full flex items-center gap-2 px-2 py-1 text-xs hover:bg-sidebar-accent rounded-md"
-										onclick={toggleSubFolder2}
-									>
-										{#if subFolder2Open}
-											<FolderOpen class="size-4" />
-										{:else}
-											<Folder class="size-4" />
-										{/if}
-										<span>Elements</span>
-									</button>
-								</Sidebar.MenuItem>
-
-								{#if subFolder2Open}
-									<Sidebar.Menu class="ml-4">
-										<Sidebar.MenuItem>
-											<Sidebar.MenuButton size="sm">
-												{#snippet child({ props })}
-													<a href="#" {...props}>
-														<FileText
-															class="size-4"
-														/>
-														<span>Earth</span>
-													</a>
-												{/snippet}
-											</Sidebar.MenuButton>
-										</Sidebar.MenuItem>
-									</Sidebar.Menu>
-								{/if}
-							</Sidebar.Menu>
-						{/if}
 
 						<Sidebar.MenuItem>
-							<button
-								class="w-full flex items-center gap-2 px-2 py-1 text-xs hover:bg-sidebar-accent rounded-md"
-								onclick={toggleSubFolder3}
-							>
-								{#if subFolder3Open}
-									<FolderOpen class="size-4" />
-								{:else}
-									<Folder class="size-4" />
-								{/if}
-								<span>Locations</span>
-							</button>
+							<Sidebar.MenuButton>
+								{#snippet child({ props })}
+									<a href="/bookmarks" {...props}>
+										<Bookmark class="size-4" />
+										<span>Bookmarks</span>
+									</a>
+								{/snippet}
+							</Sidebar.MenuButton>
 						</Sidebar.MenuItem>
-
-						{#if subFolder3Open}
-							<Sidebar.Menu class="ml-4">
-								<Sidebar.MenuItem>
-									<Sidebar.MenuButton size="sm">
-										{#snippet child({ props })}
-											<a href="#" {...props}>
-												<FileText class="size-4" />
-												<span>House</span>
-											</a>
-										{/snippet}
-									</Sidebar.MenuButton>
-								</Sidebar.MenuItem>
-							</Sidebar.Menu>
-						{/if}
 					</Sidebar.Menu>
-				{/if}
-			</Sidebar.GroupContent>
-		</Sidebar.Group>
-
-		<Sidebar.Separator />
-
-		<!-- Writing Tools -->
-		<Sidebar.Group>
-			<Sidebar.GroupLabel>Writing Tools</Sidebar.GroupLabel>
-			<Sidebar.GroupContent>
-				<Sidebar.Menu>
-					<Sidebar.MenuItem>
-						<Sidebar.MenuButton>
-							{#snippet child({ props })}
-								<a href="/editor" {...props}>
-									<PenTool class="size-4" />
-									<span>Editor</span>
-								</a>
-							{/snippet}
-						</Sidebar.MenuButton>
-					</Sidebar.MenuItem>
-
-					<Sidebar.MenuItem>
-						<Sidebar.MenuButton>
-							{#snippet child({ props })}
-								<a href="/search" {...props}>
-									<Search class="size-4" />
-									<span>Search</span>
-								</a>
-							{/snippet}
-						</Sidebar.MenuButton>
-					</Sidebar.MenuItem>
-
-					<Sidebar.MenuItem>
-						<Sidebar.MenuButton>
-							{#snippet child({ props })}
-								<a href="/bookmarks" {...props}>
-									<Bookmark class="size-4" />
-									<span>Bookmarks</span>
-								</a>
-							{/snippet}
-						</Sidebar.MenuButton>
-					</Sidebar.MenuItem>
-				</Sidebar.Menu>
-			</Sidebar.GroupContent>
-		</Sidebar.Group>
-
-		<Sidebar.Separator />
-
-		<!-- System -->
-		<Sidebar.Group>
-			<Sidebar.GroupLabel>System</Sidebar.GroupLabel>
-			<Sidebar.GroupContent>
-				<Sidebar.Menu>
-					<Sidebar.MenuItem>
-						<Sidebar.MenuButton>
-							{#snippet child({ props })}
-								<a href="/settings" {...props}>
-									<Settings class="size-4" />
-									<span>Settings</span>
-								</a>
-							{/snippet}
-						</Sidebar.MenuButton>
-					</Sidebar.MenuItem>
-				</Sidebar.Menu>
-			</Sidebar.GroupContent>
-		</Sidebar.Group>
-
-		<Sidebar.Footer>
-			<Sidebar.Menu>
-				<Sidebar.MenuItem>
-					<span
-						class="text-xs text-muted-foreground p-2 cursor-default"
-						>v{__APP_VERSION__}</span
-					>
-				</Sidebar.MenuItem>
-			</Sidebar.Menu>
-		</Sidebar.Footer>
+				</Sidebar.GroupContent>
+			</Sidebar.Group>
+		{:else}
+			<!-- No story selected message -->
+			<Sidebar.Content
+				class="flex-1 flex items-center justify-center p-4"
+			>
+				<div class="text-center text-muted-foreground">
+					<LibraryIcon class="size-8 mx-auto mb-2 opacity-50" />
+					<p class="text-sm">No story selected</p>
+					<p class="text-xs">
+						Select a story from the dropdown above, or create a new
+						one.
+					</p>
+				</div>
+			</Sidebar.Content>
+		{/if}
 	</Sidebar.Content>
+	<Sidebar.Footer>
+		<Sidebar.Menu>
+			<Sidebar.MenuItem>
+				<Sidebar.MenuButton>
+					{#snippet child({ props })}
+						<a href="/test" {...props}>
+							<Settings class="size-4" />
+							<span>Settings</span>
+						</a>
+					{/snippet}
+				</Sidebar.MenuButton>
+			</Sidebar.MenuItem>
+		</Sidebar.Menu>
+		<Sidebar.Menu>
+			<Sidebar.MenuItem>
+				<span class="text-xs text-muted-foreground p-2 cursor-default"
+					>v{__APP_VERSION__}</span
+				>
+			</Sidebar.MenuItem>
+		</Sidebar.Menu>
+	</Sidebar.Footer>
 </Sidebar.Root>
