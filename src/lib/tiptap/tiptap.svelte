@@ -79,7 +79,7 @@
 			],
 			editorProps: {
 				attributes: {
-					class: "px-4 outline-none min-h-full",
+					class: "px-4 outline-none min-h-full max-h-full overflow-y-auto",
 					style: "min-height: 100%;",
 				},
 			},
@@ -179,7 +179,7 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions (only a mouse ux improvement) -->
 	<div
 		bind:this={element}
-		class="flex-1 min-h-[400px] w-full prose **:text-foreground cursor-text max-w-none overflow-y-auto"
+		class="flex-1 min-h-[400px] w-full prose **:text-foreground cursor-text max-w-none"
 		onmouseup={() => {
 			if (editorState.editor) {
 				if (!editorState.editor.isFocused)
