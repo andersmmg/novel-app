@@ -1,13 +1,13 @@
+import { appConfigDir } from "@tauri-apps/api/path";
 import {
-	readTextFile,
-	writeTextFile,
 	BaseDirectory,
 	exists,
 	mkdir,
+	readTextFile,
+	writeTextFile,
 } from "@tauri-apps/plugin-fs";
+import { info, warn } from "@tauri-apps/plugin-log";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
-import { appConfigDir } from "@tauri-apps/api/path";
-import { warn, info } from "@tauri-apps/plugin-log";
 
 export interface AppConfig {
 	edited: Date;

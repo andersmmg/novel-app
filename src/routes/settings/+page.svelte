@@ -1,19 +1,18 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import { configStore, type AppConfig } from "$lib/config/config-store";
-	import { updateConfig, saveConfig } from "$lib/config/config-store.svelte";
 	import Button from "$lib/components/ui/button/button.svelte";
-	import Input from "$lib/components/ui/input/input.svelte";
-	import Card from "$lib/components/ui/card/card.svelte";
 	import CardContent from "$lib/components/ui/card/card-content.svelte";
 	import CardDescription from "$lib/components/ui/card/card-description.svelte";
 	import CardHeader from "$lib/components/ui/card/card-header.svelte";
 	import CardTitle from "$lib/components/ui/card/card-title.svelte";
-	import { startAutosave } from "$lib/autosave";
+	import Card from "$lib/components/ui/card/card.svelte";
 	import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
+	import Input from "$lib/components/ui/input/input.svelte";
 	import { Label } from "$lib/components/ui/label";
-	import { toast } from "svelte-sonner";
+	import { configStore, type AppConfig } from "$lib/config/config-store";
+	import { saveConfig, updateConfig } from "$lib/config/config-store.svelte";
 	import { SettingsIcon } from "@lucide/svelte";
+	import { onMount } from "svelte";
+	import { toast } from "svelte-sonner";
 
 	let config: AppConfig | null = $state(null);
 	let isLoading = $state(true);

@@ -1,6 +1,6 @@
 export {
 	config,
-	updateConfig,
 	saveConfig,
+	updateConfig,
 	type AppConfig,
 } from "./config-store";

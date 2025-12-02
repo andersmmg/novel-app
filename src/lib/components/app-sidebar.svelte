@@ -16,15 +16,13 @@
 		ChevronDownIcon,
 		EllipsisIcon,
 		FileText,
-		Folder,
-		FolderOpen,
 		LibraryIcon,
 		PenTool,
 		PlusIcon,
 		Search,
 		Settings,
-		Users,
 	} from "@lucide/svelte";
+	import { info } from "@tauri-apps/plugin-log";
 
 	let notesOpen = $state(false);
 	let subFolder1Open = $state(false);
@@ -32,67 +30,38 @@
 	let subFolder3Open = $state(false);
 	let chapterMenuOpen: string | null = null;
 
-	function toggleSubFolder1() {
-		subFolder1Open = !subFolder1Open;
-	}
-
-	function toggleSubFolder2() {
-		subFolder2Open = !subFolder2Open;
-	}
-
-	function toggleSubFolder3() {
-		subFolder3Open = !subFolder3Open;
-	}
-
-	function toggleNotes() {
-		notesOpen = !notesOpen;
-	}
-
-	// Derive chapters from selected story
 	const chapters = $derived.by(() => {
 		if (appState.selectedStory) {
-			console.log("Sidebar: Deriving chapters from selected story");
-			const storyChapters = appState.selectedStory.chapters;
-			console.log("Sidebar: Loaded chapters:", storyChapters);
-			storyChapters.forEach((chapter, index) => {
-				console.log(
-					`Sidebar: Chapter ${index} - title:`,
-					chapter.title,
-					"name:",
-					chapter.name,
-					"path:",
-					chapter.path,
-				);
-			});
-			return storyChapters;
+			return [...appState.selectedStory.chapters];
 		} else {
-			console.log("Sidebar: No story selected, no chapters to load");
 			return [];
 		}
 	});
 
-	// Derive notes from selected story
 	const notes = $derived.by(() => {
 		if (appState.selectedStory) {
-			console.log("Sidebar: Deriving notes from selected story");
 			const storyNotes = appState.selectedStory.notes;
 			const rootNotes = appState.selectedStory.rootNotes;
-			console.log("Sidebar: Loaded notes folders:", storyNotes);
-			console.log("Sidebar: Loaded root notes:", rootNotes);
-
-			// Combine root notes with note folders
-			const allNotes = [...rootNotes, ...storyNotes];
-			console.log("Sidebar: All notes:", allNotes);
-			return allNotes;
+			const freshRootNotes = [...rootNotes];
+			const freshStoryNotes = storyNotes.map((folder) => ({
+				...folder,
+				children: folder.children.map((child) => ({ ...child })),
+			}));
+			return [...freshRootNotes, ...freshStoryNotes];
 		} else {
-			console.log("Sidebar: No story selected, no notes to load");
 			return null;
 		}
 	});
 
 	function openChapter(chapter: StoryFile) {
-		// Set current edited file and navigate to editor
-		setCurrentEditedFile(chapter);
+		const freshChapter = appState.selectedStory?.getChapterByPath(
+			chapter.path,
+		);
+		if (freshChapter) {
+			setCurrentEditedFile(freshChapter);
+		} else {
+			setCurrentEditedFile(chapter);
+		}
 		goto("/editor");
 	}
 
@@ -109,10 +78,6 @@
 			$state.snapshot(appState),
 		);
 		goto("/");
-	}
-
-	function toggleChapterMenu(chapterPath: string) {
-		chapterMenuOpen = chapterMenuOpen === chapterPath ? null : chapterPath;
 	}
 
 	function deleteChapter(chapterPath: string) {
@@ -210,7 +175,7 @@
 						<Sidebar.GroupContent>
 							<!-- Chapters List -->
 							<Sidebar.Menu>
-								{#each chapters as chapter (chapter.path)}
+								{#each chapters as chapter (chapter.path + (chapter.title || chapter.name))}
 									<Sidebar.MenuItem>
 										<Sidebar.MenuButton
 											onclick={() => openChapter(chapter)}
@@ -343,7 +308,6 @@
 				</Sidebar.GroupContent>
 			</Sidebar.Group>
 		{:else}
-			<!-- No story selected message -->
 			<Sidebar.Content
 				class="flex-1 flex items-center justify-center p-4"
 			>

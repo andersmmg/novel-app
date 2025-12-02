@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
 	import {
 		appState,
 		loadAvailableStories,
 		selectStoryById,
 	} from "$lib/app-state.svelte";
 	import { Badge } from "$lib/components/ui/badge";
-	import { Button, buttonVariants } from "$lib/components/ui/button/index.js";
+	import { Button } from "$lib/components/ui/button/index.js";
 	import {
 		Card,
 		CardContent,
@@ -16,9 +15,9 @@
 	} from "$lib/components/ui/card";
 	import * as Dialog from "$lib/components/ui/dialog/index.js";
 	import * as Empty from "$lib/components/ui/empty/index.js";
-	import { Input } from "$lib/components/ui/input/index.js";
-	import { Label } from "$lib/components/ui/label/index.js";
 	import * as Field from "$lib/components/ui/field/index.js";
+	import { Input } from "$lib/components/ui/input/index.js";
+	import { Textarea } from "$lib/components/ui/textarea";
 	import { createEmptyStory } from "$lib/story";
 	import { saveStory } from "$lib/story/story-writer";
 	import type { StoryListItem } from "$lib/story/types";
@@ -27,9 +26,8 @@
 	import UserIcon from "@tabler/icons-svelte/icons/user";
 	import { BaseDirectory, exists, writeFile } from "@tauri-apps/plugin-fs";
 	import { info } from "@tauri-apps/plugin-log";
-	import { onMount } from "svelte";
-	import { Textarea } from "$lib/components/ui/textarea";
 	import { nanoid } from "nanoid";
+	import { onMount } from "svelte";
 
 	let loading = $state(true);
 	let creatingStory = $state(false);

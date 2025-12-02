@@ -1,11 +1,11 @@
 <script lang="ts">
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import * as Collapsible from "$lib/components/ui/collapsible";
-	import { ChevronRight, FileText, Folder, FolderOpen } from "@lucide/svelte";
-	import type { StoryFile, StoryFolder } from "$lib/story/types";
-	import { setCurrentEditedFile } from "$lib/app-state.svelte.js";
-	import TreeSelf from "./tree.svelte";
 	import { goto } from "$app/navigation";
+	import { setCurrentEditedFile } from "$lib/app-state.svelte.js";
+	import * as Collapsible from "$lib/components/ui/collapsible";
+	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+	import type { StoryFile, StoryFolder } from "$lib/story/types";
+	import { FileText, Folder, FolderOpen } from "@lucide/svelte";
+	import TreeSelf from "./tree.svelte";
 
 	let {
 		item,
@@ -14,6 +14,19 @@
 		item: StoryFile | StoryFolder;
 		level?: number;
 	} = $props();
+
+	$effect(() => {
+		item.path;
+		if ("title" in item) item.title;
+		if ("name" in item) item.name;
+		if ("children" in item) {
+			item.children.forEach((child) => {
+				child.path;
+				if ("title" in child) child.title;
+				if ("name" in child) child.name;
+			});
+		}
+	});
 
 	function isFolder(item: StoryFile | StoryFolder): item is StoryFolder {
 		return "children" in item;
@@ -27,10 +40,8 @@
 
 	function openItem(item: StoryFile | StoryFolder) {
 		if ("children" in item) {
-			// It's a folder - toggle would be handled by parent
 			return;
 		} else {
-			// It's a file - use the new state-based navigation
 			setCurrentEditedFile(item as StoryFile);
 			goto(`/editor`);
 		}
@@ -55,7 +66,7 @@
 			</Collapsible.Trigger>
 			<Collapsible.Content>
 				<Sidebar.MenuSub class="me-0 pe-0">
-					{#each item.children as subItem (subItem.path || subItem)}
+					{#each item.children as subItem ((subItem.path || "") + (subItem.title || subItem.name || ""))}
 						<TreeSelf item={subItem} level={level + 1} />
 					{/each}
 				</Sidebar.MenuSub>

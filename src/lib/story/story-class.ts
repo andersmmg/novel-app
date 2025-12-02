@@ -109,7 +109,6 @@ export class Story {
 		for (const folder of this.notes) {
 			if (updateInFolder(folder)) return true;
 		}
-
 		return false;
 	}
 

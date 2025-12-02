@@ -1,14 +1,14 @@
 <script lang="ts">
+	import { appState, saveCurrentStory } from "$lib/app-state.svelte";
 	import * as Menubar from "$lib/components/ui/menubar";
-	import { mode, resetMode, setMode } from "mode-watcher";
-	import PanelLeftIcon from "@lucide/svelte/icons/panel-left";
-	import Button from "./ui/button/button.svelte";
-	import AppWindowcontrols from "./app-windowcontrols.svelte";
 	import { isTauriDesktop } from "$lib/is-tauri";
 	import { ctrlShortcut } from "$lib/utils";
-	import { appState, saveCurrentStory } from "$lib/app-state.svelte";
-	import { onMount } from "svelte";
+	import PanelLeftIcon from "@lucide/svelte/icons/panel-left";
 	import { getCurrentWindow } from "@tauri-apps/api/window";
+	import { mode, resetMode, setMode } from "mode-watcher";
+	import { onMount } from "svelte";
+	import AppWindowcontrols from "./app-windowcontrols.svelte";
+	import Button from "./ui/button/button.svelte";
 
 	let { sidebarOpen = $bindable(true) } = $props();
 	const appWindow = getCurrentWindow();

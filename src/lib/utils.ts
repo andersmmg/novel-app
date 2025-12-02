@@ -1,6 +1,6 @@
+import { type } from "@tauri-apps/plugin-os";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { type } from "@tauri-apps/plugin-os";
 
 export const osType = type();
 

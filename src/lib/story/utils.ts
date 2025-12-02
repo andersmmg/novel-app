@@ -1,5 +1,5 @@
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
-import type { StoryMetadata } from './types';
+import type { StoryMetadata } from "./types";
 
 /**
  * Converts string dates in objects to Date instances
@@ -13,7 +13,10 @@ export function convertDates(obj: any): any {
 
 	const result: any = {};
 	for (const [key, value] of Object.entries(obj)) {
-		if ((key === "created" || key === "edited") && typeof value === "string") {
+		if (
+			(key === "created" || key === "edited") &&
+			typeof value === "string"
+		) {
 			const date = new Date(value);
 			result[key] = isNaN(date.getTime()) ? new Date() : date;
 		} else if (typeof value === "object") {
@@ -54,33 +57,33 @@ export function convertDatesToStrings(obj: any): any {
  * Extracts title from content with frontmatter or YAML
  */
 export function extractTitle(content: string): string {
-	console.log('extractTitle: Input content:', content);
+	console.log("extractTitle: Input content:", content);
 	const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
-	console.log('extractTitle: Frontmatter match:', frontmatterMatch);
+	console.log("extractTitle: Frontmatter match:", frontmatterMatch);
 	if (frontmatterMatch) {
 		const frontmatter = frontmatterMatch[1];
-		console.log('extractTitle: Frontmatter content:', frontmatter);
+		console.log("extractTitle: Frontmatter content:", frontmatter);
 		const titleMatch = frontmatter.match(/^title:\s*["']?(.+?)["']?\s*$/m);
-		console.log('extractTitle: Title match:', titleMatch);
+		console.log("extractTitle: Title match:", titleMatch);
 		if (titleMatch) {
 			const title = titleMatch[1].trim();
-			console.log('extractTitle: Found title in frontmatter:', title);
+			console.log("extractTitle: Found title in frontmatter:", title);
 			return title;
 		}
 	}
 
 	try {
 		const yamlData = parseYaml(content);
-		console.log('extractTitle: Parsed YAML data:', yamlData);
+		console.log("extractTitle: Parsed YAML data:", yamlData);
 		if (yamlData?.title) {
-			console.log('extractTitle: Found title in YAML:', yamlData.title);
+			console.log("extractTitle: Found title in YAML:", yamlData.title);
 			return yamlData.title;
 		}
 	} catch (e) {
-		console.log('extractTitle: YAML parse error:', e);
+		console.log("extractTitle: YAML parse error:", e);
 	}
 
-	console.log('extractTitle: No title found, returning empty string');
+	console.log("extractTitle: No title found, returning empty string");
 	return "";
 }
 
@@ -107,7 +110,12 @@ export function parseMetadata(content: string): StoryMetadata | undefined {
 /**
  * Adds frontmatter to content if metadata exists
  */
-export function addFrontmatterIfNeeded(file: { content: string; created?: Date; edited?: Date; metadata?: any }): string {
+export function addFrontmatterIfNeeded(file: {
+	content: string;
+	created?: Date;
+	edited?: Date;
+	metadata?: any;
+}): string {
 	const hasDates = file.created || file.edited;
 	const hasMetadata = file.metadata && Object.keys(file.metadata).length > 0;
 
@@ -130,40 +138,49 @@ export function addFrontmatterIfNeeded(file: { content: string; created?: Date; 
 /**
  * Separates frontmatter from content
  */
-export function separateFrontmatter(content: string): { frontmatter: string; content: string; metadata: any } {
+export function separateFrontmatter(content: string): {
+	frontmatter: string;
+	content: string;
+	metadata: any;
+} {
 	const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
-	
+
 	if (frontmatterMatch) {
 		try {
 			const metadata = convertDates(parseYaml(frontmatterMatch[1])) || {};
-			const cleanContent = content.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '').trim();
+			const cleanContent = content
+				.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, "")
+				.trim();
 			return {
 				frontmatter: frontmatterMatch[1],
 				content: cleanContent,
-				metadata
+				metadata,
 			};
 		} catch (e) {
 			// If YAML parsing fails, treat as plain content
 			return {
-				frontmatter: '',
+				frontmatter: "",
 				content: content.trim(),
-				metadata: {}
+				metadata: {},
 			};
 		}
 	}
-	
+
 	// No frontmatter found
 	return {
-		frontmatter: '',
+		frontmatter: "",
 		content: content.trim(),
-		metadata: {}
+		metadata: {},
 	};
 }
 
 /**
  * Combines frontmatter and content
  */
-export function combineFrontmatter(frontmatter: string, content: string): string {
+export function combineFrontmatter(
+	frontmatter: string,
+	content: string,
+): string {
 	if (!frontmatter.trim()) {
 		return content;
 	}

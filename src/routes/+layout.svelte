@@ -1,21 +1,21 @@
 <script lang="ts">
-	import { ModeWatcher } from "mode-watcher";
-	import * as Sidebar from "$lib/components/ui/sidebar";
-	import { saveConfig } from "$lib/config";
 	import {
 		appState,
 		loadAvailableStories,
 		saveCurrentStory,
 	} from "$lib/app-state.svelte";
+	import AppMenubar from "$lib/components/app-menubar.svelte";
+	import AppSidebar from "$lib/components/app-sidebar.svelte";
+	import * as Sidebar from "$lib/components/ui/sidebar";
+	import { Toaster } from "$lib/components/ui/sonner";
+	import { saveConfig } from "$lib/config";
 	import { Window } from "@tauri-apps/api/window";
+	import { error, info } from "@tauri-apps/plugin-log";
+	import { ModeWatcher } from "mode-watcher";
 	import { onMount } from "svelte";
+	import "../app.css";
 
 	let { children } = $props();
-	import "../app.css";
-	import AppSidebar from "$lib/components/app-sidebar.svelte";
-	import AppMenubar from "$lib/components/app-menubar.svelte";
-	import { info, error } from "@tauri-apps/plugin-log";
-	import { Toaster } from "$lib/components/ui/sonner";
 
 	let sidebarOpen = $state(true);
 

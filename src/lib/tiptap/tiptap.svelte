@@ -32,7 +32,6 @@
 	let editorState = $state({ editor: null as Editor | null });
 	let previousFileId = $state<string | null>(null);
 
-	// Update content when file changes, but avoid recursion
 	$effect(() => {
 		if (!editorState.editor) return;
 

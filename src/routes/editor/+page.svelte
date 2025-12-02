@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { appState } from "$lib/app-state.svelte";
-	import { Button } from "$lib/components/ui/button/index.js";
 	import { Badge } from "$lib/components/ui/badge/index.js";
+	import { Button } from "$lib/components/ui/button/index.js";
+	import {
+		addFrontmatterIfNeeded,
+		separateFrontmatter,
+	} from "$lib/story/utils";
 	import Tiptap from "$lib/tiptap/tiptap.svelte";
 
 	let titleInput = $state<HTMLInputElement>();
@@ -36,25 +40,45 @@
 			const filePath = appState.currentEditedFile.path;
 			const now = new Date();
 
+			const updatedMetadata = {
+				...appState.currentEditedFile.metadata,
+				title: newTitle,
+			};
 			appState.currentEditedFile.title = newTitle;
+			appState.currentEditedFile.metadata = updatedMetadata;
 			appState.currentEditedFile.edited = now;
 
+			const { content } = separateFrontmatter(
+				appState.currentEditedFile.content || "",
+			);
+
+			const tempFile = {
+				content,
+				created: appState.currentEditedFile.created,
+				edited: now,
+				metadata: updatedMetadata,
+			};
+
+			appState.currentEditedFile.content =
+				addFrontmatterIfNeeded(tempFile);
+
 			if (filePath.startsWith("chapters/")) {
-				const chapter =
-					appState.selectedStory.getChapterByPath(filePath);
-				if (chapter) {
-					chapter.title = newTitle;
-					chapter.edited = now;
-				}
+				appState.selectedStory.updateChapter(filePath, {
+					title: newTitle,
+					metadata: updatedMetadata,
+					content: appState.currentEditedFile.content,
+					edited: now,
+				});
 			} else if (filePath.startsWith("notes/")) {
-				const note = appState.selectedStory.findNoteByPath(filePath);
-				if (note && "content" in note) {
-					note.title = newTitle;
-					note.edited = now;
-				}
+				appState.selectedStory.updateNote(filePath, {
+					title: newTitle,
+					metadata: updatedMetadata,
+					content: appState.currentEditedFile.content,
+					edited: now,
+				});
 			}
 
-			appState.selectedStory.metadata.edited = now;
+			appState.selectedStory.updateMetadata({ edited: now });
 
 			const currentStory = appState.selectedStory;
 			appState.selectedStory = null;
@@ -146,21 +170,15 @@
 						appState.selectedStory.metadata.edited = now;
 
 						if (filePath.startsWith("chapters/")) {
-							const chapter =
-								appState.selectedStory.getChapterByPath(
-									filePath,
-								);
-							if (chapter) {
-								chapter.content = newContent;
-								chapter.edited = now;
-							}
+							appState.selectedStory.updateChapter(filePath, {
+								content: newContent,
+								edited: now,
+							});
 						} else if (filePath.startsWith("notes/")) {
-							const note =
-								appState.selectedStory.findNoteByPath(filePath);
-							if (note && "content" in note) {
-								note.content = newContent;
-								note.edited = now;
-							}
+							appState.selectedStory.updateNote(filePath, {
+								content: newContent,
+								edited: now,
+							});
 						}
 					}
 				}}

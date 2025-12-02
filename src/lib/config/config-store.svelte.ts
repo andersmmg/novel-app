@@ -1,5 +1,5 @@
-import { configStore, type AppConfig } from "./config-store";
 import { writable, type Writable } from "svelte/store";
+import { configStore, type AppConfig } from "./config-store";
 
 export const config: Writable<AppConfig | null> = writable(null);
 

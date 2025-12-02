@@ -1,9 +1,9 @@
+import { writable, type Writable } from "svelte/store";
 import {
 	loadConfig,
 	saveConfig as saveConfigFile,
 	type AppConfig,
 } from "./config";
-import { writable, type Writable } from "svelte/store";
 
 class ConfigStore {
 	private config: AppConfig | null = null;

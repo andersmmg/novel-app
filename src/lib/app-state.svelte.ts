@@ -1,15 +1,15 @@
-import type { StoryListItem, Story, StoryFile } from "$lib/story";
+import type { Story, StoryFile, StoryListItem } from "$lib/story";
 import { readStoryFile, readStoryFileMetadata } from "$lib/story/story-reader";
 import { saveStory } from "$lib/story/story-writer";
 import {
-	readDir,
+	BaseDirectory,
 	exists,
+	mkdir,
+	readDir,
 	readFile,
 	writeFile,
-	mkdir,
-	BaseDirectory,
 } from "@tauri-apps/plugin-fs";
-import { error as logError, info } from "@tauri-apps/plugin-log";
+import { info, error as logError } from "@tauri-apps/plugin-log";
 import { toast } from "svelte-sonner";
 
 const STORIES_DIR = "stories";
@@ -55,10 +55,9 @@ export async function loadAvailableStories() {
 		const storyFiles: StoryListItem[] = [];
 
 		for (const entry of entries) {
-			// Only process .story files (not directories)
+			// Only process .story files (not directories for now)
 			if (entry.name.endsWith(".story") && !entry.isDirectory) {
 				try {
-					// Read the file as File object to use existing metadata reader
 					const fileData = await readFileAsFile(entry.name);
 
 					if (fileData) {
