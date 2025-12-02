@@ -16,6 +16,25 @@ export function ctrlShortcut(key: string) {
 	}
 }
 
+export function formatDate(date: Date | undefined): string {
+	if (typeof date === "string") {
+		date = new Date(date);
+	}
+	if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+		return "Unknown date";
+	}
+
+	try {
+		return new Intl.DateTimeFormat("en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+		}).format(date);
+	} catch (error) {
+		return "Invalid date";
+	}
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

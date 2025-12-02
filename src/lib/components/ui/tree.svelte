@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { setCurrentEditedFile } from "$lib/app-state.svelte.js";
+	import { appState, setCurrentEditedFile } from "$lib/app-state.svelte.js";
 	import * as Collapsible from "$lib/components/ui/collapsible";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import type { StoryFile, StoryFolder } from "$lib/story/types";
@@ -76,7 +76,10 @@
 {:else}
 	<!-- File -->
 	<Sidebar.MenuItem>
-		<Sidebar.MenuButton onclick={() => openItem(item)}>
+		<Sidebar.MenuButton
+			onclick={() => openItem(item)}
+			isActive={appState.currentEditedFile?.path === item.path}
+		>
 			<FileText />
 			<span>{getItemName(item)}</span>
 		</Sidebar.MenuButton>

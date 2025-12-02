@@ -39,7 +39,7 @@
 	});
 </script>
 
-<Menubar.Root class="rounded-none" data-tauri-drag-region>
+<Menubar.Root class="rounded-none select-none" data-tauri-drag-region>
 	<div class="flex items-center">
 		<Button
 			variant="ghost"
@@ -59,25 +59,18 @@
 						>{ctrlShortcut("S")}</Menubar.Shortcut
 					>
 				</Menubar.Item>
+				<Menubar.Item
+					disabled={!appState.selectedStory}
+					onclick={() => {}}
+				>
+					Export Story <Menubar.Shortcut
+						>{ctrlShortcut("E")}</Menubar.Shortcut
+					>
+				</Menubar.Item>
 				<Menubar.Item>
 					Exit <Menubar.Shortcut>{ctrlShortcut("Q")}</Menubar.Shortcut
 					>
 				</Menubar.Item>
-			</Menubar.Content>
-		</Menubar.Menu>
-		<Menubar.Menu>
-			<Menubar.Trigger>Edit</Menubar.Trigger>
-			<Menubar.Content>
-				<Menubar.Item>
-					Undo <Menubar.Shortcut>⌘Z</Menubar.Shortcut>
-				</Menubar.Item>
-				<Menubar.Item>
-					Redo <Menubar.Shortcut>⇧⌘Z</Menubar.Shortcut>
-				</Menubar.Item>
-				<Menubar.Separator />
-				<Menubar.Item>Cut</Menubar.Item>
-				<Menubar.Item>Copy</Menubar.Item>
-				<Menubar.Item>Paste</Menubar.Item>
 			</Menubar.Content>
 		</Menubar.Menu>
 		<Menubar.Menu>

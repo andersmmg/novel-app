@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import {
 		appState,
 		loadAvailableStories,
@@ -28,6 +29,7 @@
 	import { info } from "@tauri-apps/plugin-log";
 	import { nanoid } from "nanoid";
 	import { onMount } from "svelte";
+	import Time from "svelte-time";
 
 	let loading = $state(true);
 	let creatingStory = $state(false);
@@ -80,26 +82,9 @@
 		return filename;
 	}
 
-	function formatDate(date: Date): string {
-		if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
-			return "Unknown date";
-		}
-
-		try {
-			return new Intl.DateTimeFormat("en-US", {
-				year: "numeric",
-				month: "short",
-				day: "numeric",
-			}).format(date);
-		} catch (error) {
-			return "Invalid date";
-		}
-	}
-
 	async function handleOpenStory(storyId: string) {
 		await selectStoryById(storyId);
-		// TODO: Will go to story home page
-		// goto("/editor");
+		goto("/story");
 	}
 
 	function handleCardClick(story: StoryListItem) {
@@ -335,11 +320,11 @@
 							>
 								<div class="flex items-center gap-1">
 									<CalendarIcon class="size-3" />
-									{formatDate(story.created)}
+									<Time timestamp={story.created} />
 								</div>
 								<div class="flex items-center gap-1">
 									<CalendarIcon class="size-3" />
-									{formatDate(story.edited)}
+									<Time timestamp={story.edited} />
 								</div>
 							</div>
 

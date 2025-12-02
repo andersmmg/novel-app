@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
+	import { active, checkIsActive } from "$lib/actions/active.svelte";
 	import {
 		appState,
 		selectStoryById,
@@ -13,9 +14,11 @@
 	import {
 		Book,
 		Bookmark,
+		BookOpenIcon,
 		ChevronDownIcon,
 		EllipsisIcon,
 		FileText,
+		HouseHeart,
 		LibraryIcon,
 		PenTool,
 		PlusIcon,
@@ -77,7 +80,7 @@
 			"Sidebar: Story selected, app state:",
 			$state.snapshot(appState),
 		);
-		goto("/");
+		goto("/story");
 	}
 
 	function deleteChapter(chapterPath: string) {
@@ -156,8 +159,25 @@
 			</Sidebar.MenuItem>
 		</Sidebar.Menu>
 	</Sidebar.Header>
-	<Sidebar.Content class="overflow-x-hidden">
+	<Sidebar.Content class="overflow-x-hidden gap-0">
 		{#if appState.selectedStory}
+			<!-- Story Home -->
+			<Sidebar.Group class="py-1">
+				<Sidebar.GroupContent>
+					<Sidebar.Menu>
+						<Sidebar.MenuItem>
+							<Sidebar.MenuButton>
+								{#snippet child({ props })}
+									<a href="/story" {...props} use:active>
+										<BookOpenIcon class="size-4" />
+										<span>Story Overview</span>
+									</a>
+								{/snippet}
+							</Sidebar.MenuButton>
+						</Sidebar.MenuItem>
+					</Sidebar.Menu>
+				</Sidebar.GroupContent>
+			</Sidebar.Group>
 			<!-- Chapters Group -->
 			<Collapsible.Root open class="group/collapsible">
 				<Sidebar.Group>
@@ -178,6 +198,8 @@
 								{#each chapters as chapter (chapter.path + (chapter.title || chapter.name))}
 									<Sidebar.MenuItem>
 										<Sidebar.MenuButton
+											isActive={appState.currentEditedFile
+												?.path === chapter.path}
 											onclick={() => openChapter(chapter)}
 										>
 											<FileText />
@@ -264,49 +286,6 @@
 					</Collapsible.Content>
 				</Sidebar.Group>
 			</Collapsible.Root>
-
-			<Sidebar.Separator />
-
-			<!-- Writing Tools -->
-			<Sidebar.Group>
-				<Sidebar.GroupLabel>Writing Tools</Sidebar.GroupLabel>
-				<Sidebar.GroupContent>
-					<Sidebar.Menu>
-						<Sidebar.MenuItem>
-							<Sidebar.MenuButton>
-								{#snippet child({ props })}
-									<a href="/editor" {...props}>
-										<PenTool class="size-4" />
-										<span>Editor</span>
-									</a>
-								{/snippet}
-							</Sidebar.MenuButton>
-						</Sidebar.MenuItem>
-
-						<Sidebar.MenuItem>
-							<Sidebar.MenuButton>
-								{#snippet child({ props })}
-									<a href="/search" {...props}>
-										<Search class="size-4" />
-										<span>Search</span>
-									</a>
-								{/snippet}
-							</Sidebar.MenuButton>
-						</Sidebar.MenuItem>
-
-						<Sidebar.MenuItem>
-							<Sidebar.MenuButton>
-								{#snippet child({ props })}
-									<a href="/bookmarks" {...props}>
-										<Bookmark class="size-4" />
-										<span>Bookmarks</span>
-									</a>
-								{/snippet}
-							</Sidebar.MenuButton>
-						</Sidebar.MenuItem>
-					</Sidebar.Menu>
-				</Sidebar.GroupContent>
-			</Sidebar.Group>
 		{:else}
 			<Sidebar.Content
 				class="flex-1 flex items-center justify-center p-4"
