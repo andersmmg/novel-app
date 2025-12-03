@@ -144,7 +144,12 @@
 			<ButtonGroup.Root>
 				<Button
 					size="sm"
-					variant="outline"
+					variant={editorState.editor.isActive("heading", {
+						level: 1,
+					})
+						? "default"
+						: "outline"}
+					class="border"
 					onclick={() =>
 						editorState
 							.editor!.chain()
@@ -154,7 +159,12 @@
 				>
 				<Button
 					size="sm"
-					variant="outline"
+					variant={editorState.editor.isActive("heading", {
+						level: 2,
+					})
+						? "default"
+						: "outline"}
+					class="border"
 					onclick={() =>
 						editorState
 							.editor!.chain()
@@ -164,7 +174,10 @@
 				>
 				<Button
 					size="sm"
-					variant="outline"
+					variant={editorState.editor.isActive("paragraph")
+						? "default"
+						: "outline"}
+					class="border"
 					onclick={() =>
 						editorState
 							.editor!.chain()
