@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { appState, saveCurrentStory } from "$lib/app-state.svelte";
+	import { startAutosave } from "$lib/autosave";
 	import * as Menubar from "$lib/components/ui/menubar";
 	import { isTauriDesktop } from "$lib/is-tauri";
 	import { ctrlShortcut } from "$lib/utils";
@@ -9,7 +10,7 @@
 	import { onMount } from "svelte";
 	import AppWindowcontrols from "./app-windowcontrols.svelte";
 	import Button from "./ui/button/button.svelte";
-	import { startAutosave } from "$lib/autosave";
+	import Time from "svelte-time/Time.svelte";
 
 	let { sidebarOpen = $bindable(true) } = $props();
 	const appWindow = getCurrentWindow();
@@ -103,6 +104,23 @@
 				</Menubar.Sub>
 			</Menubar.Content>
 		</Menubar.Menu>
+		<span class="ml-2 flex items-center gap-2 pointer-none">
+			<span
+				class="inline-block w-2 h-2 rounded-full ml-1"
+				class:bg-yellow-500={appState.isDirty}
+				class:bg-green-500={!appState.isDirty}
+				data-tauri-drag-region
+			></span>
+			<span class="text-xs text-muted-foreground" data-tauri-drag-region>
+				saved <Time
+					data-tauri-drag-region
+					relative
+					title=""
+					live={1 * 1_000}
+					timestamp={appState.lastSavedAt}
+				/></span
+			>
+		</span>
 	</div>
 	{#if isTauriDesktop}
 		<AppWindowcontrols />

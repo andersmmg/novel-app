@@ -47,6 +47,7 @@
 			appState.currentEditedFile.title = newTitle;
 			appState.currentEditedFile.metadata = updatedMetadata;
 			appState.currentEditedFile.edited = now;
+			appState.isDirty = true;
 
 			const { content } = separateFrontmatter(
 				appState.currentEditedFile.content || "",
@@ -163,23 +164,26 @@
 				fileType={fileInfo?.type}
 				onContentChange={(newContent, frontmatter, metadata) => {
 					if (appState.currentEditedFile && appState.selectedStory) {
-						appState.currentEditedFile.content = newContent;
+						if (appState.currentEditedFile.content != newContent) {
+							appState.currentEditedFile.content = newContent;
 
-						const filePath = appState.currentEditedFile.path;
-						const now = new Date();
+							const filePath = appState.currentEditedFile.path;
+							const now = new Date();
 
-						appState.selectedStory.metadata.edited = now;
+							appState.selectedStory.metadata.edited = now;
+							appState.isDirty = true;
 
-						if (filePath.startsWith("chapters/")) {
-							appState.selectedStory.updateChapter(filePath, {
-								content: newContent,
-								edited: now,
-							});
-						} else if (filePath.startsWith("notes/")) {
-							appState.selectedStory.updateNote(filePath, {
-								content: newContent,
-								edited: now,
-							});
+							if (filePath.startsWith("chapters/")) {
+								appState.selectedStory.updateChapter(filePath, {
+									content: newContent,
+									edited: now,
+								});
+							} else if (filePath.startsWith("notes/")) {
+								appState.selectedStory.updateNote(filePath, {
+									content: newContent,
+									edited: now,
+								});
+							}
 						}
 					}
 				}}

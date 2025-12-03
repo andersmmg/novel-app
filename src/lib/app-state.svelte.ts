@@ -18,12 +18,16 @@ interface AppState {
 	selectedStory: Story | null;
 	availableStories: StoryListItem[];
 	currentEditedFile: StoryFile | null;
+	isDirty: boolean;
+	lastSavedAt: Date | null;
 }
 
 const appState = $state<AppState>({
 	selectedStory: null,
 	availableStories: [],
 	currentEditedFile: null,
+	isDirty: false,
+	lastSavedAt: null,
 });
 
 export async function ensureStoriesDir(): Promise<boolean> {
@@ -152,6 +156,8 @@ export async function selectStoryById(storyId: string) {
 	}
 	const story = await readStoryFile(storyFile, storyPath);
 	appState.selectedStory = story;
+	appState.lastSavedAt = new Date();
+	appState.isDirty = false;
 }
 
 export function setCurrentEditedFile(file: StoryFile | null) {
@@ -182,6 +188,8 @@ export async function saveCurrentStory(): Promise<boolean> {
 
 		info(`Story saved successfully to: ${storyPath}`);
 		toast.success("Story saved!");
+		appState.lastSavedAt = new Date();
+		appState.isDirty = false;
 		return true;
 	} catch (error) {
 		logError(
