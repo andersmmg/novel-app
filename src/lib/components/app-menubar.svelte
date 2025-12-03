@@ -9,6 +9,7 @@
 	import { onMount } from "svelte";
 	import AppWindowcontrols from "./app-windowcontrols.svelte";
 	import Button from "./ui/button/button.svelte";
+	import { startAutosave } from "$lib/autosave";
 
 	let { sidebarOpen = $bindable(true) } = $props();
 	const appWindow = getCurrentWindow();
@@ -16,6 +17,7 @@
 	async function handleSave() {
 		if (appState.selectedStory) {
 			await saveCurrentStory();
+			startAutosave();
 		}
 	}
 
