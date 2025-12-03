@@ -9,6 +9,8 @@
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import { Toaster } from "$lib/components/ui/sonner";
 	import { saveConfig } from "$lib/config";
+	import { configStore } from "$lib/config/config-store";
+	import { loadTheme } from "$lib/themes/theme-loader";
 	import { Window } from "@tauri-apps/api/window";
 	import { error, info } from "@tauri-apps/plugin-log";
 	import { ModeWatcher } from "mode-watcher";
@@ -20,6 +22,16 @@
 	let sidebarOpen = $state(true);
 
 	onMount(async () => {
+		// Load theme from config
+		try {
+			const config = await configStore.getConfig();
+			await loadTheme(config.theme || "default");
+		} catch (themeError) {
+			error("Failed to load theme: {themeError}");
+			// Fallback to default theme
+			await loadTheme("default");
+		}
+
 		// Initialize story management after config is loaded
 		try {
 			await loadAvailableStories();

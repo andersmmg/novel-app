@@ -1,0 +1,127 @@
+:root {
+	--background: rgb(241, 240, 229);
+	--foreground: rgb(86, 69, 63);
+	--card: rgb(241, 240, 229);
+	--card-foreground: rgb(86, 69, 63);
+	--popover: rgb(255, 255, 255);
+	--popover-foreground: rgb(86, 69, 63);
+	--primary: rgb(163, 119, 100);
+	--primary-foreground: rgb(255, 255, 255);
+	--secondary: rgb(186, 171, 146);
+	--secondary-foreground: rgb(255, 255, 255);
+	--muted: rgb(228, 199, 184);
+	--muted-foreground: rgb(138, 101, 90);
+	--accent: rgb(228, 199, 184);
+	--accent-foreground: rgb(86, 69, 63);
+	--destructive: rgb(31, 26, 23);
+	--destructive-foreground: rgb(255, 255, 255);
+	--border: rgb(186, 171, 146);
+	--input: rgb(186, 171, 146);
+	--ring: rgb(163, 119, 100);
+	--chart-1: rgb(163, 119, 100);
+	--chart-2: rgb(138, 101, 90);
+	--chart-3: rgb(195, 158, 136);
+	--chart-4: rgb(186, 171, 146);
+	--chart-5: rgb(162, 135, 119);
+	--sidebar: rgb(235, 214, 203);
+	--sidebar-foreground: rgb(86, 69, 63);
+	--sidebar-primary: rgb(163, 119, 100);
+	--sidebar-primary-foreground: rgb(255, 255, 255);
+	--sidebar-accent: rgb(195, 158, 136);
+	--sidebar-accent-foreground: rgb(255, 255, 255);
+	--sidebar-border: rgb(162, 135, 119);
+	--sidebar-ring: rgb(163, 119, 100);
+	--font-sans: DM Sans, sans-serif;
+	--font-serif: Georgia, serif;
+	--font-mono: Menlo, monospace;
+	--radius: 0.5rem;
+	--shadow-x: 2px;
+	--shadow-y: 2px;
+	--shadow-blur: 0px;
+	--shadow-spread: 0px;
+	--shadow-opacity: 0.11;
+	--shadow-color: hsl(20 18% 51% / 0.4);
+	--shadow-2xs: 2px 2px 0px 0px hsl(20 18% 51% / 0.06);
+	--shadow-xs: 2px 2px 0px 0px hsl(20 18% 51% / 0.06);
+	--shadow-sm:
+		2px 2px 0px 0px hsl(20 18% 51% / 0.11),
+		2px 1px 2px -1px hsl(20 18% 51% / 0.11);
+	--shadow:
+		2px 2px 0px 0px hsl(20 18% 51% / 0.11),
+		2px 1px 2px -1px hsl(20 18% 51% / 0.11);
+	--shadow-md:
+		2px 2px 0px 0px hsl(20 18% 51% / 0.11),
+		2px 2px 4px -1px hsl(20 18% 51% / 0.11);
+	--shadow-lg:
+		2px 2px 0px 0px hsl(20 18% 51% / 0.11),
+		2px 4px 6px -1px hsl(20 18% 51% / 0.11);
+	--shadow-xl:
+		2px 2px 0px 0px hsl(20 18% 51% / 0.11),
+		2px 8px 10px -1px hsl(20 18% 51% / 0.11);
+	--shadow-2xl: 2px 2px 0px 0px hsl(20 18% 51% / 0.28);
+	--tracking-normal: 0em;
+	--spacing: 0.25rem;
+}
+
+.dark {
+	--background: rgb(45, 37, 33);
+	--foreground: rgb(241, 240, 229);
+	--card: rgb(60, 51, 46);
+	--card-foreground: rgb(241, 240, 229);
+	--popover: rgb(60, 51, 46);
+	--popover-foreground: rgb(241, 240, 229);
+	--primary: rgb(195, 158, 136);
+	--primary-foreground: rgb(45, 37, 33);
+	--secondary: rgb(138, 101, 90);
+	--secondary-foreground: rgb(241, 240, 229);
+	--muted: rgb(86, 69, 63);
+	--muted-foreground: rgb(197, 170, 155);
+	--accent: rgb(186, 171, 146);
+	--accent-foreground: rgb(45, 37, 33);
+	--destructive: rgb(229, 115, 115);
+	--destructive-foreground: rgb(45, 37, 33);
+	--border: rgb(86, 69, 63);
+	--input: rgb(86, 69, 63);
+	--ring: rgb(195, 158, 136);
+	--chart-1: rgb(195, 158, 136);
+	--chart-2: rgb(186, 171, 146);
+	--chart-3: rgb(163, 119, 100);
+	--chart-4: rgb(138, 101, 90);
+	--chart-5: rgb(162, 135, 119);
+	--sidebar: rgb(31, 26, 23);
+	--sidebar-foreground: rgb(241, 240, 229);
+	--sidebar-primary: rgb(195, 158, 136);
+	--sidebar-primary-foreground: rgb(31, 26, 23);
+	--sidebar-accent: rgb(186, 171, 146);
+	--sidebar-accent-foreground: rgb(31, 26, 23);
+	--sidebar-border: rgb(86, 69, 63);
+	--sidebar-ring: rgb(195, 158, 136);
+	--font-sans: DM Sans, sans-serif;
+	--font-serif: Georgia, serif;
+	--font-mono: Menlo, monospace;
+	--radius: 0.5rem;
+	--shadow-x: 2px;
+	--shadow-y: 2px;
+	--shadow-blur: 0px;
+	--shadow-spread: 0px;
+	--shadow-opacity: 0.11;
+	--shadow-color: hsl(20 18% 30% / 0.5);
+	--shadow-2xs: 2px 2px 0px 0px hsl(20 18% 30% / 0.06);
+	--shadow-xs: 2px 2px 0px 0px hsl(20 18% 30% / 0.06);
+	--shadow-sm:
+		2px 2px 0px 0px hsl(20 18% 30% / 0.11),
+		2px 1px 2px -1px hsl(20 18% 30% / 0.11);
+	--shadow:
+		2px 2px 0px 0px hsl(20 18% 30% / 0.11),
+		2px 1px 2px -1px hsl(20 18% 30% / 0.11);
+	--shadow-md:
+		2px 2px 0px 0px hsl(20 18% 30% / 0.11),
+		2px 2px 4px -1px hsl(20 18% 30% / 0.11);
+	--shadow-lg:
+		2px 2px 0px 0px hsl(20 18% 30% / 0.11),
+		2px 4px 6px -1px hsl(20 18% 30% / 0.11);
+	--shadow-xl:
+		2px 2px 0px 0px hsl(20 18% 30% / 0.11),
+		2px 8px 10px -1px hsl(20 18% 30% / 0.11);
+	--shadow-2xl: 2px 2px 0px 0px hsl(20 18% 30% / 0.28);
+}

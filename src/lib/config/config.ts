@@ -17,6 +17,7 @@ export interface AppConfig {
 		enabled: boolean;
 		intervalMinutes: number;
 	};
+	theme: string;
 }
 
 const CONFIG_PATH = "config.yml";
@@ -28,6 +29,7 @@ const DEFAULT_CONFIG: AppConfig = {
 		enabled: true,
 		intervalMinutes: 5,
 	},
+	theme: "default",
 };
 
 export async function loadConfig(): Promise<AppConfig> {

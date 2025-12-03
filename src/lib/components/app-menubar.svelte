@@ -104,23 +104,28 @@
 				</Menubar.Sub>
 			</Menubar.Content>
 		</Menubar.Menu>
-		<span class="ml-2 flex items-center gap-2 pointer-none">
-			<span
-				class="inline-block w-2 h-2 rounded-full ml-1"
-				class:bg-yellow-500={appState.isDirty}
-				class:bg-green-500={!appState.isDirty}
-				data-tauri-drag-region
-			></span>
-			<span class="text-xs text-muted-foreground" data-tauri-drag-region>
-				saved <Time
+		{#if appState.selectedStory}
+			<span class="ml-2 flex items-center gap-2 pointer-none">
+				<span
+					class="inline-block w-2 h-2 rounded-full ml-1"
+					class:bg-yellow-500={appState.isDirty}
+					class:bg-green-500={!appState.isDirty}
 					data-tauri-drag-region
-					relative
-					title=""
-					live={1 * 1_000}
-					timestamp={appState.lastSavedAt}
-				/></span
-			>
-		</span>
+				></span>
+				<span
+					class="text-xs text-muted-foreground"
+					data-tauri-drag-region
+				>
+					saved <Time
+						data-tauri-drag-region
+						relative
+						title=""
+						live={1 * 1_000}
+						timestamp={appState.lastSavedAt}
+					/></span
+				>
+			</span>
+		{/if}
 	</div>
 	{#if isTauriDesktop}
 		<AppWindowcontrols />

@@ -11,6 +11,7 @@
 	import * as Select from "$lib/components/ui/select";
 	import { configStore, type AppConfig } from "$lib/config/config-store";
 	import { saveConfig, updateConfig } from "$lib/config/config-store.svelte";
+	import ThemeSelector from "$lib/components/theme-selector.svelte";
 	import { SettingsIcon } from "@lucide/svelte";
 	import { onMount } from "svelte";
 	import { toast } from "svelte-sonner";
@@ -67,7 +68,7 @@
 					<CardTitle>Autosave</CardTitle>
 					<CardDescription>
 						Configure automatic saving of your story to prevent data
-						loss
+						loss.
 					</CardDescription>
 				</CardHeader>
 				<CardContent class="space-y-4">
@@ -105,6 +106,17 @@
 							</p>
 						</div>
 					{/if}
+				</CardContent>
+			</Card>
+			<Card>
+				<CardHeader>
+					<CardTitle>Theme</CardTitle>
+					<CardDescription>
+						Choose your preferred visual theme.
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<ThemeSelector />
 				</CardContent>
 			</Card>
 			<Card>
