@@ -4,6 +4,8 @@
 	import type { StoryFile } from "$lib/story";
 	import { combineFrontmatter, separateFrontmatter } from "$lib/story/utils";
 	import {
+		ArrowDownToLine,
+		ArrowUpToLine,
 		BoldIcon,
 		Heading1Icon,
 		Heading2Icon,
@@ -53,6 +55,8 @@
 					contentType: "markdown",
 				});
 			}
+
+			editorState.editor.chain().focus("start").scrollIntoView().run();
 		}
 	});
 
@@ -156,6 +160,7 @@
 					variant={editorState.editor.isActive("bold")
 						? "default"
 						: "outline"}
+					class="border"
 					onclick={() =>
 						editorState.editor!.chain().focus().toggleBold().run()}
 					><BoldIcon /></Button
@@ -165,12 +170,30 @@
 					variant={editorState.editor.isActive("italic")
 						? "default"
 						: "outline"}
+					class="border"
 					onclick={() =>
 						editorState
 							.editor!.chain()
 							.focus()
 							.toggleItalic()
 							.run()}><ItalicIcon /></Button
+				>
+			</ButtonGroup.Root>
+			<!-- Focus -->
+			<ButtonGroup.Root>
+				<Button
+					size="sm"
+					variant="outline"
+					onclick={() =>
+						editorState.editor!.chain().focus("start").run()}
+					><ArrowUpToLine /></Button
+				>
+				<Button
+					size="sm"
+					variant="outline"
+					onclick={() =>
+						editorState.editor!.chain().focus("end").run()}
+					><ArrowDownToLine /></Button
 				>
 			</ButtonGroup.Root>
 		</div>
