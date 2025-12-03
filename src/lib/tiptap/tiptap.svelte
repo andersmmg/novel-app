@@ -236,6 +236,7 @@
 	<div
 		bind:this={element}
 		class="flex-1 min-h-[400px] w-full prose **:text-foreground cursor-text max-w-none"
+		style="font-family: var(--font-editor);"
 		onmouseup={() => {
 			if (editorState.editor) {
 				if (!editorState.editor.isFocused)

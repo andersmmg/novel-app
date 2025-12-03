@@ -8,9 +8,9 @@
 	import { getCurrentWindow } from "@tauri-apps/api/window";
 	import { mode, resetMode, setMode } from "mode-watcher";
 	import { onMount } from "svelte";
+	import Time from "svelte-time/Time.svelte";
 	import AppWindowcontrols from "./app-windowcontrols.svelte";
 	import Button from "./ui/button/button.svelte";
-	import Time from "svelte-time/Time.svelte";
 
 	let { sidebarOpen = $bindable(true) } = $props();
 	const appWindow = getCurrentWindow();
@@ -80,7 +80,7 @@
 			<Menubar.Trigger>View</Menubar.Trigger>
 			<Menubar.Content>
 				<Menubar.Sub>
-					<Menubar.SubTrigger>Theme</Menubar.SubTrigger>
+					<Menubar.SubTrigger>Theme Mode</Menubar.SubTrigger>
 					<Menubar.SubContent>
 						<Menubar.CheckboxItem
 							value="light"

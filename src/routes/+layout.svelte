@@ -10,6 +10,7 @@
 	import { Toaster } from "$lib/components/ui/sonner";
 	import { saveConfig } from "$lib/config";
 	import { configStore } from "$lib/config/config-store";
+	import { applyFontSettings } from "$lib/fonts/font-settings";
 	import { loadTheme } from "$lib/themes/theme-loader";
 	import { Window } from "@tauri-apps/api/window";
 	import { error, info } from "@tauri-apps/plugin-log";
@@ -22,14 +23,16 @@
 	let sidebarOpen = $state(true);
 
 	onMount(async () => {
-		// Load theme from config
+		// Load theme and fonts from config
 		try {
 			const config = await configStore.getConfig();
 			await loadTheme(config.theme || "default");
+			await applyFontSettings();
 		} catch (themeError) {
 			error("Failed to load theme: {themeError}");
 			// Fallback to default theme
 			await loadTheme("default");
+			await applyFontSettings();
 		}
 
 		// Initialize story management after config is loaded

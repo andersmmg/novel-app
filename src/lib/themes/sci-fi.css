@@ -31,9 +31,6 @@
 	--sidebar-accent-foreground: rgb(255, 255, 255);
 	--sidebar-border: rgb(80, 80, 80);
 	--sidebar-ring: rgb(183, 28, 28);
-	--font-sans: "Oxanium", sans-serif;
-	--font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-	--font-mono: "Source Code Pro", monospace;
 	--radius: 0px;
 	--shadow-x: 0px;
 	--shadow-y: 2px;
@@ -91,9 +88,6 @@
 	--sidebar-accent-foreground: rgb(0, 0, 0);
 	--sidebar-border: rgb(74, 74, 74);
 	--sidebar-ring: rgb(229, 57, 53);
-	--font-sans: "Oxanium", sans-serif;
-	--font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-	--font-mono: "Source Code Pro", monospace;
 	--radius: 0px;
 	--shadow-x: 0px;
 	--shadow-y: 2px;

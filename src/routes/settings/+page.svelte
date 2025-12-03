@@ -12,6 +12,7 @@
 	import { configStore, type AppConfig } from "$lib/config/config-store";
 	import { saveConfig, updateConfig } from "$lib/config/config-store.svelte";
 	import ThemeSelector from "$lib/components/theme-selector.svelte";
+	import FontSelector from "$lib/components/font-selector.svelte";
 	import { SettingsIcon } from "@lucide/svelte";
 	import { onMount } from "svelte";
 	import { toast } from "svelte-sonner";
@@ -62,7 +63,7 @@
 			<div class="text-muted-foreground">Loading settings...</div>
 		</div>
 	{:else if config}
-		<div class="space-y-6">
+		<div class="space-y-2">
 			<Card>
 				<CardHeader>
 					<CardTitle>Autosave</CardTitle>
@@ -117,6 +118,28 @@
 				</CardHeader>
 				<CardContent>
 					<ThemeSelector />
+				</CardContent>
+			</Card>
+			<Card>
+				<CardHeader>
+					<CardTitle>Fonts</CardTitle>
+					<CardDescription>
+						Customize the fonts used throughout the application.
+					</CardDescription>
+				</CardHeader>
+				<CardContent class="space-y-6">
+					{#if config}
+						<FontSelector
+							category="ui"
+							label="UI Font"
+							bind:value={config.fonts.ui}
+						/>
+						<FontSelector
+							category="editor"
+							label="Editor Font"
+							bind:value={config.fonts.editor}
+						/>
+					{/if}
 				</CardContent>
 			</Card>
 			<Card>

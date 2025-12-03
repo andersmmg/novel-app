@@ -18,6 +18,10 @@ export interface AppConfig {
 		intervalMinutes: number;
 	};
 	theme: string;
+	fonts: {
+		ui: string;
+		editor: string;
+	};
 }
 
 const CONFIG_PATH = "config.yml";
@@ -30,6 +34,10 @@ const DEFAULT_CONFIG: AppConfig = {
 		intervalMinutes: 5,
 	},
 	theme: "default",
+	fonts: {
+		ui: "system-ui",
+		editor: "noto-serif"
+	}
 };
 
 export async function loadConfig(): Promise<AppConfig> {

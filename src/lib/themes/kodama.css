@@ -31,9 +31,6 @@
 	--sidebar-accent-foreground: rgb(92, 75, 62);
 	--sidebar-border: rgb(229, 224, 212);
 	--sidebar-ring: rgb(157, 177, 140);
-	--font-sans: Merriweather, serif;
-	--font-serif: Source Serif 4, serif;
-	--font-mono: JetBrains Mono, monospace;
 	--radius: 0.425rem;
 	--shadow-x: 3px;
 	--shadow-y: 3px;
@@ -96,9 +93,6 @@
 	--sidebar-accent-foreground: rgb(42, 37, 33);
 	--sidebar-border: rgb(90, 83, 69);
 	--sidebar-ring: rgb(138, 159, 123);
-	--font-sans: Merriweather, serif;
-	--font-serif: Source Serif 4, serif;
-	--font-mono: JetBrains Mono, monospace;
 	--radius: 0.425rem;
 	--shadow-x: 3px;
 	--shadow-y: 3px;
