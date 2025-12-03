@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from "$lib/components/ui/button";
 	import * as ButtonGroup from "$lib/components/ui/button-group";
+	import { config } from "$lib/config/config-store.svelte";
 	import type { StoryFile } from "$lib/story";
 	import { combineFrontmatter, separateFrontmatter } from "$lib/story/utils";
 	import {
@@ -21,6 +22,7 @@
 	let {
 		currentFile,
 		onContentChange,
+		fileType = "File",
 	}: {
 		currentFile: StoryFile | null;
 		onContentChange?: (
@@ -28,6 +30,7 @@
 			frontmatter: string,
 			metadata: any,
 		) => void;
+		fileType?: string;
 	} = $props();
 
 	let element = $state<HTMLElement>();
@@ -56,9 +59,25 @@
 				});
 			}
 
-			editorState.editor.chain().focus("start").scrollIntoView().run();
+			focusOpenPosition();
 		}
 	});
+
+	function focusOpenPosition() {
+		if (!editorState.editor) return;
+
+		if (fileType === "Chapter") {
+			editorState.editor
+				.chain()
+				.focus($config?.chapterOpenPosition || "start")
+				.scrollIntoView()
+				.run();
+		} else if (fileType === "Note") {
+			editorState.editor.chain().focus("start").scrollIntoView().run();
+		} else {
+			editorState.editor.chain().focus("start").scrollIntoView().run();
+		}
+	}
 
 	onMount(() => {
 		// Separate frontmatter from initial content
@@ -110,6 +129,7 @@
 		});
 
 		previousFileId = currentFile?.path || null;
+		focusOpenPosition();
 	});
 
 	onDestroy(() => {

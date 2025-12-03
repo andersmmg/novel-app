@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { active, checkIsActive } from "$lib/actions/active.svelte";
+	import { active } from "$lib/actions/active.svelte";
 	import {
 		appState,
 		selectStoryById,
@@ -13,25 +13,14 @@
 	import type { StoryFile } from "$lib/story/types";
 	import {
 		Book,
-		Bookmark,
 		BookOpenIcon,
 		ChevronDownIcon,
 		EllipsisIcon,
 		FileText,
-		HouseHeart,
 		LibraryIcon,
-		PenTool,
 		PlusIcon,
-		Search,
 		Settings,
 	} from "@lucide/svelte";
-	import { info } from "@tauri-apps/plugin-log";
-
-	let notesOpen = $state(false);
-	let subFolder1Open = $state(false);
-	let subFolder2Open = $state(false);
-	let subFolder3Open = $state(false);
-	let chapterMenuOpen: string | null = null;
 
 	const chapters = $derived.by(() => {
 		if (appState.selectedStory) {
@@ -86,13 +75,11 @@
 	function deleteChapter(chapterPath: string) {
 		// TODO: Implement chapter deletion
 		console.log("Deleting chapter:", chapterPath);
-		chapterMenuOpen = null;
 	}
 
 	function renameChapter(chapterPath: string) {
 		// TODO: Implement chapter renaming
 		console.log("Renaming chapter:", chapterPath);
-		chapterMenuOpen = null;
 	}
 </script>
 

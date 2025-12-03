@@ -160,6 +160,7 @@
 		{#if appState.selectedStory && appState.currentEditedFile}
 			<Tiptap
 				currentFile={appState.currentEditedFile}
+				fileType={fileInfo?.type}
 				onContentChange={(newContent, frontmatter, metadata) => {
 					if (appState.currentEditedFile && appState.selectedStory) {
 						appState.currentEditedFile.content = newContent;

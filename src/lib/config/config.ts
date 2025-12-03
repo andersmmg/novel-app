@@ -11,7 +11,8 @@ import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 
 export interface AppConfig {
 	edited: Date;
-	test_name: string;
+	chapterOpenPosition: "start" | "end";
+	noteOpenPosition: "start" | "end";
 	autosave: {
 		enabled: boolean;
 		intervalMinutes: number;
@@ -21,7 +22,8 @@ export interface AppConfig {
 const CONFIG_PATH = "config.yml";
 const DEFAULT_CONFIG: AppConfig = {
 	edited: new Date(),
-	test_name: "",
+	chapterOpenPosition: "end",
+	noteOpenPosition: "start",
 	autosave: {
 		enabled: true,
 		intervalMinutes: 5,

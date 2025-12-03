@@ -8,6 +8,7 @@
 	import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
 	import Input from "$lib/components/ui/input/input.svelte";
 	import { Label } from "$lib/components/ui/label";
+	import * as Select from "$lib/components/ui/select";
 	import { configStore, type AppConfig } from "$lib/config/config-store";
 	import { saveConfig, updateConfig } from "$lib/config/config-store.svelte";
 	import { SettingsIcon } from "@lucide/svelte";
@@ -104,6 +105,59 @@
 							</p>
 						</div>
 					{/if}
+				</CardContent>
+			</Card>
+			<Card>
+				<CardHeader>
+					<CardTitle>File Load Positions</CardTitle>
+					<CardDescription>
+						Where to place the cursor when opening a chapter or
+						note.
+					</CardDescription>
+				</CardHeader>
+				<CardContent class="space-y-4">
+					<div class="flex items-center gap-3">
+						<Label for="autosave-enabled">Notes</Label>
+						<Select.Root
+							type="single"
+							bind:value={config.noteOpenPosition}
+						>
+							<Select.Trigger
+								class="w-[180px]"
+								id="note-open-position"
+								><span
+									>{config.noteOpenPosition == "start"
+										? "Start"
+										: "End"}</span
+								></Select.Trigger
+							>
+							<Select.Content>
+								<Select.Item value="start">Start</Select.Item>
+								<Select.Item value="end">End</Select.Item>
+							</Select.Content>
+						</Select.Root>
+					</div>
+					<div class="flex items-center gap-3">
+						<Label for="autosave-enabled">Chapters</Label>
+						<Select.Root
+							type="single"
+							bind:value={config.chapterOpenPosition}
+						>
+							<Select.Trigger
+								class="w-[180px]"
+								id="chapter-open-position"
+								><span
+									>{config.chapterOpenPosition == "start"
+										? "Start"
+										: "End"}</span
+								></Select.Trigger
+							>
+							<Select.Content>
+								<Select.Item value="start">Start</Select.Item>
+								<Select.Item value="end">End</Select.Item>
+							</Select.Content>
+						</Select.Root>
+					</div>
 				</CardContent>
 			</Card>
 
