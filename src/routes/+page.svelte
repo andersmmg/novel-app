@@ -22,8 +22,10 @@
 	import { createEmptyStory } from "$lib/story";
 	import { saveStory } from "$lib/story/story-writer";
 	import type { StoryListItem } from "$lib/story/types";
+	import { formatWordCount } from "$lib/story/utils";
 	import BookOpenIcon from "@tabler/icons-svelte/icons/book";
 	import CalendarIcon from "@tabler/icons-svelte/icons/calendar";
+	import FileTextIcon from "@tabler/icons-svelte/icons/file-text";
 	import UserIcon from "@tabler/icons-svelte/icons/user";
 	import { BaseDirectory, exists, writeFile } from "@tauri-apps/plugin-fs";
 	import { info } from "@tauri-apps/plugin-log";
@@ -325,6 +327,17 @@
 								<div class="flex items-center gap-1">
 									<CalendarIcon class="size-3" />
 									<Time timestamp={story.edited} />
+								</div>
+							</div>
+
+							<div
+								class="flex items-center gap-4 text-sm text-muted-foreground"
+							>
+								<div class="flex items-center gap-1">
+									<FileTextIcon class="size-3" />
+									<span>
+										{formatWordCount(story.wordCount || 0)} words
+									</span>
 								</div>
 							</div>
 

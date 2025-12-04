@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { appState, saveCurrentStory } from "$lib/app-state.svelte";
 	import { Badge } from "$lib/components/ui/badge";
 	import { Button } from "$lib/components/ui/button";
-	import Time from "svelte-time";
 	import {
 		Card,
 		CardContent,
@@ -9,17 +9,13 @@
 		CardHeader,
 		CardTitle,
 	} from "$lib/components/ui/card";
+	import * as Field from "$lib/components/ui/field/index.js";
 	import { Input } from "$lib/components/ui/input";
 	import { Textarea } from "$lib/components/ui/textarea";
-	import * as Field from "$lib/components/ui/field/index.js";
-	import {
-		appState,
-		saveCurrentStory,
-		selectStoryById,
-	} from "$lib/app-state.svelte";
+	import { formatWordCount } from "$lib/story/utils";
+	import { BookOpenIcon } from "@lucide/svelte";
 	import { onMount } from "svelte";
-	import { formatDate } from "$lib/utils";
-	import { BookOpenIcon, SettingsIcon } from "@lucide/svelte";
+	import Time from "svelte-time";
 
 	let isEditing = $state(false);
 	let titleInput = $state("");
@@ -32,6 +28,14 @@
 
 	// Calculate stats from the story data
 	const chapterCount = $derived(selectedStory?.chapters.length || 0);
+	const chapterWordCount = $derived.by(() => {
+		if (!selectedStory) return 0;
+		return selectedStory.getWordCount();
+	});
+	const notesWordCount = $derived.by(() => {
+		if (!selectedStory) return 0;
+		return selectedStory.getNotesWordCount();
+	});
 	const totalNotes = $derived.by(() => {
 		if (!selectedStory) return 0;
 		let count = selectedStory.rootNotes.length;
@@ -97,10 +101,6 @@
 		}
 		isEditing = false;
 	}
-
-	// TODO: Actual data
-	const wordCount = $derived("45.2k");
-	const pageCount = $derived("287");
 </script>
 
 <div class="container mx-auto p-6 space-y-6">
@@ -284,19 +284,29 @@
 								</div>
 							</div>
 							<div class="text-center p-3 bg-muted rounded-lg">
-								<div class="text-2xl font-bold text-primary">
-									{wordCount}
+								<div
+									class="text-2xl font-bold text-primary"
+									title={chapterWordCount > 1000
+										? chapterWordCount.toLocaleString()
+										: ""}
+								>
+									{formatWordCount(chapterWordCount)}
 								</div>
 								<div class="text-xs text-muted-foreground">
 									Words
 								</div>
 							</div>
 							<div class="text-center p-3 bg-muted rounded-lg">
-								<div class="text-2xl font-bold text-primary">
-									{pageCount}
+								<div
+									class="text-2xl font-bold text-primary"
+									title={notesWordCount > 1000
+										? notesWordCount.toLocaleString()
+										: ""}
+								>
+									{formatWordCount(notesWordCount)}
 								</div>
 								<div class="text-xs text-muted-foreground">
-									Pages
+									Note Words
 								</div>
 							</div>
 							<div class="text-center p-3 bg-muted rounded-lg">

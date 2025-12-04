@@ -86,6 +86,7 @@ export async function loadAvailableStories() {
 										: new Date(
 												metadata.edited || Date.now(),
 											),
+								wordCount: metadata.wordCount,
 								path: `${STORIES_DIR}/${entry.name}`,
 								id: entry.name,
 								isDirectory: false,

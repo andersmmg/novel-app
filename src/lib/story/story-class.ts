@@ -1,4 +1,5 @@
 import type { StoryFile, StoryFolder, StoryMetadata } from "./types";
+import { countWords } from "./utils";
 
 export class Story {
 	metadata: StoryMetadata;
@@ -17,14 +18,17 @@ export class Story {
 
 	addChapter(file: StoryFile): void {
 		this.chapters.push(file);
+		this.updateWordCount();
 	}
 
 	addRootNote(file: StoryFile): void {
 		this.rootNotes.push(file);
+		this.updateWordCount();
 	}
 
 	addNoteFolder(folder: StoryFolder): void {
 		this.notes.push(folder);
+		this.updateWordCount();
 	}
 
 	getChapterByPath(path: string): StoryFile | undefined {
@@ -71,7 +75,11 @@ export class Story {
 	}
 
 	updateChapter(path: string, updates: Partial<StoryFile>): boolean {
-		return this.updateFileInArray(this.chapters, path, updates);
+		const result = this.updateFileInArray(this.chapters, path, updates);
+		if (result) {
+			this.updateWordCount();
+		}
+		return result;
 	}
 
 	updateNote(path: string, updates: Partial<StoryFile>): boolean {
@@ -84,6 +92,7 @@ export class Story {
 				...this.rootNotes[rootNoteIndex],
 				...updates,
 			};
+			this.updateWordCount();
 			return true;
 		}
 
@@ -107,7 +116,10 @@ export class Story {
 		}
 
 		for (const folder of this.notes) {
-			if (updateInFolder(folder)) return true;
+			if (updateInFolder(folder)) {
+				this.updateWordCount();
+				return true;
+			}
 		}
 		return false;
 	}
@@ -126,7 +138,11 @@ export class Story {
 	}
 
 	deleteChapter(path: string): boolean {
-		return this.deleteFileFromArray(this.chapters, path);
+		const result = this.deleteFileFromArray(this.chapters, path);
+		if (result) {
+			this.updateWordCount();
+		}
+		return result;
 	}
 
 	deleteNote(path: string): boolean {
@@ -135,6 +151,7 @@ export class Story {
 		);
 		if (rootIndex !== -1) {
 			this.rootNotes.splice(rootIndex, 1);
+			this.updateWordCount();
 			return true;
 		}
 
@@ -157,9 +174,11 @@ export class Story {
 			if (folder.path === path) {
 				const folderIndex = this.notes.indexOf(folder);
 				this.notes.splice(folderIndex, 1);
+				this.updateWordCount();
 				return true;
 			}
 			if (deleteFromFolder(folder)) {
+				this.updateWordCount();
 				return true;
 			}
 		}
@@ -183,5 +202,45 @@ export class Story {
 			collectFilesFromFolder(folder);
 		}
 		return allFiles;
+	}
+
+	getWordCount(): number {
+		let totalWords = 0;
+
+		for (const chapter of this.chapters) {
+			totalWords += countWords(chapter.content);
+		}
+
+		return totalWords;
+	}
+
+	getNotesWordCount(): number {
+		let totalWords = 0;
+
+		for (const note of this.rootNotes) {
+			totalWords += countWords(note.content);
+		}
+
+		function countWordsInFolder(folder: StoryFolder): number {
+			let folderWords = 0;
+			for (const child of folder.children) {
+				if ("children" in child) {
+					folderWords += countWordsInFolder(child);
+				} else {
+					folderWords += countWords(child.content);
+				}
+			}
+			return folderWords;
+		}
+
+		for (const folder of this.notes) {
+			totalWords += countWordsInFolder(folder);
+		}
+
+		return totalWords;
+	}
+
+	updateWordCount(): void {
+		this.metadata.wordCount = this.getWordCount();
 	}
 }

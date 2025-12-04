@@ -12,6 +12,8 @@ import {
 export async function saveStory(story: Story): Promise<Blob> {
 	const zip = new JSZip();
 
+	story.updateWordCount();
+
 	if (story.metadata && Object.keys(story.metadata).length > 0) {
 		const updatedMetadata = {
 			...story.metadata,
@@ -79,7 +81,7 @@ export async function downloadStory(
 
 export function createEmptyStory(title?: string): Story {
 	const now = new Date();
-	return new Story(
+	const story = new Story(
 		{
 			title: title || "Untitled Story",
 			author: "",
@@ -87,9 +89,11 @@ export function createEmptyStory(title?: string): Story {
 			description: "",
 			created: now,
 			edited: now,
+			wordCount: 0,
 		},
 		`${nanoid()}.story`,
 	);
+	return story;
 }
 
 export function createChapter(title: string, content: string = ""): StoryFile {

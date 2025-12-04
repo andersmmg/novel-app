@@ -228,5 +228,7 @@ export async function readStoryFile(
 		story.addRootNote(rootNote);
 	}
 
+	story.updateWordCount();
+
 	return story;
 }

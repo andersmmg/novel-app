@@ -5,6 +5,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import {
 		addFrontmatterIfNeeded,
+		countWords,
 		separateFrontmatter,
 	} from "$lib/story/utils";
 	import Tiptap from "$lib/tiptap/tiptap.svelte";
@@ -27,6 +28,13 @@
 		}
 
 		return { type: "File", title, variant: "outline" as const };
+	});
+
+	const currentWordCount = $derived.by(() => {
+		if (!appState.currentEditedFile) {
+			return 0;
+		}
+		return countWords(appState.currentEditedFile.content || "");
 	});
 
 	function startEditingTitle() {
@@ -213,4 +221,25 @@
 			</div>
 		{/if}
 	</main>
+
+	{#if appState.currentEditedFile}
+		<footer
+			class="border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60"
+		>
+			<div class="container px-4 py-2">
+				<div
+					class="flex items-center justify-between text-sm text-muted-foreground"
+				>
+					<div class="flex items-center gap-4">
+						<div class="flex items-center gap-1">
+							<span class="text-foreground font-semibold">
+								{currentWordCount.toLocaleString()}
+							</span>
+							<span class="font-medium">words</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+	{/if}
 </div>

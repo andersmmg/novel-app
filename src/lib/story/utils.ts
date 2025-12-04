@@ -188,6 +188,30 @@ export function combineFrontmatter(
 }
 
 /**
+ * Counts words in text content, excluding frontmatter
+ */
+export function countWords(text: string): number {
+	const { content } = separateFrontmatter(text);
+	return content
+		.trim()
+		.split(/\s+/)
+		.filter((word) => word.length > 0).length;
+}
+
+/**
+ * Formats word count for display (e.g., 1500 -> "1.5k", 1500000 -> "1.5M")
+ */
+export function formatWordCount(count: number): string {
+	if (count < 1000) {
+		return count.toString();
+	} else if (count < 1000000) {
+		return `${(count / 1000).toFixed(1)}k`;
+	} else {
+		return `${(count / 1000000).toFixed(1)}M`;
+	}
+}
+
+/**
  * Sanitizes filename by removing invalid characters
  */
 export function sanitizeFilename(name: string): string {
