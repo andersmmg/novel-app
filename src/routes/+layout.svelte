@@ -80,7 +80,7 @@
 	class="min-h-[calc(100svh-2.25rem)] max-h-[calc(100svh-2.25rem)]"
 >
 	<AppSidebar />
-	<Sidebar.Inset class="w-full overflow-y-auto max-h-full border-r border-b">
+	<Sidebar.Inset class="w-full overflow-y-auto max-h-full border-t-0 border-l-0 border-b border-r">
 		{@render children?.()}
 	</Sidebar.Inset>
 </Sidebar.Provider>

@@ -149,8 +149,8 @@
 
 <Dialog.Root
 	bind:open={creatingStory}
-	onOpenChangeComplete={() => {
-		if (!creatingStory) {
+	onOpenChangeComplete={(isOpen) => {
+		if (!isOpen) {
 			titleInput = "";
 			authorInput = "";
 			genreInput = "";
@@ -275,15 +275,15 @@
 		</div>
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{#each stories as story (story.id)}
-				<div
-					role="button"
-					tabindex="0"
-					class="hover:shadow-md transition-shadow cursor-pointer"
-					onclick={() => handleCardClick(story)}
-					onkeydown={(e) =>
-						e.key === "Enter" && handleCardClick(story)}
-				>
-					<Card>
+				<div>
+					<Card
+						role="button"
+						tabindex={0}
+						class="hover:shadow-md transition-shadow cursor-pointer"
+						onclick={() => handleCardClick(story)}
+						onkeydown={(e) =>
+							e.key === "Enter" && handleCardClick(story)}
+					>
 						<CardHeader>
 							<div class="flex items-start justify-between">
 								<div class="flex-1 min-w-0">

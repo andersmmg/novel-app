@@ -168,6 +168,7 @@
 											>Description</Field.Label
 										>
 										<Textarea
+											class="bg-background"
 											id="description"
 											bind:value={descriptionInput}
 											placeholder="A short description of your story..."

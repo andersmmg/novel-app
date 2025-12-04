@@ -250,9 +250,7 @@
 			<ButtonGroup.Root class="ms-auto">
 				<Button
 					size="sm"
-					variant={$config?.editor.expandWidth
-						? "default"
-						: "outline"}
+					variant="outline"
 					onclick={() => adjustFontsize(-1)}><MinusIcon /></Button
 				>
 				<Button
@@ -264,9 +262,7 @@
 				>
 				<Button
 					size="sm"
-					variant={$config?.editor.expandWidth
-						? "default"
-						: "outline"}
+					variant="outline"
 					onclick={() => adjustFontsize(1)}><PlusIcon /></Button
 				>
 			</ButtonGroup.Root>
@@ -285,12 +281,15 @@
 
 	<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions (only a mouse ux improvement) -->
 	<div class="max-h-full flex flex-col overflow-y-auto w-full flex-1">
-		<div class="mx-auto h-full">
+		<div class="mx-auto h-full"
+			class:min-w-full={$config?.editor.expandWidth}>
 			<div
 				bind:this={element}
 				class="min-h-full w-full prose **:text-foreground cursor-text"
-				class:md:max-w-none={!$config?.editor.expandWidth}
-				class:lg:max-w-200={!$config?.editor.expandWidth}
+				class:max-lg:max-w-none={!$config?.editor.expandWidth}
+				class:lg:min-w-190={!$config?.editor.expandWidth}
+				class:lg:max-w-190={!$config?.editor.expandWidth}
+				class:xl:min-w-250={!$config?.editor.expandWidth}
 				class:xl:max-w-250={!$config?.editor.expandWidth}
 				class:max-w-none={$config?.editor.expandWidth}
 				style="font-family: var(--font-editor); font-size: {$config
