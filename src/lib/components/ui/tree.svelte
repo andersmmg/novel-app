@@ -42,7 +42,10 @@
 		if ("children" in item) {
 			return;
 		} else {
-			setCurrentEditedFile(item as StoryFile);
+			const fileItem = item as StoryFile;
+			const freshFile = appState.selectedStory?.findNoteByPath(fileItem.path) as StoryFile;
+			const fileToEdit = freshFile || fileItem;
+			setCurrentEditedFile(fileToEdit);
 			goto(`/editor`);
 		}
 	}

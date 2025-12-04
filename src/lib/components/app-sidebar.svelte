@@ -49,11 +49,8 @@
 		const freshChapter = appState.selectedStory?.getChapterByPath(
 			chapter.path,
 		);
-		if (freshChapter) {
-			setCurrentEditedFile(freshChapter);
-		} else {
-			setCurrentEditedFile(chapter);
-		}
+		const fileToEdit = freshChapter || chapter;
+		setCurrentEditedFile(fileToEdit);
 		goto("/editor");
 	}
 
