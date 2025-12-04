@@ -108,6 +108,8 @@
 					class: "px-4 outline-none min-h-full max-h-full overflow-y-auto",
 					style: "min-height: 100%;",
 				},
+				scrollMargin: 80,
+				scrollThreshold: 80,
 			},
 			content: initialContent,
 			contentType: "markdown",
@@ -294,7 +296,7 @@
 		>
 			<div
 				bind:this={element}
-				class="min-h-full w-full prose **:text-foreground cursor-text"
+				class="min-h-full w-full prose **:text-foreground cursor-text pb-10"
 				class:max-lg:max-w-none={!$config?.editor.expandWidth}
 				class:lg:min-w-190={!$config?.editor.expandWidth}
 				class:lg:max-w-190={!$config?.editor.expandWidth}
