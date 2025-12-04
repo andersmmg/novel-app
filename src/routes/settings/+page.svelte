@@ -217,4 +217,7 @@
 			</Card>
 		</div>
 	{/if}
+	<div class="text-sm text-muted-foreground mt-2 cursor-default"
+		>v{__APP_VERSION__}</div
+	>
 </div>

@@ -17,6 +17,7 @@
 	import { ModeWatcher, setMode } from "mode-watcher";
 	import { onMount } from "svelte";
 	import "../app.css";
+    import { ConfirmDeleteDialog } from "$lib/components/confirm-delete";
 
 	let { children } = $props();
 
@@ -73,6 +74,7 @@
 
 <ModeWatcher />
 <Toaster />
+<ConfirmDeleteDialog />
 <AppMenubar bind:sidebarOpen />
 
 <Sidebar.Provider

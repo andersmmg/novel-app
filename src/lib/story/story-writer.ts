@@ -4,9 +4,8 @@ import { stringify as stringifyYaml } from "yaml";
 import { Story } from "./story-class";
 import type { StoryFile, StoryFolder } from "./types";
 import {
-	addFrontmatterIfNeeded,
-	convertDatesToStrings,
-	sanitizeFilename,
+    addFrontmatterIfNeeded,
+    convertDatesToStrings
 } from "./utils";
 
 export async function saveStory(story: Story): Promise<Blob> {
@@ -97,7 +96,7 @@ export function createEmptyStory(title?: string): Story {
 }
 
 export function createChapter(title: string, content: string = ""): StoryFile {
-	const filename = sanitizeFilename(title) + ".md";
+	const filename = nanoid() + ".md";
 	const path = `chapters/${filename}`;
 	const now = new Date();
 
@@ -115,7 +114,7 @@ export function createChapter(title: string, content: string = ""): StoryFile {
 }
 
 export function createNote(title: string, content: string = ""): StoryFile {
-	const filename = sanitizeFilename(title) + ".md";
+	const filename = nanoid() + ".md";
 	const path = `notes/${filename}`;
 	const now = new Date();
 
@@ -133,7 +132,7 @@ export function createNote(title: string, content: string = ""): StoryFile {
 }
 
 export function createNoteFolder(title: string, name?: string): StoryFolder {
-	const folderName = name || sanitizeFilename(title);
+	const folderName = name || nanoid();
 	const path = `notes/${folderName}/`;
 
 	return {

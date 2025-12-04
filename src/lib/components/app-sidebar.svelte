@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import {
-	    appState,
-	    selectStoryById,
-	    setCurrentEditedFile
+		appState,
+		selectStoryById,
+		setCurrentEditedFile,
 	} from "$lib/app-state.svelte";
+	import { confirmDelete } from "$lib/components/confirm-delete";
 	import * as Collapsible from "$lib/components/ui/collapsible";
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
@@ -12,14 +13,14 @@
 	import { createChapter } from "$lib/story/story-writer";
 	import type { StoryFile } from "$lib/story/types";
 	import {
-	    Book,
-	    BookOpenIcon,
-	    ChevronDownIcon,
-	    EllipsisIcon,
-	    FileText,
-	    LibraryIcon,
-	    PlusIcon,
-	    Settings,
+		Book,
+		BookOpenIcon,
+		ChevronDownIcon,
+		EllipsisIcon,
+		FileText,
+		LibraryIcon,
+		PlusIcon,
+		Settings,
 	} from "@lucide/svelte";
 
 	const chapters = $derived.by(() => {
@@ -85,8 +86,24 @@
 	}
 
 	function deleteChapter(chapterPath: string) {
-		// TODO: Implement chapter deletion
-		console.log("Deleting chapter:", chapterPath);
+		if (!appState.selectedStory) {
+			console.error("No story selected");
+			return;
+		}
+
+		const success = appState.selectedStory.deleteChapter(chapterPath);
+
+		if (success) {
+			const currentStory = appState.selectedStory;
+			appState.selectedStory = null;
+			appState.selectedStory = currentStory;
+
+			appState.isDirty = true;
+
+			if (appState.currentEditedFile?.path === chapterPath) {
+				appState.currentEditedFile = null;
+			}
+		}
 	}
 
 	function renameChapter(chapterPath: string) {
@@ -231,10 +248,23 @@
 													<span>Rename</span>
 												</DropdownMenu.Item>
 												<DropdownMenu.Item
-													onclick={() =>
-														deleteChapter(
-															chapter.path,
-														)}
+													onclick={() => {
+														confirmDelete({
+															title: `Delete ${chapter.title}`,
+															description:
+																`Are you sure you want to delete this chapter?`,
+															input: {
+																confirmationText: chapter.title || '',
+															},
+															onConfirm:
+																async () => {
+																	deleteChapter(
+																		chapter.path,
+																	);
+																	return true;
+																},
+														});
+													}}
 												>
 													<span>Delete</span>
 												</DropdownMenu.Item>
@@ -311,13 +341,6 @@
 						</a>
 					{/snippet}
 				</Sidebar.MenuButton>
-			</Sidebar.MenuItem>
-		</Sidebar.Menu>
-		<Sidebar.Menu>
-			<Sidebar.MenuItem>
-				<span class="text-xs text-muted-foreground p-2 cursor-default"
-					>v{__APP_VERSION__}</span
-				>
 			</Sidebar.MenuItem>
 		</Sidebar.Menu>
 	</Sidebar.Footer>
