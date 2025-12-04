@@ -8,19 +8,25 @@
 	import AppSidebar from "$lib/components/app-sidebar.svelte";
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import { Toaster } from "$lib/components/ui/sonner";
-	import { saveConfig } from "$lib/config";
+	import { saveConfig, config } from "$lib/config";
 	import { configStore } from "$lib/config/config-store";
 	import { applyFontSettings } from "$lib/fonts/font-settings";
 	import { loadTheme } from "$lib/themes/theme-loader";
 	import { Window } from "@tauri-apps/api/window";
 	import { error, info } from "@tauri-apps/plugin-log";
-	import { ModeWatcher } from "mode-watcher";
+	import { ModeWatcher, setMode } from "mode-watcher";
 	import { onMount } from "svelte";
 	import "../app.css";
 
 	let { children } = $props();
 
 	let sidebarOpen = $state(true);
+
+	config.subscribe((value) => {
+		if (value?.themeMode) {
+			setMode(value.themeMode);
+		}
+	});
 
 	onMount(async () => {
 		// Load theme and fonts from config

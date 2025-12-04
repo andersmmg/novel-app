@@ -18,6 +18,7 @@ export interface AppConfig {
 		intervalMinutes: number;
 	};
 	theme: string;
+	themeMode: "dark" | "light" | "system";
 	fonts: {
 		ui: string;
 		editor: string;
@@ -34,10 +35,11 @@ const DEFAULT_CONFIG: AppConfig = {
 		intervalMinutes: 5,
 	},
 	theme: "default",
+	themeMode: "system",
 	fonts: {
 		ui: "system-ui",
-		editor: "noto-serif"
-	}
+		editor: "noto-serif",
+	},
 };
 
 export async function loadConfig(): Promise<AppConfig> {

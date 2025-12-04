@@ -155,7 +155,7 @@
 						<Sidebar.MenuItem>
 							<Sidebar.MenuButton>
 								{#snippet child({ props })}
-									<a href="/story" {...props} use:active>
+									<a href="/story" {...props}>
 										<BookOpenIcon class="size-4" />
 										<span>Story Overview</span>
 									</a>

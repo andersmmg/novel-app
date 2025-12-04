@@ -76,34 +76,6 @@
 				</Menubar.Item>
 			</Menubar.Content>
 		</Menubar.Menu>
-		<Menubar.Menu>
-			<Menubar.Trigger>View</Menubar.Trigger>
-			<Menubar.Content>
-				<Menubar.Sub>
-					<Menubar.SubTrigger>Theme Mode</Menubar.SubTrigger>
-					<Menubar.SubContent>
-						<Menubar.CheckboxItem
-							value="light"
-							onclick={() => setMode("light")}
-							checked={mode.current === "light"}
-							>Light</Menubar.CheckboxItem
-						>
-						<Menubar.CheckboxItem
-							value="dark"
-							onclick={() => setMode("dark")}
-							checked={mode.current === "dark"}
-							>Dark</Menubar.CheckboxItem
-						>
-						<Menubar.CheckboxItem
-							value="system"
-							onclick={() => resetMode()}
-							checked={mode.current === undefined}
-							>System</Menubar.CheckboxItem
-						>
-					</Menubar.SubContent>
-				</Menubar.Sub>
-			</Menubar.Content>
-		</Menubar.Menu>
 		{#if appState.selectedStory}
 			<span class="ml-2 flex items-center gap-2 pointer-none">
 				<span

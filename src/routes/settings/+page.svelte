@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { startAutosave } from "$lib/autosave";
+	import FontSelector from "$lib/components/font-selector.svelte";
+	import ThemeSelector from "$lib/components/theme-selector.svelte";
 	import Button from "$lib/components/ui/button/button.svelte";
 	import CardContent from "$lib/components/ui/card/card-content.svelte";
 	import CardDescription from "$lib/components/ui/card/card-description.svelte";
@@ -9,45 +12,23 @@
 	import Input from "$lib/components/ui/input/input.svelte";
 	import { Label } from "$lib/components/ui/label";
 	import * as Select from "$lib/components/ui/select";
-	import { configStore, type AppConfig } from "$lib/config/config-store";
-	import { saveConfig, updateConfig } from "$lib/config/config-store.svelte";
-	import ThemeSelector from "$lib/components/theme-selector.svelte";
-	import FontSelector from "$lib/components/font-selector.svelte";
+	import { config, type AppConfig } from "$lib/config/config-store";
 	import { SettingsIcon } from "@lucide/svelte";
-	import { onMount } from "svelte";
-	import { toast } from "svelte-sonner";
-
-	let config: AppConfig | null = $state(null);
-	let isLoading = $state(true);
-	let isSaving = $state(false);
-
-	onMount(async () => {
-		config = await configStore.getConfig();
-		isLoading = false;
-	});
-
-	async function handleSave() {
-		if (!config) return;
-
-		isSaving = true;
-		try {
-			await updateConfig(config);
-			await saveConfig();
-			toast.success("Settings saved!");
-		} catch (error) {
-			console.error("Failed to save config:", error);
-		} finally {
-			isSaving = false;
-		}
-	}
 
 	function handleIntervalChange(event: Event) {
+		if (!$config) return;
 		const target = event.target as HTMLInputElement;
 		if (config && target.value) {
 			const value = parseInt(target.value);
 			if (!isNaN(value) && value > 0) {
-				config.autosave.intervalMinutes = value;
+				$config.autosave.intervalMinutes = value;
 			}
+		}
+	}
+
+	function setThemeMode(mode: AppConfig["themeMode"]) {
+		if ($config) {
+			$config.themeMode = mode;
 		}
 	}
 </script>
@@ -58,11 +39,7 @@
 		Settings
 	</h1>
 
-	{#if isLoading}
-		<div class="flex items-center justify-center p-8">
-			<div class="text-muted-foreground">Loading settings...</div>
-		</div>
-	{:else if config}
+	{#if $config}
 		<div class="space-y-2">
 			<Card>
 				<CardHeader>
@@ -76,12 +53,15 @@
 					<div class="flex items-center gap-3">
 						<Checkbox
 							id="autosave-enabled"
-							bind:checked={config.autosave.enabled}
+							bind:checked={$config.autosave.enabled}
+							onCheckedChange={() => {
+								startAutosave();
+							}}
 						/>
 						<Label for="autosave-enabled">Enable autosave</Label>
 					</div>
 
-					{#if config.autosave.enabled}
+					{#if $config.autosave.enabled}
 						<div class="space-y-2">
 							<label
 								for="autosave-interval"
@@ -94,13 +74,13 @@
 								type="number"
 								min="1"
 								max="60"
-								value={config.autosave.intervalMinutes}
+								value={$config.autosave.intervalMinutes}
 								onchange={handleIntervalChange}
 								placeholder="Enter minutes between autosaves"
 							/>
 							<p class="text-xs text-muted-foreground">
-								Story will be automatically saved every {config
-									.autosave.intervalMinutes} minute{config
+								Story will be automatically saved every {$config
+									.autosave.intervalMinutes} minute{$config
 									.autosave.intervalMinutes !== 1
 									? "s"
 									: ""}
@@ -120,6 +100,46 @@
 					<ThemeSelector />
 				</CardContent>
 			</Card>
+
+			<Card>
+				<CardHeader>
+					<CardTitle>Theme Mode</CardTitle>
+					<CardDescription>
+						Choose between dark and light modes.
+					</CardDescription>
+				</CardHeader>
+				<CardContent class="space-y-6">
+					<div class="flex items-center gap-2">
+						<Button
+							variant={$config.themeMode === "light"
+								? "default"
+								: "outline"}
+							size="sm"
+							onclick={() => setThemeMode("light")}
+						>
+							Light
+						</Button>
+						<Button
+							variant={$config.themeMode === "dark"
+								? "default"
+								: "outline"}
+							size="sm"
+							onclick={() => setThemeMode("dark")}
+						>
+							Dark
+						</Button>
+						<Button
+							variant={$config.themeMode === "system"
+								? "default"
+								: "outline"}
+							size="sm"
+							onclick={() => setThemeMode("system")}
+						>
+							System
+						</Button>
+					</div>
+				</CardContent>
+			</Card>
 			<Card>
 				<CardHeader>
 					<CardTitle>Fonts</CardTitle>
@@ -132,12 +152,12 @@
 						<FontSelector
 							category="ui"
 							label="UI Font"
-							bind:value={config.fonts.ui}
+							bind:value={$config.fonts.ui}
 						/>
 						<FontSelector
 							category="editor"
 							label="Editor Font"
-							bind:value={config.fonts.editor}
+							bind:value={$config.fonts.editor}
 						/>
 					{/if}
 				</CardContent>
@@ -155,13 +175,13 @@
 						<Label for="autosave-enabled">Notes</Label>
 						<Select.Root
 							type="single"
-							bind:value={config.noteOpenPosition}
+							bind:value={$config.noteOpenPosition}
 						>
 							<Select.Trigger
 								class="w-[180px]"
 								id="note-open-position"
 								><span
-									>{config.noteOpenPosition == "start"
+									>{$config.noteOpenPosition == "start"
 										? "Start"
 										: "End"}</span
 								></Select.Trigger
@@ -176,13 +196,13 @@
 						<Label for="autosave-enabled">Chapters</Label>
 						<Select.Root
 							type="single"
-							bind:value={config.chapterOpenPosition}
+							bind:value={$config.chapterOpenPosition}
 						>
 							<Select.Trigger
 								class="w-[180px]"
 								id="chapter-open-position"
 								><span
-									>{config.chapterOpenPosition == "start"
+									>{$config.chapterOpenPosition == "start"
 										? "Start"
 										: "End"}</span
 								></Select.Trigger
@@ -195,12 +215,6 @@
 					</div>
 				</CardContent>
 			</Card>
-
-			<div class="flex justify-end">
-				<Button onclick={handleSave} disabled={isSaving}>
-					{isSaving ? "Saving..." : "Save Settings"}
-				</Button>
-			</div>
 		</div>
 	{/if}
 </div>
