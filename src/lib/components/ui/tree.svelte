@@ -2,7 +2,7 @@
 	import { goto } from "$app/navigation";
 	import { appState, setCurrentEditedFile } from "$lib/app-state.svelte.js";
 	import * as Collapsible from "$lib/components/ui/collapsible";
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+	import * as Sidebar from "$lib/components/ui/sidebar";
 	import type { StoryFile, StoryFolder } from "$lib/story/types";
 	import { FileText, Folder, FolderOpen } from "@lucide/svelte";
 	import TreeSelf from "./tree.svelte";
@@ -43,7 +43,9 @@
 			return;
 		} else {
 			const fileItem = item as StoryFile;
-			const freshFile = appState.selectedStory?.findNoteByPath(fileItem.path) as StoryFile;
+			const freshFile = appState.selectedStory?.findNoteByPath(
+				fileItem.path,
+			) as StoryFile;
 			const fileToEdit = freshFile || fileItem;
 			setCurrentEditedFile(fileToEdit);
 			goto(`/editor`);

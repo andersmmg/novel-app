@@ -9,7 +9,7 @@
 		CardHeader,
 		CardTitle,
 	} from "$lib/components/ui/card";
-	import * as Field from "$lib/components/ui/field/index.js";
+	import * as Field from "$lib/components/ui/field";
 	import { Input } from "$lib/components/ui/input";
 	import { Textarea } from "$lib/components/ui/textarea";
 	import { formatWordCount } from "$lib/story/utils";

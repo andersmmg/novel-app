@@ -6,7 +6,7 @@
 		selectStoryById,
 	} from "$lib/app-state.svelte";
 	import { Badge } from "$lib/components/ui/badge";
-	import { Button } from "$lib/components/ui/button/index.js";
+	import { Button } from "$lib/components/ui/button";
 	import {
 		Card,
 		CardContent,
@@ -14,10 +14,10 @@
 		CardHeader,
 		CardTitle,
 	} from "$lib/components/ui/card";
-	import * as Dialog from "$lib/components/ui/dialog/index.js";
-	import * as Empty from "$lib/components/ui/empty/index.js";
-	import * as Field from "$lib/components/ui/field/index.js";
-	import { Input } from "$lib/components/ui/input/index.js";
+	import * as Dialog from "$lib/components/ui/dialog";
+	import * as Empty from "$lib/components/ui/empty";
+	import * as Field from "$lib/components/ui/field";
+	import { Input } from "$lib/components/ui/input";
 	import { Textarea } from "$lib/components/ui/textarea";
 	import { createEmptyStory } from "$lib/story";
 	import { saveStory } from "$lib/story/story-writer";
