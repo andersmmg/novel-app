@@ -23,6 +23,10 @@ export interface AppConfig {
 		ui: string;
 		editor: string;
 	};
+	editor: {
+		expandWidth: boolean;
+		fontSize: number;
+	};
 }
 
 const CONFIG_PATH = "config.yml";
@@ -39,6 +43,10 @@ const DEFAULT_CONFIG: AppConfig = {
 	fonts: {
 		ui: "system-ui",
 		editor: "noto-serif",
+	},
+	editor: {
+		expandWidth: false,
+		fontSize: 16,
 	},
 };
 

@@ -11,7 +11,10 @@
 		Heading1Icon,
 		Heading2Icon,
 		ItalicIcon,
+		MinusIcon,
 		Pilcrow,
+		PlusIcon,
+		UnfoldHorizontalIcon,
 	} from "@lucide/svelte";
 	import { Editor } from "@tiptap/core";
 	import { Placeholder } from "@tiptap/extensions/placeholder";
@@ -132,6 +135,20 @@
 		focusOpenPosition();
 	});
 
+	function toggleExpandWidth() {
+		if (!$config || !$config.editor) return;
+		$config.editor.expandWidth = !$config.editor.expandWidth;
+	}
+
+	function adjustFontsize(value: number) {
+		if (!$config || !$config.editor) return;
+		$config.editor.fontSize += value;
+		$config.editor.fontSize = Math.max(
+			10,
+			Math.min(40, $config.editor.fontSize),
+		);
+	}
+
 	onDestroy(() => {
 		editorState.editor?.destroy();
 	});
@@ -229,19 +246,62 @@
 					><ArrowDownToLine /></Button
 				>
 			</ButtonGroup.Root>
+			<!-- Font Size -->
+			<ButtonGroup.Root class="ms-auto">
+				<Button
+					size="sm"
+					variant={$config?.editor.expandWidth
+						? "default"
+						: "outline"}
+					onclick={() => adjustFontsize(-1)}><MinusIcon /></Button
+				>
+				<Button
+					size="sm"
+					variant="outline"
+					class="pointer-events-none font-mono"
+					onclick={toggleExpandWidth}
+					>{$config?.editor.fontSize}</Button
+				>
+				<Button
+					size="sm"
+					variant={$config?.editor.expandWidth
+						? "default"
+						: "outline"}
+					onclick={() => adjustFontsize(1)}><PlusIcon /></Button
+				>
+			</ButtonGroup.Root>
+			<!-- View -->
+			<ButtonGroup.Root>
+				<Button
+					size="sm"
+					variant={$config?.editor.expandWidth
+						? "default"
+						: "outline"}
+					onclick={toggleExpandWidth}><UnfoldHorizontalIcon /></Button
+				>
+			</ButtonGroup.Root>
 		</div>
 	{/if}
 
 	<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions (only a mouse ux improvement) -->
-	<div
-		bind:this={element}
-		class="flex-1 min-h-[400px] w-full prose **:text-foreground cursor-text max-w-none"
-		style="font-family: var(--font-editor);"
-		onmouseup={() => {
-			if (editorState.editor) {
-				if (!editorState.editor.isFocused)
-					editorState.editor.chain().focus("end").run();
-			}
-		}}
-	></div>
+	<div class="max-h-full flex flex-col overflow-y-auto w-full flex-1">
+		<div class="mx-auto h-full">
+			<div
+				bind:this={element}
+				class="min-h-full w-full prose **:text-foreground cursor-text"
+				class:md:max-w-none={!$config?.editor.expandWidth}
+				class:lg:max-w-200={!$config?.editor.expandWidth}
+				class:xl:max-w-250={!$config?.editor.expandWidth}
+				class:max-w-none={$config?.editor.expandWidth}
+				style="font-family: var(--font-editor); font-size: {$config
+					?.editor.fontSize}px;"
+				onmouseup={() => {
+					if (editorState.editor) {
+						if (!editorState.editor.isFocused)
+							editorState.editor.chain().focus("end").run();
+					}
+				}}
+			></div>
+		</div>
+	</div>
 </div>
