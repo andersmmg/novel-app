@@ -12,6 +12,9 @@
 
 	let titleInput = $state<HTMLInputElement>();
 	let isEditingTitle = $state(false);
+	let debouncedWordCount = $state(0);
+	let wordCountTimeout: ReturnType<typeof setTimeout> | undefined;
+	let lastFilePath = $state<string | null>(null);
 
 	const fileInfo = $derived.by(() => {
 		if (!appState.currentEditedFile) {
@@ -30,11 +33,27 @@
 		return { type: "File", title, variant: "outline" as const };
 	});
 
-	const currentWordCount = $derived.by(() => {
-		if (!appState.currentEditedFile) {
-			return 0;
+	$effect(() => {
+		const currentFile = appState.currentEditedFile;
+		const currentFilePath = currentFile?.path || null;
+		const content = currentFile?.content || "";
+
+		if (!currentFile) {
+			debouncedWordCount = 0;
+			lastFilePath = null;
+			return;
 		}
-		return countWords(appState.currentEditedFile.content || "");
+
+		if (lastFilePath !== currentFilePath) {
+			lastFilePath = currentFilePath;
+			debouncedWordCount = countWords(content);
+			return;
+		}
+
+		clearTimeout(wordCountTimeout);
+		wordCountTimeout = setTimeout(() => {
+			debouncedWordCount = countWords(content);
+		}, 200);
 	});
 
 	function startEditingTitle() {
@@ -233,7 +252,7 @@
 					<div class="flex items-center gap-4">
 						<div class="flex items-center gap-1">
 							<span class="text-foreground font-semibold">
-								{currentWordCount.toLocaleString()}
+								{debouncedWordCount.toLocaleString()}
 							</span>
 							<span class="font-medium">words</span>
 						</div>

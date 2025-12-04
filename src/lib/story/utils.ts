@@ -1,6 +1,15 @@
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 import type { StoryMetadata } from "./types";
 
+const frontmatterCache = new Map<
+	string,
+	{
+		frontmatter: string;
+		content: string;
+		metadata: any;
+	}
+>();
+
 /**
  * Converts string dates in objects to Date instances
  */
@@ -57,33 +66,25 @@ export function convertDatesToStrings(obj: any): any {
  * Extracts title from content with frontmatter or YAML
  */
 export function extractTitle(content: string): string {
-	console.log("extractTitle: Input content:", content);
 	const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
-	console.log("extractTitle: Frontmatter match:", frontmatterMatch);
 	if (frontmatterMatch) {
 		const frontmatter = frontmatterMatch[1];
-		console.log("extractTitle: Frontmatter content:", frontmatter);
 		const titleMatch = frontmatter.match(/^title:\s*["']?(.+?)["']?\s*$/m);
-		console.log("extractTitle: Title match:", titleMatch);
 		if (titleMatch) {
 			const title = titleMatch[1].trim();
-			console.log("extractTitle: Found title in frontmatter:", title);
 			return title;
 		}
 	}
 
 	try {
 		const yamlData = parseYaml(content);
-		console.log("extractTitle: Parsed YAML data:", yamlData);
 		if (yamlData?.title) {
-			console.log("extractTitle: Found title in YAML:", yamlData.title);
 			return yamlData.title;
 		}
 	} catch (e) {
-		console.log("extractTitle: YAML parse error:", e);
+		// YAML parse error, continue
 	}
 
-	console.log("extractTitle: No title found, returning empty string");
 	return "";
 }
 
@@ -136,14 +137,26 @@ export function addFrontmatterIfNeeded(file: {
 }
 
 /**
- * Separates frontmatter from content
+ * Separates frontmatter from content with caching
  */
 export function separateFrontmatter(content: string): {
 	frontmatter: string;
 	content: string;
 	metadata: any;
 } {
+	// Check cache first
+	const cached = frontmatterCache.get(content);
+	if (cached) {
+		return cached;
+	}
+
 	const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
+
+	let result: {
+		frontmatter: string;
+		content: string;
+		metadata: any;
+	};
 
 	if (frontmatterMatch) {
 		try {
@@ -151,27 +164,38 @@ export function separateFrontmatter(content: string): {
 			const cleanContent = content
 				.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, "")
 				.trim();
-			return {
+			result = {
 				frontmatter: frontmatterMatch[1],
 				content: cleanContent,
 				metadata,
 			};
 		} catch (e) {
 			// If YAML parsing fails, treat as plain content
-			return {
+			result = {
 				frontmatter: "",
 				content: content.trim(),
 				metadata: {},
 			};
 		}
+	} else {
+		// No frontmatter found
+		result = {
+			frontmatter: "",
+			content: content.trim(),
+			metadata: {},
+		};
 	}
 
-	// No frontmatter found
-	return {
-		frontmatter: "",
-		content: content.trim(),
-		metadata: {},
-	};
+	// Cache the result (limit cache size to prevent memory issues)
+	if (frontmatterCache.size > 100) {
+		const firstKey = frontmatterCache.keys().next().value;
+		if (firstKey) {
+			frontmatterCache.delete(firstKey);
+		}
+	}
+	frontmatterCache.set(content, result);
+
+	return result;
 }
 
 /**
@@ -192,10 +216,8 @@ export function combineFrontmatter(
  */
 export function countWords(text: string): number {
 	const { content } = separateFrontmatter(text);
-	return content
-		.trim()
-		.split(/\s+/)
-		.filter((word) => word.length > 0).length;
+	const matches = content.match(/\b\w+\b/g);
+	return matches ? matches.length : 0;
 }
 
 /**

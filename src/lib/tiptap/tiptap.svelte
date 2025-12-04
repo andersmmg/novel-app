@@ -39,6 +39,7 @@
 	let element = $state<HTMLElement>();
 	let editorState = $state({ editor: null as Editor | null });
 	let previousFileId = $state<string | null>(null);
+	let updateTimeout: ReturnType<typeof setTimeout> | undefined;
 
 	$effect(() => {
 		if (!editorState.editor) return;
@@ -47,7 +48,6 @@
 		const currentFileChanged = previousFileId !== currentFileId;
 
 		if (currentFileChanged) {
-			console.log("Tiptap: File changed, updating content");
 			previousFileId = currentFileId;
 
 			// Separate frontmatter from content
@@ -116,17 +116,23 @@
 			},
 			onUpdate: ({ editor }) => {
 				if (onContentChange && currentFile) {
-					const newContent = editor.getMarkdown();
-					const { frontmatter, metadata } = separateFrontmatter(
-						currentFile.content || "",
-					);
+					clearTimeout(updateTimeout);
+					updateTimeout = setTimeout(() => {
+						const newContent = editor.getMarkdown();
+						const { frontmatter, metadata } = separateFrontmatter(
+							currentFile.content || "",
+						);
 
-					// Update with new content but preserve existing frontmatter
-					const updatedFullContent = combineFrontmatter(
-						frontmatter,
-						newContent,
-					);
-					onContentChange(updatedFullContent, frontmatter, metadata);
+						const updatedFullContent = combineFrontmatter(
+							frontmatter,
+							newContent,
+						);
+						onContentChange(
+							updatedFullContent,
+							frontmatter,
+							metadata,
+						);
+					}, 200);
 				}
 			},
 		});
@@ -150,6 +156,7 @@
 	}
 
 	onDestroy(() => {
+		clearTimeout(updateTimeout);
 		editorState.editor?.destroy();
 	});
 </script>
@@ -281,8 +288,10 @@
 
 	<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions (only a mouse ux improvement) -->
 	<div class="max-h-full flex flex-col overflow-y-auto w-full flex-1">
-		<div class="mx-auto h-full"
-			class:min-w-full={$config?.editor.expandWidth}>
+		<div
+			class="mx-auto h-full"
+			class:min-w-full={$config?.editor.expandWidth}
+		>
 			<div
 				bind:this={element}
 				class="min-h-full w-full prose **:text-foreground cursor-text"
