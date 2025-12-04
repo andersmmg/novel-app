@@ -1,25 +1,25 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { active } from "$lib/actions/active.svelte";
 	import {
-		appState,
-		selectStoryById,
-		setCurrentEditedFile,
+	    appState,
+	    selectStoryById,
+	    setCurrentEditedFile
 	} from "$lib/app-state.svelte";
 	import * as Collapsible from "$lib/components/ui/collapsible";
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import Tree from "$lib/components/ui/tree.svelte";
+	import { createChapter } from "$lib/story/story-writer";
 	import type { StoryFile } from "$lib/story/types";
 	import {
-		Book,
-		BookOpenIcon,
-		ChevronDownIcon,
-		EllipsisIcon,
-		FileText,
-		LibraryIcon,
-		PlusIcon,
-		Settings,
+	    Book,
+	    BookOpenIcon,
+	    ChevronDownIcon,
+	    EllipsisIcon,
+	    FileText,
+	    LibraryIcon,
+	    PlusIcon,
+	    Settings,
 	} from "@lucide/svelte";
 
 	const chapters = $derived.by(() => {
@@ -54,9 +54,24 @@
 		goto("/editor");
 	}
 
-	function addChapter() {
-		// TODO: Implement chapter creation
-		console.log("Adding new chapter to story:", appState.selectedStory);
+	async function addChapter() {
+		if (!appState.selectedStory) {
+			console.error("No story selected");
+			return;
+		}
+
+		const newChapter = createChapter("Untitled Chapter");
+		appState.selectedStory.addChapter(newChapter);
+
+		// Force reactive update
+		const currentStory = appState.selectedStory;
+		appState.selectedStory = null;
+		appState.selectedStory = currentStory;
+
+		appState.isDirty = true;
+
+		setCurrentEditedFile(newChapter);
+		goto("/editor");
 	}
 
 	async function selectStory(storyId: string) {
@@ -228,7 +243,7 @@
 									</Sidebar.MenuItem>
 								{/each}
 								<Sidebar.MenuItem class="text-muted-foreground">
-									<Sidebar.MenuButton>
+									<Sidebar.MenuButton onclick={addChapter}>
 										<PlusIcon class="size-4" />
 										<span>New Chapter</span>
 									</Sidebar.MenuButton>
