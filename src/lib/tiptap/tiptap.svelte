@@ -105,7 +105,7 @@
 			],
 			editorProps: {
 				attributes: {
-					class: "px-4 outline-none min-h-full max-h-full overflow-y-auto",
+					class: "px-4 outline-none min-h-full max-h-full overflow-y-hidden",
 					style: "min-height: 100%;",
 				},
 				scrollMargin: 80,
@@ -291,7 +291,7 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions (only a mouse ux improvement) -->
 	<div class="max-h-full flex flex-col overflow-y-auto w-full flex-1">
 		<div
-			class="mx-auto h-full"
+			class="mx-auto h-full max-lg:w-full"
 			class:min-w-full={$config?.editor.expandWidth}
 		>
 			<div

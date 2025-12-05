@@ -9,6 +9,7 @@
 	import * as Collapsible from "$lib/components/ui/collapsible";
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import * as Sidebar from "$lib/components/ui/sidebar";
+	import * as ContextMenu from "$lib/components/ui/context-menu";
 	import Tree from "$lib/components/ui/tree.svelte";
 	import { createChapter } from "$lib/story/story-writer";
 	import type { StoryFile } from "$lib/story/types";
@@ -21,6 +22,7 @@
 		LibraryIcon,
 		PlusIcon,
 		Settings,
+        TrashIcon,
 	} from "@lucide/svelte";
 
 	const chapters = $derived.by(() => {
@@ -212,65 +214,47 @@
 							<!-- Chapters List -->
 							<Sidebar.Menu>
 								{#each chapters as chapter (chapter.path + (chapter.title || chapter.name))}
-									<Sidebar.MenuItem>
-										<Sidebar.MenuButton
-											isActive={appState.currentEditedFile
-												?.path === chapter.path}
-											onclick={() => openChapter(chapter)}
-										>
-											<FileText />
-											<span
-												>{chapter.title ||
-													chapter.name ||
-													"Untitled Chapter"}</span
-											>
-										</Sidebar.MenuButton>
-										<DropdownMenu.Root>
-											<DropdownMenu.Trigger>
-												{#snippet child({ props })}
-													<Sidebar.MenuAction
-														{...props}
-													>
-														<EllipsisIcon />
-													</Sidebar.MenuAction>
-												{/snippet}
-											</DropdownMenu.Trigger>
-											<DropdownMenu.Content
-												side="right"
-												align="start"
-											>
-												<DropdownMenu.Item
+									<ContextMenu.Root>
+										<ContextMenu.Trigger>
+											<Sidebar.MenuItem>
+												<Sidebar.MenuButton
+													isActive={appState
+														.currentEditedFile
+														?.path === chapter.path}
 													onclick={() =>
-														renameChapter(
-															chapter.path,
-														)}
+														openChapter(chapter)}
 												>
-													<span>Rename</span>
-												</DropdownMenu.Item>
-												<DropdownMenu.Item
-													onclick={() => {
-														confirmDelete({
-															title: `Delete ${chapter.title}`,
-															description:
-																`Are you sure you want to delete this chapter?`,
-															input: {
-																confirmationText: chapter.title || '',
-															},
-															onConfirm:
-																async () => {
-																	deleteChapter(
-																		chapter.path,
-																	);
-																	return true;
-																},
-														});
-													}}
-												>
-													<span>Delete</span>
-												</DropdownMenu.Item>
-											</DropdownMenu.Content>
-										</DropdownMenu.Root>
-									</Sidebar.MenuItem>
+													<FileText />
+													<span
+														>{chapter.title ||
+															chapter.name ||
+															"Untitled Chapter"}</span
+													>
+												</Sidebar.MenuButton>
+											</Sidebar.MenuItem>
+										</ContextMenu.Trigger>
+										<ContextMenu.Content>
+											<ContextMenu.Item
+												onclick={() => {
+													confirmDelete({
+														title: `Delete ${chapter.title}`,
+														description: `Are you sure you want to delete this chapter?`,
+														input: {
+															confirmationText:
+																chapter.title ||
+																"",
+														},
+														onConfirm: async () => {
+															deleteChapter(
+																chapter.path,
+															);
+															return true;
+														},
+													});
+												}}><TrashIcon /> Delete</ContextMenu.Item
+											>
+										</ContextMenu.Content>
+									</ContextMenu.Root>
 								{/each}
 								<Sidebar.MenuItem class="text-muted-foreground">
 									<Sidebar.MenuButton onclick={addChapter}>
