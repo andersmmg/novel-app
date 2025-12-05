@@ -13,6 +13,7 @@
 		TrashIcon,
 	} from "@lucide/svelte";
 	import TreeSelf from "./tree.svelte";
+    import { inputPrompt } from "../input-prompt";
 
 	let {
 		item,
@@ -89,7 +90,18 @@
 			</Sidebar.MenuItem>
 		</ContextMenu.Trigger>
 		<ContextMenu.Content>
-			<ContextMenu.Item><SquarePenIcon /> Rename</ContextMenu.Item>
+			<ContextMenu.Item onclick={() => inputPrompt({
+				title: 'Rename Folder',
+				description: 'Enter a new name for this folder',
+				input: {
+					initialValue: getItemName(item)
+				},
+				onConfirm: async (value) => {
+					console.log(value);
+				}
+			})}
+				><SquarePenIcon /> Rename</ContextMenu.Item
+			>
 			<ContextMenu.Item><TrashIcon /> Delete</ContextMenu.Item>
 		</ContextMenu.Content>
 	</ContextMenu.Root>
@@ -108,6 +120,18 @@
 			</Sidebar.MenuItem>
 		</ContextMenu.Trigger>
 		<ContextMenu.Content>
+			<ContextMenu.Item onclick={() => inputPrompt({
+				title: 'Rename Note',
+				description: 'Enter a new name for this note',
+				input: {
+					initialValue: getItemName(item)
+				},
+				onConfirm: async (value) => {
+					console.log(value);
+				}
+			})}
+				><SquarePenIcon /> Rename</ContextMenu.Item
+			>
 			<ContextMenu.Item><TrashIcon /> Delete</ContextMenu.Item>
 		</ContextMenu.Content>
 	</ContextMenu.Root>

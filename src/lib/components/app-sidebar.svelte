@@ -18,12 +18,19 @@
 		BookOpenIcon,
 		ChevronDownIcon,
 		EllipsisIcon,
+		FilePlusIcon,
 		FileText,
+		FolderPlusIcon,
 		LibraryIcon,
 		PlusIcon,
 		Settings,
-        TrashIcon,
+		SquarePenIcon,
+		TrashIcon,
 	} from "@lucide/svelte";
+	import { Button } from "./ui/button";
+	import clsx from "clsx";
+	import { cn } from "$lib/utils";
+    import { inputPrompt } from "./input-prompt";
 
 	const chapters = $derived.by(() => {
 		if (appState.selectedStory) {
@@ -202,10 +209,10 @@
 					<Sidebar.GroupLabel>
 						{#snippet child({ props })}
 							<Collapsible.Trigger {...props}>
-								Chapters
 								<ChevronDownIcon
-									class="ms-auto transition-transform group-data-[state=open]/collapsible:rotate-180"
+									class="me-1 transition-transform group-data-[state=open]/collapsible:rotate-180"
 								/>
+								Chapters
 							</Collapsible.Trigger>
 						{/snippet}
 					</Sidebar.GroupLabel>
@@ -235,6 +242,23 @@
 										</ContextMenu.Trigger>
 										<ContextMenu.Content>
 											<ContextMenu.Item
+												onclick={() =>
+													inputPrompt({
+														title: "Rename Chapter",
+														description:
+															"Enter a new title for this chapter",
+														input: {
+															initialValue: chapter.title || "",
+														},
+														onConfirm: async (
+															value,
+														) => {
+															console.log(value);
+														},
+													})}
+												><SquarePenIcon /> Rename</ContextMenu.Item
+											>
+											<ContextMenu.Item
 												onclick={() => {
 													confirmDelete({
 														title: `Delete ${chapter.title}`,
@@ -251,7 +275,8 @@
 															return true;
 														},
 													});
-												}}><TrashIcon /> Delete</ContextMenu.Item
+												}}
+												><TrashIcon /> Delete</ContextMenu.Item
 											>
 										</ContextMenu.Content>
 									</ContextMenu.Root>
@@ -273,12 +298,29 @@
 				<Sidebar.Group>
 					<Sidebar.GroupLabel>
 						{#snippet child({ props })}
-							<Collapsible.Trigger {...props}>
-								Notes
-								<ChevronDownIcon
-									class="ms-auto transition-transform group-data-[state=open]/collapsible:rotate-180"
-								/>
-							</Collapsible.Trigger>
+							<div class="flex justify-stretch items-end">
+								<Collapsible.Trigger
+									{...props}
+									class={cn(props.class as string, "flex-1")}
+								>
+									<ChevronDownIcon
+										class="me-1 transition-transform group-data-[state=open]/collapsible:rotate-180"
+									/>
+									Notes
+								</Collapsible.Trigger>
+								<Button
+									class="size-7 rounded-full"
+									variant="ghost"
+								>
+									<FolderPlusIcon />
+								</Button>
+								<Button
+									class="size-7 rounded-full"
+									variant="ghost"
+								>
+									<FilePlusIcon />
+								</Button>
+							</div>
 						{/snippet}
 					</Sidebar.GroupLabel>
 					<Collapsible.Content>
@@ -288,12 +330,6 @@
 								{#each notes as noteItem (noteItem.path)}
 									<Tree item={noteItem} />
 								{/each}
-								<Sidebar.MenuItem class="text-muted-foreground">
-									<Sidebar.MenuButton>
-										<PlusIcon />
-										<span>New Note</span>
-									</Sidebar.MenuButton>
-								</Sidebar.MenuItem>
 							</Sidebar.Menu>
 						</Sidebar.GroupContent>
 					</Collapsible.Content>

@@ -31,6 +31,20 @@ export class Story {
 		this.updateWordCount();
 	}
 
+	addNoteToFolder(folderPath: string, note: StoryFile): boolean {
+		const folder = this.findNoteByPath(folderPath);
+		if (folder && "children" in folder) {
+			const filename = note.path.replace("notes/", "");
+			note.path = folderPath + filename;
+			note.name = filename;
+
+			folder.children.push(note);
+			this.updateWordCount();
+			return true;
+		}
+		return false;
+	}
+
 	getChapterByPath(path: string): StoryFile | undefined {
 		return this.chapters.find((chapter) => chapter.path === path);
 	}

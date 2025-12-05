@@ -14,6 +14,7 @@
 		MinusIcon,
 		Pilcrow,
 		PlusIcon,
+		UnderlineIcon,
 		UnfoldHorizontalIcon,
 	} from "@lucide/svelte";
 	import { Editor } from "@tiptap/core";
@@ -236,6 +237,19 @@
 							.focus()
 							.toggleItalic()
 							.run()}><ItalicIcon /></Button
+				>
+				<Button
+					size="sm"
+					variant={editorState.editor.isActive("underline")
+						? "default"
+						: "outline"}
+					class="border"
+					onclick={() =>
+						editorState
+							.editor!.chain()
+							.focus()
+							.toggleUnderline()
+							.run()}><UnderlineIcon /></Button
 				>
 			</ButtonGroup.Root>
 			<!-- Focus -->

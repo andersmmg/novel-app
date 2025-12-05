@@ -171,13 +171,13 @@
 							{/if}
 						</div>
 					</div>
+				{:else if appState.selectedStory}
+					<div class="flex-1">
+						<h1 class="text-lg text-muted-foreground">No File Selected</h1>
+					</div>
 				{:else}
 					<div class="flex-1">
-						<h1 class="text-lg font-semibold">No Novel Selected</h1>
-						<p class="text-sm text-muted-foreground">
-							Please select a novel from the home page to start
-							editing.
-						</p>
+						<h1 class="text-lg text-muted-foreground">No Story Selected</h1>
 					</div>
 				{/if}
 			</div>
@@ -222,20 +222,24 @@
 					<p class="text-muted-foreground mb-4">
 						Select a chapter or note to start editing.
 					</p>
-					<Button onclick={goBack}>Go to Novels</Button>
+					<Button
+						onclick={() => {
+							goto("/story");
+						}}>Go to Overview</Button
+					>
 				</div>
 			</div>
 		{:else}
 			<div class="flex items-center justify-center h-full">
 				<div class="text-center">
 					<h2 class="text-xl font-semibold mb-2">
-						No Novel Selected
+						No Story Selected
 					</h2>
 					<p class="text-muted-foreground mb-4">
-						Please select a novel from the home page to start
+						Please select a story from the home page or sidebar to start
 						editing.
 					</p>
-					<Button onclick={goBack}>Go to Novels</Button>
+					<Button onclick={goBack}>Go to Stories</Button>
 				</div>
 			</div>
 		{/if}
@@ -243,7 +247,7 @@
 
 	{#if appState.currentEditedFile}
 		<footer
-			class="border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60"
+			class="border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 cursor-default"
 		>
 			<div class="container px-4 py-2">
 				<div

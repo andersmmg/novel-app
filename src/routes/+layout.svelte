@@ -18,6 +18,7 @@
 	import { onMount } from "svelte";
 	import "../app.css";
     import { ConfirmDeleteDialog } from "$lib/components/confirm-delete";
+    import { InputPromptDialog } from "$lib/components/input-prompt";
 
 	let { children } = $props();
 
@@ -75,6 +76,7 @@
 <ModeWatcher />
 <Toaster />
 <ConfirmDeleteDialog />
+<InputPromptDialog />
 <AppMenubar bind:sidebarOpen />
 
 <Sidebar.Provider
