@@ -9,6 +9,29 @@ import {
 import { info, warn } from "@tauri-apps/plugin-log";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 
+function deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T {
+	const result = { ...target };
+	
+	for (const key in source) {
+		if (source[key] !== undefined) {
+			if (
+				typeof source[key] === "object" &&
+				source[key] !== null &&
+				!Array.isArray(source[key]) &&
+				typeof result[key] === "object" &&
+				result[key] !== null &&
+				!Array.isArray(result[key])
+			) {
+				result[key] = deepMerge(result[key], source[key] as any);
+			} else {
+				result[key] = source[key] as any;
+			}
+		}
+	}
+	
+	return result;
+}
+
 export interface AppConfig {
 	edited: Date;
 	chapterOpenPosition: "start" | "end";
@@ -26,6 +49,19 @@ export interface AppConfig {
 	editor: {
 		expandWidth: boolean;
 		fontSize: number;
+		toolbarItems: {
+			heading1: boolean,
+			heading2: boolean,
+			paragraph: boolean,
+			bold: boolean,
+			italic: boolean,
+			underline: boolean,
+			top: boolean,
+			bottom: boolean,
+			find: boolean,
+			fontSize: boolean,
+			expandWidth: boolean
+		}
 	};
 }
 
@@ -47,6 +83,19 @@ const DEFAULT_CONFIG: AppConfig = {
 	editor: {
 		expandWidth: false,
 		fontSize: 16,
+		toolbarItems: {
+			heading1: true,
+			heading2: true,
+			paragraph: true,
+			bold: true,
+			italic: true,
+			underline: true,
+			top: true,
+			bottom: true,
+			find: true,
+			fontSize: true,
+			expandWidth: true
+		}
 	},
 };
 
@@ -67,7 +116,7 @@ export async function loadConfig(): Promise<AppConfig> {
 				configData.edited = new Date(configData.edited);
 			}
 
-			loadedConfig = { ...DEFAULT_CONFIG, ...configData };
+			loadedConfig = deepMerge(DEFAULT_CONFIG, configData);
 		} else {
 			warn(
 				`Parsed config data is not an object or is null, skipping merge: ${JSON.stringify(configData)}`,

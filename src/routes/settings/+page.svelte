@@ -2,6 +2,7 @@
 	import { startAutosave } from "$lib/autosave";
 	import FontSelector from "$lib/components/font-selector.svelte";
 	import ThemeSelector from "$lib/components/theme-selector.svelte";
+	import * as ButtonGroup from "$lib/components/ui/button-group";
 	import Button from "$lib/components/ui/button/button.svelte";
 	import CardContent from "$lib/components/ui/card/card-content.svelte";
 	import CardDescription from "$lib/components/ui/card/card-description.svelte";
@@ -13,7 +14,21 @@
 	import { Label } from "$lib/components/ui/label";
 	import * as Select from "$lib/components/ui/select";
 	import { config, type AppConfig } from "$lib/config/config-store";
-	import { SettingsIcon } from "@lucide/svelte";
+	import {
+		ArrowDownToLine,
+		ArrowUpToLine,
+		BoldIcon,
+		Heading1Icon,
+		Heading2Icon,
+		ItalicIcon,
+		MinusIcon,
+		PilcrowIcon,
+		PlusIcon,
+		SettingsIcon,
+		TextSearchIcon,
+		UnderlineIcon,
+		UnfoldHorizontalIcon,
+	} from "@lucide/svelte";
 
 	function handleIntervalChange(event: Event) {
 		if (!$config) return;
@@ -164,6 +179,153 @@
 			</Card>
 			<Card>
 				<CardHeader>
+					<CardTitle>Editor Toolbar</CardTitle>
+					<CardDescription>
+						Customize the items in the editor toolbar.
+					</CardDescription>
+				</CardHeader>
+				<CardContent class="space-y-6">
+					<div class="flex gap-1 items-center">
+						<ButtonGroup.Root>
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems.heading1
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.heading1 =
+										!$config.editor.toolbarItems.heading1;
+								}}><Heading1Icon /></Button
+							>
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems.heading2
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.heading2 =
+										!$config.editor.toolbarItems.heading2;
+								}}><Heading2Icon /></Button
+							>
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems.paragraph
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.paragraph =
+										!$config.editor.toolbarItems.paragraph;
+								}}><PilcrowIcon /></Button
+							>
+						</ButtonGroup.Root>
+						<!-- Formatting -->
+						<ButtonGroup.Root>
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems.bold
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.bold =
+										!$config.editor.toolbarItems.bold;
+								}}><BoldIcon /></Button
+							>
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems.italic
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.italic =
+										!$config.editor.toolbarItems.italic;
+								}}><ItalicIcon /></Button
+							>
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems.underline
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.underline =
+										!$config.editor.toolbarItems.underline;
+								}}><UnderlineIcon /></Button
+							>
+						</ButtonGroup.Root>
+						<!-- Focus -->
+						<ButtonGroup.Root>
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems.top
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.top =
+										!$config.editor.toolbarItems.top;
+								}}><ArrowUpToLine /></Button
+							>
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems.bottom
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.bottom =
+										!$config.editor.toolbarItems.bottom;
+								}}><ArrowDownToLine /></Button
+							>
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems.find
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.find =
+										!$config.editor.toolbarItems.find;
+								}}><TextSearchIcon /></Button
+							>
+						</ButtonGroup.Root>
+						<!-- Font Size -->
+						<ButtonGroup.Root class="ms-auto">
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems.fontSize
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.fontSize =
+										!$config.editor.toolbarItems.fontSize;
+								}}><MinusIcon />16<PlusIcon /></Button
+							>
+						</ButtonGroup.Root>
+						<!-- View -->
+						<ButtonGroup.Root>
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems.expandWidth
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.expandWidth =
+										!$config.editor.toolbarItems.expandWidth;
+								}}><UnfoldHorizontalIcon /></Button
+							>
+						</ButtonGroup.Root>
+					</div>
+				</CardContent>
+			</Card>
+			<Card>
+				<CardHeader>
 					<CardTitle>File Load Positions</CardTitle>
 					<CardDescription>
 						Where to place the cursor when opening a chapter or
@@ -217,7 +379,7 @@
 			</Card>
 		</div>
 	{/if}
-	<div class="text-sm text-muted-foreground mt-2 cursor-default"
-		>v{__APP_VERSION__}</div
-	>
+	<div class="text-sm text-muted-foreground mt-2 cursor-default">
+		v{__APP_VERSION__}
+	</div>
 </div>

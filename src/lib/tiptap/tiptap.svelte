@@ -6,7 +6,7 @@
 	import type { StoryFile } from "$lib/story";
 	import { combineFrontmatter, separateFrontmatter } from "$lib/story/utils";
 	import OfficePaste from "@intevation/tiptap-extension-office-paste";
-	import { TaskItem, TaskList } from '@tiptap/extension-list'
+	import { TaskItem, TaskList } from "@tiptap/extension-list";
 	import {
 		ArrowDownToLine,
 		ArrowUpToLine,
@@ -263,142 +263,166 @@
 	{#if editorState.editor}
 		<div class="p-2 pr-4 bg-background flex gap-2 items-center border-b">
 			<!-- Headings -->
-			<ButtonGroup.Root>
-				<Button
-					size="sm"
-					variant={editorState.editor.isActive("heading", {
-						level: 1,
-					})
-						? "default"
-						: "outline"}
-					class="border"
-					onclick={() =>
-						editorState
-							.editor!.chain()
-							.focus()
-							.toggleHeading({ level: 1 })
-							.run()}><Heading1Icon /></Button
-				>
-				<Button
-					size="sm"
-					variant={editorState.editor.isActive("heading", {
-						level: 2,
-					})
-						? "default"
-						: "outline"}
-					class="border"
-					onclick={() =>
-						editorState
-							.editor!.chain()
-							.focus()
-							.toggleHeading({ level: 2 })
-							.run()}><Heading2Icon /></Button
-				>
-				<Button
-					size="sm"
-					variant={editorState.editor.isActive("paragraph")
-						? "default"
-						: "outline"}
-					class="border"
-					onclick={() =>
-						editorState
-							.editor!.chain()
-							.focus()
-							.setParagraph()
-							.run()}><Pilcrow /></Button
-				>
+			<ButtonGroup.Root class="empty:hidden">
+				{#if $config?.editor.toolbarItems.heading1}
+					<Button
+						size="sm"
+						variant={editorState.editor.isActive("heading", {
+							level: 1,
+						})
+							? "default"
+							: "outline"}
+						class="border"
+						onclick={() =>
+							editorState
+								.editor!.chain()
+								.focus()
+								.toggleHeading({ level: 1 })
+								.run()}><Heading1Icon /></Button
+					>
+				{/if}
+				{#if $config?.editor.toolbarItems.heading2}
+					<Button
+						size="sm"
+						variant={editorState.editor.isActive("heading", {
+							level: 2,
+						})
+							? "default"
+							: "outline"}
+						class="border"
+						onclick={() =>
+							editorState
+								.editor!.chain()
+								.focus()
+								.toggleHeading({ level: 2 })
+								.run()}><Heading2Icon /></Button
+					>
+				{/if}
+				{#if $config?.editor.toolbarItems.paragraph}
+					<Button
+						size="sm"
+						variant={editorState.editor.isActive("paragraph")
+							? "default"
+							: "outline"}
+						class="border"
+						onclick={() =>
+							editorState
+								.editor!.chain()
+								.focus()
+								.setParagraph()
+								.run()}><Pilcrow /></Button
+					>
+				{/if}
 			</ButtonGroup.Root>
 			<!-- Formatting -->
-			<ButtonGroup.Root>
-				<Button
-					size="sm"
-					variant={editorState.editor.isActive("bold")
-						? "default"
-						: "outline"}
-					class="border"
-					onclick={() =>
-						editorState.editor!.chain().focus().toggleBold().run()}
-					><BoldIcon /></Button
-				>
-				<Button
-					size="sm"
-					variant={editorState.editor.isActive("italic")
-						? "default"
-						: "outline"}
-					class="border"
-					onclick={() =>
-						editorState
-							.editor!.chain()
-							.focus()
-							.toggleItalic()
-							.run()}><ItalicIcon /></Button
-				>
-				<Button
-					size="sm"
-					variant={editorState.editor.isActive("underline")
-						? "default"
-						: "outline"}
-					class="border"
-					onclick={() =>
-						editorState
-							.editor!.chain()
-							.focus()
-							.toggleUnderline()
-							.run()}><UnderlineIcon /></Button
-				>
+			<ButtonGroup.Root class="empty:hidden">
+				{#if $config?.editor.toolbarItems.bold}
+					<Button
+						size="sm"
+						variant={editorState.editor.isActive("bold")
+							? "default"
+							: "outline"}
+						class="border"
+						onclick={() =>
+							editorState
+								.editor!.chain()
+								.focus()
+								.toggleBold()
+								.run()}><BoldIcon /></Button
+					>
+				{/if}
+				{#if $config?.editor.toolbarItems.italic}
+					<Button
+						size="sm"
+						variant={editorState.editor.isActive("italic")
+							? "default"
+							: "outline"}
+						class="border"
+						onclick={() =>
+							editorState
+								.editor!.chain()
+								.focus()
+								.toggleItalic()
+								.run()}><ItalicIcon /></Button
+					>
+				{/if}
+				{#if $config?.editor.toolbarItems.underline}
+					<Button
+						size="sm"
+						variant={editorState.editor.isActive("underline")
+							? "default"
+							: "outline"}
+						class="border"
+						onclick={() =>
+							editorState
+								.editor!.chain()
+								.focus()
+								.toggleUnderline()
+								.run()}><UnderlineIcon /></Button
+					>
+				{/if}
 			</ButtonGroup.Root>
 			<!-- Focus -->
-			<ButtonGroup.Root>
-				<Button
-					size="sm"
-					variant="outline"
-					onclick={() =>
-						editorState.editor!.chain().focus("start").run()}
-					><ArrowUpToLine /></Button
-				>
-				<Button
-					size="sm"
-					variant="outline"
-					onclick={() =>
-						editorState.editor!.chain().focus("end").run()}
-					><ArrowDownToLine /></Button
-				>
-				<Button
-					size="sm"
-					variant="outline"
-					onclick={openSearch}
-					><TextSearchIcon /></Button
-				>
+			<ButtonGroup.Root class="empty:hidden">
+				{#if $config?.editor.toolbarItems.top}
+					<Button
+						size="sm"
+						variant="outline"
+						onclick={() =>
+							editorState.editor!.chain().focus("start").run()}
+						><ArrowUpToLine /></Button
+					>
+				{/if}
+				{#if $config?.editor.toolbarItems.bottom}
+					<Button
+						size="sm"
+						variant="outline"
+						onclick={() =>
+							editorState.editor!.chain().focus("end").run()}
+						><ArrowDownToLine /></Button
+					>
+				{/if}
+				{#if $config?.editor.toolbarItems.find}
+					<Button size="sm" variant="outline" onclick={openSearch}
+						><TextSearchIcon /></Button
+					>
+				{/if}
 			</ButtonGroup.Root>
+			<div class="ms-auto"></div>
 			<!-- Font Size -->
-			<ButtonGroup.Root class="ms-auto">
-				<Button
-					size="sm"
-					variant="outline"
-					onclick={() => adjustFontsize(-1)}><MinusIcon /></Button
-				>
-				<Button
-					size="sm"
-					variant="outline"
-					class="pointer-events-none font-mono"
-					onclick={toggleExpandWidth}
-					>{$config?.editor.fontSize}</Button
-				>
-				<Button
-					size="sm"
-					variant="outline"
-					onclick={() => adjustFontsize(1)}><PlusIcon /></Button
-				>
-			</ButtonGroup.Root>
+			{#if $config?.editor.toolbarItems.fontSize}
+				<ButtonGroup.Root>
+					<Button
+						size="sm"
+						variant="outline"
+						onclick={() => adjustFontsize(-1)}><MinusIcon /></Button
+					>
+					<Button
+						size="sm"
+						variant="outline"
+						class="pointer-events-none font-mono"
+						onclick={toggleExpandWidth}
+						>{$config?.editor.fontSize}</Button
+					>
+					<Button
+						size="sm"
+						variant="outline"
+						onclick={() => adjustFontsize(1)}><PlusIcon /></Button
+					>
+				</ButtonGroup.Root>
+			{/if}
 			<!-- View -->
-			<ButtonGroup.Root>
-				<Button
-					size="sm"
-					variant={$config?.editor.expandWidth
-						? "default"
-						: "outline"}
-					onclick={toggleExpandWidth}><UnfoldHorizontalIcon /></Button
-				>
+			<ButtonGroup.Root class="empty:hidden">
+				{#if $config?.editor.toolbarItems.expandWidth}
+					<Button
+						size="sm"
+						variant={$config?.editor.expandWidth
+							? "default"
+							: "outline"}
+						onclick={toggleExpandWidth}
+						><UnfoldHorizontalIcon /></Button
+					>
+				{/if}
 			</ButtonGroup.Root>
 		</div>
 	{/if}
