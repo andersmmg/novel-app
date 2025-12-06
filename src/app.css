@@ -2,7 +2,7 @@
 @plugin "@tailwindcss/typography";
 @import "tw-animate-css";
 
-@custom-variant dark (&: is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
 	--radius-sm: calc(var(--radius) - 4px);
@@ -62,5 +62,11 @@
 		float: left;
 		height: 0;
 		pointer-events: none;
+	}
+	.tiptap .search-result {
+		@apply bg-yellow-200 dark:bg-yellow-500/50;
+	}
+	.tiptap .search-result-current {
+		@apply bg-green-200 dark:bg-green-500/50;
 	}
 }

@@ -1,27 +1,35 @@
 <script lang="ts">
 	import { Button } from "$lib/components/ui/button";
 	import * as ButtonGroup from "$lib/components/ui/button-group";
+	import { Input } from "$lib/components/ui/input";
 	import { config } from "$lib/config/config-store.svelte";
 	import type { StoryFile } from "$lib/story";
 	import { combineFrontmatter, separateFrontmatter } from "$lib/story/utils";
+	import OfficePaste from "@intevation/tiptap-extension-office-paste";
 	import {
 		ArrowDownToLine,
 		ArrowUpToLine,
 		BoldIcon,
+		CaseSensitiveIcon,
+		ChevronLeftIcon,
+		ChevronRightIcon,
 		Heading1Icon,
 		Heading2Icon,
 		ItalicIcon,
 		MinusIcon,
 		Pilcrow,
 		PlusIcon,
+		TextSearchIcon,
 		UnderlineIcon,
 		UnfoldHorizontalIcon,
+		XIcon,
 	} from "@lucide/svelte";
-	import { Editor } from "@tiptap/core";
+	import { Editor, Extension } from "@tiptap/core";
 	import { Placeholder } from "@tiptap/extensions/placeholder";
 	import { Markdown } from "@tiptap/markdown";
 	import { StarterKit } from "@tiptap/starter-kit";
 	import { onDestroy, onMount } from "svelte";
+	import { SearchAndReplace } from "./search-replace";
 
 	let {
 		currentFile,
@@ -41,6 +49,10 @@
 	let editorState = $state({ editor: null as Editor | null });
 	let previousFileId = $state<string | null>(null);
 	let updateTimeout: ReturnType<typeof setTimeout> | undefined;
+	let searchTimeout: ReturnType<typeof setTimeout> | undefined;
+	let searchQuery = $state<string>("");
+	let searchElement = $state<HTMLInputElement>();
+	let searchOpen = $state(false);
 
 	$effect(() => {
 		if (!editorState.editor) return;
@@ -83,6 +95,17 @@
 		}
 	}
 
+	const ShortcutsExtension = Extension.create({
+		addKeyboardShortcuts() {
+			return {
+				"Mod-f": () => {
+					openSearch();
+					return false;
+				},
+			};
+		},
+	});
+
 	onMount(() => {
 		// Separate frontmatter from initial content
 		const { content: initialContent } = separateFrontmatter(
@@ -92,6 +115,12 @@
 		editorState.editor = new Editor({
 			element: element,
 			extensions: [
+				ShortcutsExtension,
+				SearchAndReplace.configure({
+					searchResultClass: "search-result",
+					disableRegex: false,
+				}),
+				OfficePaste,
 				Markdown,
 				Placeholder.configure({
 					placeholder: "Start writing...",
@@ -158,8 +187,71 @@
 		);
 	}
 
+	function openSearch() {
+		if (!editorState.editor) return;
+		searchOpen = true;
+		editorState.editor.commands.resetIndex();
+		const { view, state } = editorState.editor;
+		const { from, to } = view.state.selection;
+		searchQuery = state.doc.textBetween(from, to, "");
+		setTimeout(() => {
+			searchElement?.focus();
+			searchElement?.select();
+		}, 0);
+	}
+
+	function closeSearch() {
+		if (!editorState.editor) return;
+		searchOpen = false;
+		editorState.editor.commands.focus();
+		editorState.editor.commands.setSearchTerm("");
+		editorState.editor.commands.resetIndex();
+	}
+
+	function scrollToSearch() {
+		if (!editorState.editor) return;
+		if (editorState.editor.storage.searchAndReplace.results.length === 0)
+			return;
+		editorState.editor.commands.setTextSelection(
+			editorState.editor.storage.searchAndReplace.results[
+				editorState.editor.storage.searchAndReplace.resultIndex
+			],
+		);
+		const { node } = editorState.editor.view.domAtPos(
+			editorState.editor.state.selection.anchor,
+		);
+		node instanceof HTMLElement &&
+			node.scrollIntoView({ behavior: "smooth", block: "center" });
+	}
+
+	function updateSearch(e: KeyboardEvent) {
+		if (!editorState.editor) return;
+		if (e.key === "Enter") {
+			if (e.getModifierState("Shift")) {
+				editorState.editor.commands.previousSearchResult();
+			} else {
+				editorState.editor.commands.nextSearchResult();
+			}
+			scrollToSearch();
+			return;
+		}
+		if (e.key === "Escape") {
+			closeSearch();
+			return;
+		}
+		if (searchTimeout) {
+			clearTimeout(searchTimeout);
+		}
+		searchTimeout = setTimeout(() => {
+			if (!editorState.editor) return;
+			editorState.editor.commands.setSearchTerm(searchQuery);
+			scrollToSearch();
+		}, 300);
+	}
+
 	onDestroy(() => {
 		clearTimeout(updateTimeout);
+		clearTimeout(searchTimeout);
 		editorState.editor?.destroy();
 	});
 </script>
@@ -268,6 +360,12 @@
 						editorState.editor!.chain().focus("end").run()}
 					><ArrowDownToLine /></Button
 				>
+				<Button
+					size="sm"
+					variant="outline"
+					onclick={openSearch}
+					><TextSearchIcon /></Button
+				>
 			</ButtonGroup.Root>
 			<!-- Font Size -->
 			<ButtonGroup.Root class="ms-auto">
@@ -328,4 +426,63 @@
 			></div>
 		</div>
 	</div>
+	{#if searchOpen}
+		<footer class="border-t bg-background/95">
+			<div class="flex items-center gap-1 px-1">
+				<Button variant="ghost" size="icon-sm" onclick={closeSearch}
+					><XIcon /></Button
+				>
+				<div class="mx-2 text-muted-foreground text-sm">Find:</div>
+				<Input
+					class="rounded-none focus-visible:ring-0 border-y-0 focus-visible:border-input"
+					bind:value={searchQuery}
+					onkeyup={updateSearch}
+					bind:ref={searchElement}
+				/>
+				<Button
+					variant={editorState.editor?.storage.searchAndReplace
+						.caseSensitive
+						? "secondary"
+						: "ghost"}
+					size="icon-sm"
+					onclick={() => {
+						if (editorState.editor) {
+							editorState.editor.commands.setCaseSensitive(
+								!editorState.editor?.storage.searchAndReplace
+									.caseSensitive,
+							);
+						}
+					}}><CaseSensitiveIcon /></Button
+				>
+				<Button
+					variant="ghost"
+					size="icon-sm"
+					onclick={() => {
+						if (editorState.editor) {
+							editorState.editor.commands.previousSearchResult();
+							scrollToSearch();
+						}
+					}}><ChevronLeftIcon /></Button
+				>
+				<Button
+					variant="ghost"
+					size="icon-sm"
+					onclick={() => {
+						if (editorState.editor) {
+							editorState.editor.commands.nextSearchResult();
+							scrollToSearch();
+						}
+					}}><ChevronRightIcon /></Button
+				>
+				<div class="mx-2 text-muted-foreground text-sm font-mono">
+					{editorState.editor?.storage?.searchAndReplace.results
+						.length
+						? editorState.editor?.storage?.searchAndReplace
+								.resultIndex + 1
+						: 0}/{editorState.editor?.storage?.searchAndReplace
+						.results.length}
+				</div>
+			</div>
+		</footer>
+	{/if}
 </div>

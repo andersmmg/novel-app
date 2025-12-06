@@ -13,6 +13,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@intevation/tiptap-extension-office-paste": "^0.1.2",
     "@tabler/icons-svelte": "^3.35.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.17",
