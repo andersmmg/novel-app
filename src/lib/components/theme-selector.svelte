@@ -11,6 +11,7 @@
 		{ name: "kodama", label: "Kodama" },
 		{ name: "mocha", label: "Mocha" },
 		{ name: "nature", label: "Nature" },
+		{ name: "perpetuity", label: "Perpetuity" },
 	];
 
 	let selectedTheme = $state("default");

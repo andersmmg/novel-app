@@ -6,6 +6,7 @@
 	import type { StoryFile } from "$lib/story";
 	import { combineFrontmatter, separateFrontmatter } from "$lib/story/utils";
 	import OfficePaste from "@intevation/tiptap-extension-office-paste";
+	import { TaskItem, TaskList } from '@tiptap/extension-list'
 	import {
 		ArrowDownToLine,
 		ArrowUpToLine,
@@ -125,6 +126,8 @@
 				Placeholder.configure({
 					placeholder: "Start writing...",
 				}),
+				TaskList,
+				TaskItem,
 				StarterKit.configure({
 					horizontalRule: {
 						HTMLAttributes: {
@@ -408,7 +411,7 @@
 		>
 			<div
 				bind:this={element}
-				class="min-h-full w-full prose **:text-foreground cursor-text pb-10"
+				class="min-h-full w-full **:text-foreground cursor-text pb-10 prose"
 				class:max-lg:max-w-none={!$config?.editor.expandWidth}
 				class:lg:min-w-190={!$config?.editor.expandWidth}
 				class:lg:max-w-190={!$config?.editor.expandWidth}
