@@ -9,9 +9,12 @@ import {
 import { info, warn } from "@tauri-apps/plugin-log";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 
-function deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T {
+function deepMerge<T extends Record<string, any>>(
+	target: T,
+	source: Partial<T>,
+): T {
 	const result = { ...target };
-	
+
 	for (const key in source) {
 		if (source[key] !== undefined) {
 			if (
@@ -28,7 +31,7 @@ function deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>)
 			}
 		}
 	}
-	
+
 	return result;
 }
 
@@ -50,18 +53,21 @@ export interface AppConfig {
 		expandWidth: boolean;
 		fontSize: number;
 		toolbarItems: {
-			heading1: boolean,
-			heading2: boolean,
-			paragraph: boolean,
-			bold: boolean,
-			italic: boolean,
-			underline: boolean,
-			top: boolean,
-			bottom: boolean,
-			find: boolean,
-			fontSize: boolean,
-			expandWidth: boolean
-		}
+			heading1: boolean;
+			heading2: boolean;
+			paragraph: boolean;
+			bold: boolean;
+			italic: boolean;
+			underline: boolean;
+			list: boolean;
+			numberedList: boolean;
+			taskList: boolean;
+			top: boolean;
+			bottom: boolean;
+			find: boolean;
+			fontSize: boolean;
+			expandWidth: boolean;
+		};
 	};
 }
 
@@ -90,12 +96,15 @@ const DEFAULT_CONFIG: AppConfig = {
 			bold: true,
 			italic: true,
 			underline: true,
+			list: true,
+			numberedList: true,
+			taskList: true,
 			top: true,
 			bottom: true,
 			find: true,
 			fontSize: true,
-			expandWidth: true
-		}
+			expandWidth: true,
+		},
 	},
 };
 

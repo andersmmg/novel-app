@@ -21,6 +21,9 @@
 		Heading1Icon,
 		Heading2Icon,
 		ItalicIcon,
+		ListIcon,
+		ListOrderedIcon,
+		ListTodoIcon,
 		MinusIcon,
 		PilcrowIcon,
 		PlusIcon,
@@ -257,6 +260,44 @@
 								}}><UnderlineIcon /></Button
 							>
 						</ButtonGroup.Root>
+						<!-- Lists -->
+						<ButtonGroup.Root>
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems.list
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.list =
+										!$config.editor.toolbarItems.list;
+								}}><ListIcon /></Button
+							>
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems
+									.numberedList
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.numberedList =
+										!$config.editor.toolbarItems
+											.numberedList;
+								}}><ListOrderedIcon /></Button
+							>
+							<Button
+								size="sm"
+								variant={$config.editor.toolbarItems.taskList
+									? "default"
+									: "outline"}
+								class="border"
+								onclick={() => {
+									$config.editor.toolbarItems.taskList =
+										!$config.editor.toolbarItems.taskList;
+								}}><ListTodoIcon /></Button
+							>
+						</ButtonGroup.Root>
 						<!-- Focus -->
 						<ButtonGroup.Root>
 							<Button
@@ -317,7 +358,8 @@
 								class="border"
 								onclick={() => {
 									$config.editor.toolbarItems.expandWidth =
-										!$config.editor.toolbarItems.expandWidth;
+										!$config.editor.toolbarItems
+											.expandWidth;
 								}}><UnfoldHorizontalIcon /></Button
 							>
 						</ButtonGroup.Root>

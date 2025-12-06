@@ -6,7 +6,6 @@
 	import type { StoryFile } from "$lib/story";
 	import { combineFrontmatter, separateFrontmatter } from "$lib/story/utils";
 	import OfficePaste from "@intevation/tiptap-extension-office-paste";
-	import { TaskItem, TaskList } from "@tiptap/extension-list";
 	import {
 		ArrowDownToLine,
 		ArrowUpToLine,
@@ -17,6 +16,9 @@
 		Heading1Icon,
 		Heading2Icon,
 		ItalicIcon,
+		ListIcon,
+		ListOrderedIcon,
+		ListTodoIcon,
 		MinusIcon,
 		Pilcrow,
 		PlusIcon,
@@ -26,6 +28,7 @@
 		XIcon,
 	} from "@lucide/svelte";
 	import { Editor, Extension } from "@tiptap/core";
+	import { TaskItem, TaskList } from "@tiptap/extension-list";
 	import { Placeholder } from "@tiptap/extensions/placeholder";
 	import { Markdown } from "@tiptap/markdown";
 	import { StarterKit } from "@tiptap/starter-kit";
@@ -359,6 +362,54 @@
 								.focus()
 								.toggleUnderline()
 								.run()}><UnderlineIcon /></Button
+					>
+				{/if}
+			</ButtonGroup.Root>
+			<!-- Lists -->
+			<ButtonGroup.Root class="empty:hidden">
+				{#if $config?.editor.toolbarItems.list}
+					<Button
+						size="sm"
+						variant={editorState.editor.isActive("bulletList")
+							? "default"
+							: "outline"}
+						class="border"
+						onclick={() =>
+							editorState
+								.editor!.chain()
+								.focus()
+								.toggleBulletList()
+								.run()}><ListIcon /></Button
+					>
+				{/if}
+				{#if $config?.editor.toolbarItems.numberedList}
+					<Button
+						size="sm"
+						variant={editorState.editor.isActive("orderedList")
+							? "default"
+							: "outline"}
+						class="border"
+						onclick={() =>
+							editorState
+								.editor!.chain()
+								.focus()
+								.toggleOrderedList()
+								.run()}><ListOrderedIcon /></Button
+					>
+				{/if}
+				{#if $config?.editor.toolbarItems.taskList}
+					<Button
+						size="sm"
+						variant={editorState.editor.isActive("taskList")
+							? "default"
+							: "outline"}
+						class="border"
+						onclick={() =>
+							editorState
+								.editor!.chain()
+								.focus()
+								.toggleTaskList()
+								.run()}><ListTodoIcon /></Button
 					>
 				{/if}
 			</ButtonGroup.Root>
