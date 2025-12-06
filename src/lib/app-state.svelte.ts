@@ -30,6 +30,12 @@ const appState = $state<AppState>({
 	lastSavedAt: null,
 });
 
+export async function forceSelectedStoryUpdate() {
+	const currentStory = appState.selectedStory;
+	appState.selectedStory = null;
+	appState.selectedStory = currentStory;
+}
+
 export async function ensureStoriesDir(): Promise<boolean> {
 	try {
 		if (!(await exists(STORIES_DIR, { baseDir: BaseDirectory.AppData }))) {

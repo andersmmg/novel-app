@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { appState } from "$lib/app-state.svelte";
+	import { appState, forceSelectedStoryUpdate } from "$lib/app-state.svelte";
 	import { Badge } from "$lib/components/ui/badge";
 	import { Button } from "$lib/components/ui/button";
 	import {
 		addFrontmatterIfNeeded,
 		countWords,
 		separateFrontmatter,
+		getFileTypeFromPath,
+		renameStoryItem,
+		updateStoryFileContent,
 	} from "$lib/story/utils";
 	import Tiptap from "$lib/tiptap/tiptap.svelte";
 
@@ -23,10 +26,11 @@
 
 		const file = appState.currentEditedFile;
 		const title = file?.title || file?.name || "Untitled";
+		const fileType = getFileTypeFromPath(file.path);
 
-		if (file.path.startsWith("chapters/")) {
+		if (fileType === "chapter") {
 			return { type: "Chapter", title, variant: "default" as const };
-		} else if (file.path.startsWith("notes/")) {
+		} else if (fileType === "note") {
 			return { type: "Note", title, variant: "outline" as const };
 		}
 
@@ -67,50 +71,28 @@
 			const filePath = appState.currentEditedFile.path;
 			const now = new Date();
 
-			const updatedMetadata = {
+			appState.currentEditedFile.title = newTitle;
+			appState.currentEditedFile.edited = now;
+			appState.currentEditedFile.metadata = {
 				...appState.currentEditedFile.metadata,
 				title: newTitle,
 			};
-			appState.currentEditedFile.title = newTitle;
-			appState.currentEditedFile.metadata = updatedMetadata;
-			appState.currentEditedFile.edited = now;
 			appState.isDirty = true;
 
 			const { content } = separateFrontmatter(
 				appState.currentEditedFile.content || "",
 			);
-
 			const tempFile = {
 				content,
 				created: appState.currentEditedFile.created,
 				edited: now,
-				metadata: updatedMetadata,
+				metadata: appState.currentEditedFile.metadata,
 			};
-
 			appState.currentEditedFile.content =
 				addFrontmatterIfNeeded(tempFile);
 
-			if (filePath.startsWith("chapters/")) {
-				appState.selectedStory.updateChapter(filePath, {
-					title: newTitle,
-					metadata: updatedMetadata,
-					content: appState.currentEditedFile.content,
-					edited: now,
-				});
-			} else if (filePath.startsWith("notes/")) {
-				appState.selectedStory.updateNote(filePath, {
-					title: newTitle,
-					metadata: updatedMetadata,
-					content: appState.currentEditedFile.content,
-					edited: now,
-				});
-			}
-
-			appState.selectedStory.updateMetadata({ edited: now });
-
-			const currentStory = appState.selectedStory;
-			appState.selectedStory = null;
-			appState.selectedStory = currentStory;
+			renameStoryItem(appState.selectedStory, filePath, newTitle);
+			forceSelectedStoryUpdate();
 		}
 		isEditingTitle = false;
 	}
@@ -173,11 +155,15 @@
 					</div>
 				{:else if appState.selectedStory}
 					<div class="flex-1">
-						<h1 class="text-lg text-muted-foreground">No File Selected</h1>
+						<h1 class="text-lg text-muted-foreground">
+							No File Selected
+						</h1>
 					</div>
 				{:else}
 					<div class="flex-1">
-						<h1 class="text-lg text-muted-foreground">No Story Selected</h1>
+						<h1 class="text-lg text-muted-foreground">
+							No Story Selected
+						</h1>
 					</div>
 				{/if}
 			</div>
@@ -200,17 +186,12 @@
 							appState.selectedStory.metadata.edited = now;
 							appState.isDirty = true;
 
-							if (filePath.startsWith("chapters/")) {
-								appState.selectedStory.updateChapter(filePath, {
-									content: newContent,
-									edited: now,
-								});
-							} else if (filePath.startsWith("notes/")) {
-								appState.selectedStory.updateNote(filePath, {
-									content: newContent,
-									edited: now,
-								});
-							}
+							// Use the unified content update function
+							updateStoryFileContent(
+								appState.selectedStory,
+								filePath,
+								newContent,
+							);
 						}
 					}
 				}}
@@ -236,8 +217,8 @@
 						No Story Selected
 					</h2>
 					<p class="text-muted-foreground mb-4">
-						Please select a story from the home page or sidebar to start
-						editing.
+						Please select a story from the home page or sidebar to
+						start editing.
 					</p>
 					<Button onclick={goBack}>Go to Stories</Button>
 				</div>

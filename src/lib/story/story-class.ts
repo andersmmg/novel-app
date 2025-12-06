@@ -138,6 +138,30 @@ export class Story {
 		return false;
 	}
 
+	updateFolder(path: string, updates: Partial<StoryFolder>): boolean {
+		function updateInFolder(folder: StoryFolder): boolean {
+			if (folder.path === path) {
+				Object.assign(folder, updates);
+				return true;
+			}
+
+			for (const child of folder.children) {
+				if ("children" in child) {
+					if (updateInFolder(child)) return true;
+				}
+			}
+			return false;
+		}
+
+		for (const folder of this.notes) {
+			if (updateInFolder(folder)) {
+				this.updateWordCount();
+				return true;
+			}
+		}
+		return false;
+	}
+
 	updateMetadata(updates: Partial<StoryMetadata>): void {
 		this.metadata = { ...this.metadata, ...updates };
 	}

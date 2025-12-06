@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { appState, setCurrentEditedFile } from "$lib/app-state.svelte.js";
+	import {
+		appState,
+		forceSelectedStoryUpdate,
+		setCurrentEditedFile,
+	} from "$lib/app-state.svelte.js";
 	import * as Collapsible from "$lib/components/ui/collapsible";
 	import * as ContextMenu from "$lib/components/ui/context-menu";
 	import * as Sidebar from "$lib/components/ui/sidebar";
@@ -13,7 +17,8 @@
 		TrashIcon,
 	} from "@lucide/svelte";
 	import TreeSelf from "./tree.svelte";
-    import { inputPrompt } from "../input-prompt";
+	import { inputPrompt } from "../input-prompt";
+	import { renameStoryItem } from "$lib/story/utils";
 
 	let {
 		item,
@@ -81,7 +86,7 @@
 					</Collapsible.Trigger>
 					<Collapsible.Content>
 						<Sidebar.MenuSub class="me-0 pe-0">
-							{#each item.children as subItem ((subItem.path || "") + (subItem.title || subItem.name || ""))}
+							{#each item.children as subItem (subItem.path || subItem.name)}
 								<TreeSelf item={subItem} level={level + 1} />
 							{/each}
 						</Sidebar.MenuSub>
@@ -90,17 +95,24 @@
 			</Sidebar.MenuItem>
 		</ContextMenu.Trigger>
 		<ContextMenu.Content>
-			<ContextMenu.Item onclick={() => inputPrompt({
-				title: 'Rename Folder',
-				description: 'Enter a new name for this folder',
-				input: {
-					initialValue: getItemName(item)
-				},
-				onConfirm: async (value) => {
-					console.log(value);
-				}
-			})}
-				><SquarePenIcon /> Rename</ContextMenu.Item
+			<ContextMenu.Item
+				onclick={() =>
+					inputPrompt({
+						title: "Rename Folder",
+						description: "Enter a new name for this folder",
+						input: {
+							initialValue: getItemName(item),
+						},
+						onConfirm: async (value) => {
+							if (!appState.selectedStory) return;
+							renameStoryItem(
+								appState.selectedStory,
+								item.path,
+								value,
+							);
+							forceSelectedStoryUpdate();
+						},
+					})}><SquarePenIcon /> Rename</ContextMenu.Item
 			>
 			<ContextMenu.Item><TrashIcon /> Delete</ContextMenu.Item>
 		</ContextMenu.Content>
@@ -120,17 +132,24 @@
 			</Sidebar.MenuItem>
 		</ContextMenu.Trigger>
 		<ContextMenu.Content>
-			<ContextMenu.Item onclick={() => inputPrompt({
-				title: 'Rename Note',
-				description: 'Enter a new name for this note',
-				input: {
-					initialValue: getItemName(item)
-				},
-				onConfirm: async (value) => {
-					console.log(value);
-				}
-			})}
-				><SquarePenIcon /> Rename</ContextMenu.Item
+			<ContextMenu.Item
+				onclick={() =>
+					inputPrompt({
+						title: "Rename Note",
+						description: "Enter a new name for this note",
+						input: {
+							initialValue: getItemName(item),
+						},
+						onConfirm: async (value) => {
+							if (!appState.selectedStory) return;
+							renameStoryItem(
+								appState.selectedStory,
+								item.path,
+								value,
+							);
+							forceSelectedStoryUpdate();
+						},
+					})}><SquarePenIcon /> Rename</ContextMenu.Item
 			>
 			<ContextMenu.Item><TrashIcon /> Delete</ContextMenu.Item>
 		</ContextMenu.Content>

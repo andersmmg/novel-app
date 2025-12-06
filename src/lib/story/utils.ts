@@ -1,5 +1,6 @@
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 import type { StoryMetadata } from "./types";
+import type { Story } from "./story-class";
 
 const frontmatterCache = new Map<
 	string,
@@ -243,4 +244,129 @@ export function sanitizeFilename(name: string): string {
 		.replace(/\s+/g, "-")
 		.replace(/-+/g, "-")
 		.trim();
+}
+
+/**
+ * Determines file type from path
+ */
+export function getFileTypeFromPath(
+	path: string,
+): "chapter" | "note" | "folder" | "unknown" {
+	if (path.startsWith("chapters/")) return "chapter";
+	if (path.startsWith("notes/")) return "note";
+	return "unknown";
+}
+
+/**
+ * Determines if a path represents a folder (ends with /)
+ */
+export function isFolderPath(path: string): boolean {
+	return path.endsWith("/");
+}
+
+/**
+ * Renames a StoryFile and updates the story accordingly
+ */
+export function renameStoryFile(
+	story: Story,
+	filePath: string,
+	newTitle: string,
+): boolean {
+	if (!story || !filePath) return false;
+
+	const fileType = getFileTypeFromPath(filePath);
+	if (fileType === "unknown") return false;
+
+	const now = new Date();
+	const updatedMetadata = {
+		title: newTitle,
+		edited: now,
+	};
+
+	// Update the file based on type
+	if (fileType === "chapter") {
+		return story.updateChapter(filePath, {
+			title: newTitle,
+			metadata: updatedMetadata,
+			edited: now,
+		});
+	} else if (fileType === "note") {
+		return story.updateNote(filePath, {
+			title: newTitle,
+			metadata: updatedMetadata,
+			edited: now,
+		});
+	}
+
+	return false;
+}
+
+/**
+ * Updates StoryFile content and updates the story accordingly
+ */
+export function updateStoryFileContent(
+	story: Story,
+	filePath: string,
+	newContent: string,
+): boolean {
+	if (!story || !filePath) return false;
+
+	const fileType = getFileTypeFromPath(filePath);
+	if (fileType === "unknown") return false;
+
+	const now = new Date();
+
+	// Update the file based on type
+	if (fileType === "chapter") {
+		return story.updateChapter(filePath, {
+			content: newContent,
+			edited: now,
+		});
+	} else if (fileType === "note") {
+		return story.updateNote(filePath, {
+			content: newContent,
+			edited: now,
+		});
+	}
+
+	return false;
+}
+
+/**
+ * Renames a StoryFolder and updates the story accordingly
+ */
+export function renameStoryFolder(
+	story: Story,
+	folderPath: string,
+	newTitle: string,
+): boolean {
+	if (!story || !folderPath || !isFolderPath(folderPath)) return false;
+
+	const now = new Date();
+	const updatedMetadata = {
+		title: newTitle,
+		edited: now,
+	};
+
+	return story.updateFolder(folderPath, {
+		title: newTitle,
+		metadata: updatedMetadata,
+	});
+}
+
+/**
+ * Unified rename function for both files and folders
+ */
+export function renameStoryItem(
+	story: Story,
+	itemPath: string,
+	newTitle: string,
+): boolean {
+	if (!story || !itemPath) return false;
+
+	if (isFolderPath(itemPath)) {
+		return renameStoryFolder(story, itemPath, newTitle);
+	} else {
+		return renameStoryFile(story, itemPath, newTitle);
+	}
 }

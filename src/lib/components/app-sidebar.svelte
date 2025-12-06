@@ -2,22 +2,24 @@
 	import { goto } from "$app/navigation";
 	import {
 		appState,
+		forceSelectedStoryUpdate,
 		selectStoryById,
 		setCurrentEditedFile,
 	} from "$lib/app-state.svelte";
 	import { confirmDelete } from "$lib/components/confirm-delete";
 	import * as Collapsible from "$lib/components/ui/collapsible";
+	import * as ContextMenu from "$lib/components/ui/context-menu";
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import * as Sidebar from "$lib/components/ui/sidebar";
-	import * as ContextMenu from "$lib/components/ui/context-menu";
 	import Tree from "$lib/components/ui/tree.svelte";
 	import { createChapter } from "$lib/story/story-writer";
 	import type { StoryFile } from "$lib/story/types";
+	import { renameStoryFile } from "$lib/story/utils";
+	import { cn } from "$lib/utils";
 	import {
 		Book,
 		BookOpenIcon,
 		ChevronDownIcon,
-		EllipsisIcon,
 		FilePlusIcon,
 		FileText,
 		FolderPlusIcon,
@@ -27,10 +29,8 @@
 		SquarePenIcon,
 		TrashIcon,
 	} from "@lucide/svelte";
+	import { inputPrompt } from "./input-prompt";
 	import { Button } from "./ui/button";
-	import clsx from "clsx";
-	import { cn } from "$lib/utils";
-    import { inputPrompt } from "./input-prompt";
 
 	const chapters = $derived.by(() => {
 		if (appState.selectedStory) {
@@ -248,12 +248,23 @@
 														description:
 															"Enter a new title for this chapter",
 														input: {
-															initialValue: chapter.title || "",
+															initialValue:
+																chapter.title ||
+																"",
 														},
 														onConfirm: async (
 															value,
 														) => {
-															console.log(value);
+															if (
+																!appState.selectedStory
+															)
+																return;
+															renameStoryFile(
+																appState.selectedStory,
+																chapter.path,
+																value,
+															);
+															forceSelectedStoryUpdate();
 														},
 													})}
 												><SquarePenIcon /> Rename</ContextMenu.Item

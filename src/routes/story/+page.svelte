@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appState, saveCurrentStory } from "$lib/app-state.svelte";
+	import { appState, forceSelectedStoryUpdate, saveCurrentStory } from "$lib/app-state.svelte";
 	import { Badge } from "$lib/components/ui/badge";
 	import { Button } from "$lib/components/ui/button";
 	import {
@@ -23,22 +23,21 @@
 	let genreInput = $state("");
 	let descriptionInput = $state("");
 
-	const selectedStory = $derived(appState.selectedStory);
-	const storyMetadata = $derived(selectedStory?.metadata || {});
+	const storyMetadata = $derived(appState.selectedStory?.metadata || {});
 
 	// Calculate stats from the story data
-	const chapterCount = $derived(selectedStory?.chapters.length || 0);
+	const chapterCount = $derived(appState.selectedStory?.chapters.length || 0);
 	const chapterWordCount = $derived.by(() => {
-		if (!selectedStory) return 0;
-		return selectedStory.getWordCount();
+		if (!appState.selectedStory) return 0;
+		return appState.selectedStory.getWordCount();
 	});
 	const notesWordCount = $derived.by(() => {
-		if (!selectedStory) return 0;
-		return selectedStory.getNotesWordCount();
+		if (!appState.selectedStory) return 0;
+		return appState.selectedStory.getNotesWordCount();
 	});
 	const totalNotes = $derived.by(() => {
-		if (!selectedStory) return 0;
-		let count = selectedStory.rootNotes.length;
+		if (!appState.selectedStory) return 0;
+		let count = appState.selectedStory.rootNotes.length;
 
 		function countNotesInFolder(folder: any): number {
 			let folderCount = 0;
@@ -52,59 +51,60 @@
 			return folderCount;
 		}
 
-		for (const folder of selectedStory.notes) {
+		for (const folder of appState.selectedStory.notes) {
 			count += countNotesInFolder(folder);
 		}
 		return count;
 	});
 
 	onMount(() => {
-		if (selectedStory) {
-			titleInput = selectedStory.metadata.title || "";
-			authorInput = selectedStory.metadata.author || "";
-			genreInput = selectedStory.metadata.genre || "";
-			descriptionInput = selectedStory.metadata.description || "";
+		if (appState.selectedStory) {
+			titleInput = appState.selectedStory.metadata.title || "";
+			authorInput = appState.selectedStory.metadata.author || "";
+			genreInput = appState.selectedStory.metadata.genre || "";
+			descriptionInput = appState.selectedStory.metadata.description || "";
 		}
 	});
 
 	function startEditing() {
-		if (selectedStory) {
-			titleInput = selectedStory.metadata.title || "";
-			authorInput = selectedStory.metadata.author || "";
-			genreInput = selectedStory.metadata.genre || "";
-			descriptionInput = selectedStory.metadata.description || "";
+		if (appState.selectedStory) {
+			titleInput = appState.selectedStory.metadata.title || "";
+			authorInput = appState.selectedStory.metadata.author || "";
+			genreInput = appState.selectedStory.metadata.genre || "";
+			descriptionInput = appState.selectedStory.metadata.description || "";
 		}
 		isEditing = true;
 	}
 
 	async function saveChanges() {
-		if (!selectedStory) return;
+		if (!appState.selectedStory) return;
 
-		selectedStory.updateMetadata({
+		appState.selectedStory.updateMetadata({
 			title: titleInput.trim() || "Untitled Story",
 			author: authorInput.trim(),
 			genre: genreInput.trim(),
 			description: descriptionInput.trim(),
 			edited: new Date(),
 		});
+		forceSelectedStoryUpdate();
 
 		await saveCurrentStory();
 		isEditing = false;
 	}
 
 	function cancelEditing() {
-		if (selectedStory) {
-			titleInput = selectedStory.metadata.title || "";
-			authorInput = selectedStory.metadata.author || "";
-			genreInput = selectedStory.metadata.genre || "";
-			descriptionInput = selectedStory.metadata.description || "";
+		if (appState.selectedStory) {
+			titleInput = appState.selectedStory.metadata.title || "";
+			authorInput = appState.selectedStory.metadata.author || "";
+			genreInput = appState.selectedStory.metadata.genre || "";
+			descriptionInput = appState.selectedStory.metadata.description || "";
 		}
 		isEditing = false;
 	}
 </script>
 
 <div class="container mx-auto p-6 space-y-6">
-	{#if !selectedStory}
+	{#if !appState.selectedStory}
 		<div class="text-center py-12">
 			<h2 class="text-2xl font-semibold mb-2">No Story Selected</h2>
 			<p class="text-muted-foreground">
