@@ -1,10 +1,14 @@
 <script lang="ts" module>
-	import { cn, type WithElementRef } from "$lib/utils.js";
+	import {
+		cn,
+		type WithElementRef,
+		type WithoutChildrenOrChild,
+	} from "$lib/utils.js";
 	import type {
 		HTMLAnchorAttributes,
 		HTMLButtonAttributes,
 	} from "svelte/elements";
-	import { type VariantProps, tv } from "tailwind-variants";
+	import { tv, type VariantProps } from "tailwind-variants";
 
 	export const buttonVariants = tv({
 		base: "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
@@ -43,10 +47,19 @@
 		WithElementRef<HTMLAnchorAttributes> & {
 			variant?: ButtonVariant;
 			size?: ButtonSize;
+			tooltipContent?: Snippet | string;
+			tooltipContentProps?: WithoutChildrenOrChild<
+				ComponentProps<typeof Tooltip.Content>
+			>;
+			tooltipDelay?: number;
 		};
 </script>
 
 <script lang="ts">
+	import * as Tooltip from "$lib/components/ui/tooltip";
+	import { mergeProps } from "bits-ui";
+	import type { ComponentProps, Snippet } from "svelte";
+
 	let {
 		class: className,
 		variant = "default",
@@ -55,33 +68,55 @@
 		href = undefined,
 		type = "button",
 		disabled,
+		tooltipContent,
+		tooltipContentProps,
+		tooltipDelay = 500,
 		children,
 		...restProps
 	}: ButtonProps = $props();
+
+	const buttonProps = $derived({
+		class: cn(buttonVariants({ variant, size }), className),
+		"data-slot": "button",
+		...restProps,
+	});
 </script>
 
-{#if href}
-	<a
-		bind:this={ref}
-		data-slot="button"
-		class={cn(buttonVariants({ variant, size }), className)}
-		href={disabled ? undefined : href}
-		aria-disabled={disabled}
-		role={disabled ? "link" : undefined}
-		tabindex={disabled ? -1 : undefined}
-		{...restProps}
-	>
-		{@render children?.()}
-	</a>
+{#snippet Button({ props }: { props?: Record })}
+	{@const mergedProps = mergeProps(buttonProps, props)}
+	{#if href}
+		<a
+			bind:this={ref}
+			href={disabled ? undefined : href}
+			aria-disabled={disabled}
+			role={disabled ? "link" : undefined}
+			tabindex={disabled ? -1 : undefined}
+			{...mergedProps}
+		>
+			{@render children?.()}
+		</a>
+	{:else}
+		<button bind:this={ref} {type} {disabled} {...mergedProps}>
+			{@render children?.()}
+		</button>
+	{/if}
+{/snippet}
+
+{#if !tooltipContent}
+	{@render Button({ props: {} })}
 {:else}
-	<button
-		bind:this={ref}
-		data-slot="button"
-		class={cn(buttonVariants({ variant, size }), className)}
-		{type}
-		{disabled}
-		{...restProps}
-	>
-		{@render children?.()}
-	</button>
+	<Tooltip.Root delayDuration={tooltipDelay}>
+		<Tooltip.Trigger>
+			{#snippet child({ props })}
+				{@render Button({ props })}
+			{/snippet}
+		</Tooltip.Trigger>
+		<Tooltip.Content {...tooltipContentProps}>
+			{#if typeof tooltipContent === "string"}
+				{tooltipContent}
+			{:else if tooltipContent}
+				{@render tooltipContent()}
+			{/if}
+		</Tooltip.Content>
+	</Tooltip.Root>
 {/if}

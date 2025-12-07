@@ -269,6 +269,8 @@
 			<ButtonGroup.Root class="empty:hidden">
 				{#if $config?.editor.toolbarItems.heading1}
 					<Button
+						tooltipContent="Heading 1"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant={editorState.editor.isActive("heading", {
 							level: 1,
@@ -286,6 +288,8 @@
 				{/if}
 				{#if $config?.editor.toolbarItems.heading2}
 					<Button
+						tooltipContent="Heading 2"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant={editorState.editor.isActive("heading", {
 							level: 2,
@@ -303,6 +307,8 @@
 				{/if}
 				{#if $config?.editor.toolbarItems.paragraph}
 					<Button
+						tooltipContent="Paragraph"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant={editorState.editor.isActive("paragraph")
 							? "default"
@@ -321,6 +327,8 @@
 			<ButtonGroup.Root class="empty:hidden">
 				{#if $config?.editor.toolbarItems.bold}
 					<Button
+						tooltipContent="Bold"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant={editorState.editor.isActive("bold")
 							? "default"
@@ -336,6 +344,8 @@
 				{/if}
 				{#if $config?.editor.toolbarItems.italic}
 					<Button
+						tooltipContent="Italic"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant={editorState.editor.isActive("italic")
 							? "default"
@@ -351,6 +361,8 @@
 				{/if}
 				{#if $config?.editor.toolbarItems.underline}
 					<Button
+						tooltipContent="Underline"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant={editorState.editor.isActive("underline")
 							? "default"
@@ -369,6 +381,8 @@
 			<ButtonGroup.Root class="empty:hidden">
 				{#if $config?.editor.toolbarItems.list}
 					<Button
+						tooltipContent="List"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant={editorState.editor.isActive("bulletList")
 							? "default"
@@ -384,6 +398,8 @@
 				{/if}
 				{#if $config?.editor.toolbarItems.numberedList}
 					<Button
+						tooltipContent="Numbered List"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant={editorState.editor.isActive("orderedList")
 							? "default"
@@ -399,6 +415,8 @@
 				{/if}
 				{#if $config?.editor.toolbarItems.taskList}
 					<Button
+						tooltipContent="Task List"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant={editorState.editor.isActive("taskList")
 							? "default"
@@ -417,6 +435,8 @@
 			<ButtonGroup.Root class="empty:hidden">
 				{#if $config?.editor.toolbarItems.top}
 					<Button
+						tooltipContent="Jump to Start"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant="outline"
 						onclick={() =>
@@ -426,6 +446,8 @@
 				{/if}
 				{#if $config?.editor.toolbarItems.bottom}
 					<Button
+						tooltipContent="Jump to End"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant="outline"
 						onclick={() =>
@@ -434,8 +456,12 @@
 					>
 				{/if}
 				{#if $config?.editor.toolbarItems.find}
-					<Button size="sm" variant="outline" onclick={openSearch}
-						><TextSearchIcon /></Button
+					<Button
+						tooltipContent="Find"
+						tooltipContentProps={{ side: "bottom" }}
+						size="sm"
+						variant="outline"
+						onclick={searchOpen ? closeSearch : openSearch}><TextSearchIcon /></Button
 					>
 				{/if}
 			</ButtonGroup.Root>
@@ -444,6 +470,8 @@
 			{#if $config?.editor.toolbarItems.fontSize}
 				<ButtonGroup.Root>
 					<Button
+						tooltipContent="Reduce Editor Font Size"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant="outline"
 						onclick={() => adjustFontsize(-1)}><MinusIcon /></Button
@@ -456,6 +484,8 @@
 						>{$config?.editor.fontSize}</Button
 					>
 					<Button
+						tooltipContent="Increase Editor Font Size"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant="outline"
 						onclick={() => adjustFontsize(1)}><PlusIcon /></Button
@@ -466,6 +496,8 @@
 			<ButtonGroup.Root class="empty:hidden">
 				{#if $config?.editor.toolbarItems.expandWidth}
 					<Button
+						tooltipContent="Expand Editor Width"
+						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant={$config?.editor.expandWidth
 							? "default"

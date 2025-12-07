@@ -191,6 +191,7 @@
 					<div class="flex gap-1 items-center">
 						<ButtonGroup.Root>
 							<Button
+								tooltipContent="Heading 1"
 								size="sm"
 								variant={$config.editor.toolbarItems.heading1
 									? "default"
@@ -202,6 +203,7 @@
 								}}><Heading1Icon /></Button
 							>
 							<Button
+								tooltipContent="Heading 2"
 								size="sm"
 								variant={$config.editor.toolbarItems.heading2
 									? "default"
@@ -213,6 +215,7 @@
 								}}><Heading2Icon /></Button
 							>
 							<Button
+								tooltipContent="Paragraph"
 								size="sm"
 								variant={$config.editor.toolbarItems.paragraph
 									? "default"
@@ -227,6 +230,7 @@
 						<!-- Formatting -->
 						<ButtonGroup.Root>
 							<Button
+								tooltipContent="Bold"
 								size="sm"
 								variant={$config.editor.toolbarItems.bold
 									? "default"
@@ -238,6 +242,7 @@
 								}}><BoldIcon /></Button
 							>
 							<Button
+								tooltipContent="Italic"
 								size="sm"
 								variant={$config.editor.toolbarItems.italic
 									? "default"
@@ -249,6 +254,7 @@
 								}}><ItalicIcon /></Button
 							>
 							<Button
+								tooltipContent="Underline"
 								size="sm"
 								variant={$config.editor.toolbarItems.underline
 									? "default"
@@ -263,6 +269,7 @@
 						<!-- Lists -->
 						<ButtonGroup.Root>
 							<Button
+								tooltipContent="List"
 								size="sm"
 								variant={$config.editor.toolbarItems.list
 									? "default"
@@ -274,6 +281,7 @@
 								}}><ListIcon /></Button
 							>
 							<Button
+								tooltipContent="Numbered List"
 								size="sm"
 								variant={$config.editor.toolbarItems
 									.numberedList
@@ -287,6 +295,7 @@
 								}}><ListOrderedIcon /></Button
 							>
 							<Button
+								tooltipContent="Task List"
 								size="sm"
 								variant={$config.editor.toolbarItems.taskList
 									? "default"
@@ -301,6 +310,7 @@
 						<!-- Focus -->
 						<ButtonGroup.Root>
 							<Button
+								tooltipContent="Jump to Start"
 								size="sm"
 								variant={$config.editor.toolbarItems.top
 									? "default"
@@ -312,6 +322,7 @@
 								}}><ArrowUpToLine /></Button
 							>
 							<Button
+								tooltipContent="Jump to End"
 								size="sm"
 								variant={$config.editor.toolbarItems.bottom
 									? "default"
@@ -323,6 +334,7 @@
 								}}><ArrowDownToLine /></Button
 							>
 							<Button
+								tooltipContent="Find"
 								size="sm"
 								variant={$config.editor.toolbarItems.find
 									? "default"
@@ -337,6 +349,7 @@
 						<!-- Font Size -->
 						<ButtonGroup.Root class="ms-auto">
 							<Button
+								tooltipContent="Editor Font Size"
 								size="sm"
 								variant={$config.editor.toolbarItems.fontSize
 									? "default"
@@ -351,6 +364,7 @@
 						<!-- View -->
 						<ButtonGroup.Root>
 							<Button
+								tooltipContent="Expand Editor Width"
 								size="sm"
 								variant={$config.editor.toolbarItems.expandWidth
 									? "default"
