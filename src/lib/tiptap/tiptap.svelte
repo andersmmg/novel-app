@@ -120,17 +120,16 @@
 			element: element,
 			extensions: [
 				ShortcutsExtension,
-				SearchAndReplace.configure({
-					searchResultClass: "search-result",
-					disableRegex: false,
-				}),
+				SearchAndReplace,
 				OfficePaste,
 				Markdown,
 				Placeholder.configure({
 					placeholder: "Start writing...",
 				}),
 				TaskList,
-				TaskItem,
+				TaskItem.configure({
+					nested: true,
+				}),
 				StarterKit.configure({
 					horizontalRule: {
 						HTMLAttributes: {
@@ -461,7 +460,8 @@
 						tooltipContentProps={{ side: "bottom" }}
 						size="sm"
 						variant="outline"
-						onclick={searchOpen ? closeSearch : openSearch}><TextSearchIcon /></Button
+						onclick={searchOpen ? closeSearch : openSearch}
+						><TextSearchIcon /></Button
 					>
 				{/if}
 			</ButtonGroup.Root>
