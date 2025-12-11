@@ -211,7 +211,28 @@ export async function readStoryFile(
 	const chapters = files.filter(
 		(f) => f.path.startsWith("chapters/") && !f.isDirectory,
 	);
-	for (const chapter of chapters) {
+	
+	chapters.sort((a, b) => {
+		const aOrder = a.order ?? a.metadata?.order;
+		const bOrder = b.order ?? b.metadata?.order;
+		
+		if (aOrder !== undefined && bOrder !== undefined) {
+			return aOrder - bOrder;
+		}
+		if (aOrder !== undefined) return -1;
+		if (bOrder !== undefined) return 1;
+		
+		return a.name.localeCompare(b.name);
+	});
+	
+	for (let i = 0; i < chapters.length; i++) {
+		const chapter = chapters[i];
+		if (chapter.order === undefined && chapter.metadata?.order === undefined) {
+			chapter.order = i;
+		} else if (chapter.order === undefined && chapter.metadata?.order !== undefined) {
+			chapter.order = chapter.metadata.order;
+		}
+		
 		const { isDirectory, ...chapterFile } = chapter;
 		story.addChapter(chapterFile);
 	}

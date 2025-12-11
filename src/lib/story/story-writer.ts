@@ -95,7 +95,7 @@ export function createEmptyStory(title?: string): Story {
 	return story;
 }
 
-export function createChapter(title: string, content: string = ""): StoryFile {
+export function createChapter(title: string, content: string = "", order?: number): StoryFile {
 	const filename = nanoid() + ".md";
 	const path = `chapters/${filename}`;
 	const now = new Date();
@@ -107,6 +107,7 @@ export function createChapter(title: string, content: string = ""): StoryFile {
 		title,
 		created: now,
 		edited: now,
+		order,
 		metadata: {
 			title,
 		},

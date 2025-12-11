@@ -17,8 +17,18 @@ export class Story {
 	}
 
 	addChapter(file: StoryFile): void {
+		if (file.order === undefined) {
+			file.order = this.chapters.length;
+		}
 		this.chapters.push(file);
+		this.sortChapters();
 		this.updateWordCount();
+	}
+
+	private sortChapters(): void {
+		this.chapters.sort((a, b) => {
+			return (a.order ?? 0) - (b.order ?? 0);
+		});
 	}
 
 	addRootNote(file: StoryFile): void {
@@ -47,6 +57,11 @@ export class Story {
 
 	getChapterByPath(path: string): StoryFile | undefined {
 		return this.chapters.find((chapter) => chapter.path === path);
+	}
+
+	getSortedChapters(): StoryFile[] {
+		this.sortChapters();
+		return [...this.chapters];
 	}
 
 	findNoteByPath(path: string): StoryFile | StoryFolder | undefined {
@@ -91,6 +106,7 @@ export class Story {
 	updateChapter(path: string, updates: Partial<StoryFile>): boolean {
 		const result = this.updateFileInArray(this.chapters, path, updates);
 		if (result) {
+			this.sortChapters();
 			this.updateWordCount();
 		}
 		return result;
@@ -178,6 +194,14 @@ export class Story {
 	deleteChapter(path: string): boolean {
 		const result = this.deleteFileFromArray(this.chapters, path);
 		if (result) {
+			for (let i = 0; i < this.chapters.length; i++) {
+				this.chapters[i].order = i;
+				if (!this.chapters[i].metadata) {
+					this.chapters[i].metadata = {};
+				}
+				this.chapters[i].metadata.order = i;
+			}
+			this.sortChapters();
 			this.updateWordCount();
 		}
 		return result;

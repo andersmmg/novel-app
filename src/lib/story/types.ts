@@ -5,6 +5,7 @@ export interface StoryFile {
 	title?: string;
 	created?: Date;
 	edited?: Date;
+	order?: number;
 	metadata?: any;
 }
 

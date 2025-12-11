@@ -239,7 +239,7 @@
 							<span class="text-foreground font-semibold">
 								{debouncedWordCount.toLocaleString()}
 							</span>
-							<span class="font-medium">words</span>
+							<span class="font-medium">word{debouncedWordCount === 1 ? '' : 's'}</span>
 						</div>
 					</div>
 				</div>

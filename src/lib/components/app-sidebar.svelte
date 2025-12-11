@@ -2,39 +2,32 @@
 	import { goto } from "$app/navigation";
 	import {
 		appState,
-		forceSelectedStoryUpdate,
 		selectStoryById,
 		setCurrentEditedFile,
 	} from "$lib/app-state.svelte";
-	import { confirmDelete } from "$lib/components/confirm-delete";
 	import * as Collapsible from "$lib/components/ui/collapsible";
-	import * as ContextMenu from "$lib/components/ui/context-menu";
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import Tree from "$lib/components/ui/tree.svelte";
 	import { createChapter } from "$lib/story/story-writer";
 	import type { StoryFile } from "$lib/story/types";
-	import { renameStoryFile } from "$lib/story/utils";
 	import { cn } from "$lib/utils";
 	import {
 		Book,
 		BookOpenIcon,
 		ChevronDownIcon,
 		FilePlusIcon,
-		FileText,
 		FolderPlusIcon,
 		LibraryIcon,
 		PlusIcon,
 		Settings,
-		SquarePenIcon,
-		TrashIcon,
 	} from "@lucide/svelte";
-	import { inputPrompt } from "./input-prompt";
+	import ChaptersList from "./sidebar/chapters-list.svelte";
 	import { Button } from "./ui/button";
 
 	const chapters = $derived.by(() => {
 		if (appState.selectedStory) {
-			return [...appState.selectedStory.chapters];
+			return appState.selectedStory.getSortedChapters();
 		} else {
 			return [];
 		}
@@ -70,7 +63,8 @@
 			return;
 		}
 
-		const newChapter = createChapter("Untitled Chapter");
+		const nextOrder = appState.selectedStory.chapters.length;
+		const newChapter = createChapter("Untitled Chapter", "", nextOrder);
 		appState.selectedStory.addChapter(newChapter);
 
 		// Force reactive update
@@ -103,6 +97,14 @@
 		const success = appState.selectedStory.deleteChapter(chapterPath);
 
 		if (success) {
+			for (let i = 0; i < appState.selectedStory.chapters.length; i++) {
+				appState.selectedStory.chapters[i].order = i;
+				if (!appState.selectedStory.chapters[i].metadata) {
+					appState.selectedStory.chapters[i].metadata = {};
+				}
+				appState.selectedStory.chapters[i].metadata.order = i;
+			}
+
 			const currentStory = appState.selectedStory;
 			appState.selectedStory = null;
 			appState.selectedStory = currentStory;
@@ -220,78 +222,11 @@
 						<Sidebar.GroupContent>
 							<!-- Chapters List -->
 							<Sidebar.Menu>
-								{#each chapters as chapter (chapter.path + (chapter.title || chapter.name))}
-									<ContextMenu.Root>
-										<ContextMenu.Trigger>
-											<Sidebar.MenuItem>
-												<Sidebar.MenuButton
-													isActive={appState
-														.currentEditedFile
-														?.path === chapter.path}
-													onclick={() =>
-														openChapter(chapter)}
-												>
-													<FileText />
-													<span
-														>{chapter.title ||
-															chapter.name ||
-															"Untitled Chapter"}</span
-													>
-												</Sidebar.MenuButton>
-											</Sidebar.MenuItem>
-										</ContextMenu.Trigger>
-										<ContextMenu.Content>
-											<ContextMenu.Item
-												onclick={() =>
-													inputPrompt({
-														title: "Rename Chapter",
-														description:
-															"Enter a new title for this chapter",
-														input: {
-															initialValue:
-																chapter.title ||
-																"",
-														},
-														onConfirm: async (
-															value,
-														) => {
-															if (
-																!appState.selectedStory
-															)
-																return;
-															renameStoryFile(
-																appState.selectedStory,
-																chapter.path,
-																value,
-															);
-															forceSelectedStoryUpdate();
-														},
-													})}
-												><SquarePenIcon /> Rename</ContextMenu.Item
-											>
-											<ContextMenu.Item
-												onclick={() => {
-													confirmDelete({
-														title: `Delete ${chapter.title}`,
-														description: `Are you sure you want to delete this chapter?`,
-														input: {
-															confirmationText:
-																chapter.title ||
-																"",
-														},
-														onConfirm: async () => {
-															deleteChapter(
-																chapter.path,
-															);
-															return true;
-														},
-													});
-												}}
-												><TrashIcon /> Delete</ContextMenu.Item
-											>
-										</ContextMenu.Content>
-									</ContextMenu.Root>
-								{/each}
+								<ChaptersList
+									{chapters}
+									{openChapter}
+									{deleteChapter}
+								/>
 								<Sidebar.MenuItem class="text-muted-foreground">
 									<Sidebar.MenuButton onclick={addChapter}>
 										<PlusIcon class="size-4" />
