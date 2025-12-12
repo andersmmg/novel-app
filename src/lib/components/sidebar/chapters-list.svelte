@@ -6,7 +6,17 @@
 	import type { StoryFile } from "$lib/story";
 	import { renameStoryFile } from "$lib/story/utils";
 	import { FileText, SquarePenIcon, TrashIcon } from "@lucide/svelte";
+	import {
+		dndzone,
+		overrideItemIdKeyNameBeforeInitialisingDndZones,
+		setDebugMode,
+		type DndEvent,
+        type Item,
+	} from "svelte-dnd-action";
 	import { inputPrompt } from "../input-prompt";
+	import { flip } from "svelte/animate";
+	setDebugMode(true);
+	overrideItemIdKeyNameBeforeInitialisingDndZones("name");
 
 	let {
 		chapters,
@@ -19,64 +29,90 @@
 	} = $props();
 
 	let localChapters: StoryFile[] = $derived(chapters);
-
+	const flipDurationMs = 100;
+	function handleDndConsider(e: CustomEvent<DndEvent<StoryFile>>) {
+		localChapters = e.detail.items;
+	}
+	function handleDndFinalize(e: CustomEvent<DndEvent<StoryFile>>) {
+		localChapters = e.detail.items;
+	}
 </script>
 
-<div>
-	{#each localChapters as chapter, index (chapter.path)}
-		<ContextMenu.Root>
-			<ContextMenu.Trigger data-index={index}
-				onclick={() => openChapter(chapter)}>
-				<Sidebar.MenuItem>
-					<Sidebar.MenuButton
-						isActive={appState.currentEditedFile?.path ===
-							chapter.path}
-					>
-						<FileText />
-						<span
-							>{chapter.title ||
-								chapter.name ||
-								"Untitled Chapter"}</span
+<div
+	use:dndzone={{
+		items: localChapters,
+		flipDurationMs,
+		type: "chapter",
+	}}
+	onconsider={handleDndConsider}
+	onfinalize={handleDndFinalize}
+>
+	{#each localChapters as chapter (chapter.name)}
+		<div
+			animate:flip={{ duration: flipDurationMs }}
+			class="outline-none focus-card"
+		>
+			<ContextMenu.Root>
+				<ContextMenu.Trigger
+					onclick={() => openChapter(chapter)}
+					class="cursor-default"
+				>
+					<Sidebar.MenuItem>
+						<Sidebar.MenuButton
+							isActive={appState.currentEditedFile?.path ===
+								chapter.path}
 						>
-					</Sidebar.MenuButton>
-				</Sidebar.MenuItem>
-			</ContextMenu.Trigger>
-			<ContextMenu.Content>
-				<ContextMenu.Item
-					onclick={() =>
-						inputPrompt({
-							title: "Rename Chapter",
-							description: "Enter a new title for this chapter",
-							input: {
-								initialValue: chapter.title || "",
-							},
-							onConfirm: async (value) => {
-								if (!appState.selectedStory) return;
-								renameStoryFile(
-									appState.selectedStory,
-									chapter.path,
-									value,
-								);
-								forceSelectedStoryUpdate();
-							},
-						})}><SquarePenIcon /> Rename</ContextMenu.Item
-				>
-				<ContextMenu.Item
-					onclick={() => {
-						confirmDelete({
-							title: `Delete ${chapter.title}`,
-							description: `Are you sure you want to delete this chapter?`,
-							input: {
-								confirmationText: chapter.title || "",
-							},
-							onConfirm: async () => {
-								deleteChapter(chapter.path);
-								return true;
-							},
-						});
-					}}><TrashIcon /> Delete</ContextMenu.Item
-				>
-			</ContextMenu.Content>
-		</ContextMenu.Root>
+							{#snippet child({ props })}
+								<span {...props}>
+									<FileText />
+									<span
+										>{chapter.title ||
+											chapter.name ||
+											"Untitled Chapter"}</span
+									></span
+								>
+							{/snippet}
+						</Sidebar.MenuButton>
+					</Sidebar.MenuItem>
+				</ContextMenu.Trigger>
+				<ContextMenu.Content>
+					<ContextMenu.Item
+						onclick={() =>
+							inputPrompt({
+								title: "Rename Chapter",
+								description:
+									"Enter a new title for this chapter",
+								input: {
+									initialValue: chapter.title || "",
+								},
+								onConfirm: async (value) => {
+									if (!appState.selectedStory) return;
+									renameStoryFile(
+										appState.selectedStory,
+										chapter.path,
+										value,
+									);
+									forceSelectedStoryUpdate();
+								},
+							})}><SquarePenIcon /> Rename</ContextMenu.Item
+					>
+					<ContextMenu.Item
+						onclick={() => {
+							confirmDelete({
+								title: `Delete ${chapter.title}`,
+								description: `Are you sure you want to delete this chapter?`,
+								input: {
+									confirmationText: chapter.title || "",
+								},
+								onConfirm: async () => {
+									deleteChapter(chapter.path);
+									return true;
+								},
+							});
+						}}><TrashIcon /> Delete</ContextMenu.Item
+					>
+				</ContextMenu.Content>
+			</ContextMenu.Root>
+		</div>
 	{/each}
 </div>
