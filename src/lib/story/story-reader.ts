@@ -184,6 +184,7 @@ export async function readStoryFile(
 				isDirectory: false,
 				title,
 				metadata,
+				order: metadata?.order,
 				created:
 					metadata?.created || metadata?.edited
 						? new Date(metadata.created || metadata.edited!)

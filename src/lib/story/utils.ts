@@ -1,5 +1,5 @@
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
-import type { StoryMetadata } from "./types";
+import type { StoryMetadata, StoryFile } from "./types";
 import type { Story } from "./story-class";
 
 const frontmatterCache = new Map<
@@ -116,25 +116,42 @@ export function addFrontmatterIfNeeded(file: {
 	content: string;
 	created?: Date;
 	edited?: Date;
+	order?: number;
 	metadata?: any;
 }): string {
 	const hasDates = file.created || file.edited;
 	const hasMetadata = file.metadata && Object.keys(file.metadata).length > 0;
+	const hasOrder = file.order !== undefined;
 
-	if (!hasDates && !hasMetadata) {
+	if (!hasDates && !hasMetadata && !hasOrder) {
 		return file.content;
 	}
 
+	// Parse existing frontmatter if present
+	let existingMetadata: any = {};
+	let contentWithoutFrontmatter = file.content;
+	
 	if (file.content.startsWith("---\n")) {
-		return file.content;
+		const frontmatterMatch = file.content.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
+		if (frontmatterMatch) {
+			try {
+				existingMetadata = parseYaml(frontmatterMatch[1]) || {};
+				contentWithoutFrontmatter = file.content.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, "").trim();
+			} catch (e) {
+				// If parsing fails, treat as plain content
+				contentWithoutFrontmatter = file.content;
+			}
+		}
 	}
 
-	const metadata: any = { ...file.metadata };
-	if (file.created) metadata.created = file.created;
-	if (file.edited) metadata.edited = file.edited;
+	// Merge metadata (new values override existing ones)
+	const mergedMetadata: any = { ...existingMetadata, ...file.metadata };
+	if (file.created) mergedMetadata.created = file.created;
+	if (file.edited) mergedMetadata.edited = file.edited;
+	if (file.order !== undefined) mergedMetadata.order = file.order;
 
-	const frontmatter = stringifyYaml(convertDatesToStrings(metadata));
-	return `---\n${frontmatter}\n---\n\n${file.content}`;
+	const frontmatter = stringifyYaml(convertDatesToStrings(mergedMetadata));
+	return `---\n${frontmatter}\n---\n\n${contentWithoutFrontmatter}`;
 }
 
 /**
@@ -318,15 +335,22 @@ export function updateStoryFileContent(
 
 	// Update the file based on type
 	if (fileType === "chapter") {
+		const existingChapter = story.getChapterByPath(filePath);
 		return story.updateChapter(filePath, {
 			content: newContent,
 			edited: now,
+			order: existingChapter?.order,
+			metadata: existingChapter?.metadata,
 		});
 	} else if (fileType === "note") {
-		return story.updateNote(filePath, {
-			content: newContent,
-			edited: now,
-		});
+		const existingNote = story.findNoteByPath(filePath);
+		if (existingNote && !("children" in existingNote)) {
+			return story.updateNote(filePath, {
+				content: newContent,
+				edited: now,
+				metadata: existingNote.metadata,
+			});
+		}
 	}
 
 	return false;

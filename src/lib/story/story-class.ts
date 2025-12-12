@@ -207,6 +207,23 @@ export class Story {
 		return result;
 	}
 
+	reorderChapters(newOrder: StoryFile[]): boolean {
+		if (newOrder.length !== this.chapters.length) return false;
+		
+		for (let i = 0; i < newOrder.length; i++) {
+			const chapter = this.chapters.find(c => c.path === newOrder[i].path);
+			if (!chapter) return false;
+			chapter.order = i;
+			if (!chapter.metadata) {
+				chapter.metadata = {};
+			}
+			chapter.metadata.order = i;
+		}
+		
+		this.sortChapters();
+		return true;
+	}
+
 	deleteNote(path: string): boolean {
 		const rootIndex = this.rootNotes.findIndex(
 			(note) => note.path === path,

@@ -15,7 +15,7 @@
 	} from "svelte-dnd-action";
 	import { inputPrompt } from "../input-prompt";
 	import { flip } from "svelte/animate";
-	setDebugMode(true);
+	// setDebugMode(true);
 	overrideItemIdKeyNameBeforeInitialisingDndZones("name");
 
 	let {
@@ -35,6 +35,13 @@
 	}
 	function handleDndFinalize(e: CustomEvent<DndEvent<StoryFile>>) {
 		localChapters = e.detail.items;
+		if (!appState.selectedStory) return;
+
+		const success = appState.selectedStory.reorderChapters(localChapters);
+		if (success) {
+			appState.isDirty = true;
+			forceSelectedStoryUpdate();
+		}
 	}
 </script>
 
@@ -43,6 +50,7 @@
 		items: localChapters,
 		flipDurationMs,
 		type: "chapter",
+		dropTargetStyle: {}
 	}}
 	onconsider={handleDndConsider}
 	onfinalize={handleDndFinalize}

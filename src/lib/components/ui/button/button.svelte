@@ -82,7 +82,7 @@
 	});
 </script>
 
-{#snippet Button({ props }: { props?: Record })}
+{#snippet Button({ props }: { props?: Record<string, any> })}
 	{@const mergedProps = mergeProps(buttonProps, props)}
 	{#if href}
 		<a
