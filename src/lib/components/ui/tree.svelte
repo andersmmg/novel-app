@@ -13,6 +13,7 @@
 		FileText,
 		Folder,
 		FolderOpen,
+		NotepadText,
 		SquarePenIcon,
 		TrashIcon,
 	} from "@lucide/svelte";
@@ -126,7 +127,7 @@
 					onclick={() => openItem(item)}
 					isActive={appState.currentEditedFile?.path === item.path}
 				>
-					<FileText />
+					<NotepadText />
 					<span>{getItemName(item)}</span>
 				</Sidebar.MenuButton>
 			</Sidebar.MenuItem>

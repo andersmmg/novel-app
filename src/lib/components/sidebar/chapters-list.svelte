@@ -5,7 +5,7 @@
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import type { StoryFile } from "$lib/story";
 	import { renameStoryFile } from "$lib/story/utils";
-	import { FileText, SquarePenIcon, TrashIcon } from "@lucide/svelte";
+	import { BookText, FileText, SquarePenIcon, TrashIcon } from "@lucide/svelte";
 	import {
 		dndzone,
 		overrideItemIdKeyNameBeforeInitialisingDndZones,
@@ -72,7 +72,7 @@
 						>
 							{#snippet child({ props })}
 								<span {...props}>
-									<FileText />
+									<BookText />
 									<span
 										>{chapter.title ||
 											chapter.name ||
