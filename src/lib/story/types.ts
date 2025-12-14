@@ -1,4 +1,5 @@
 export interface StoryFile {
+	id: string;
 	name: string;
 	path: string;
 	content: string;
@@ -10,6 +11,7 @@ export interface StoryFile {
 }
 
 export interface StoryFolder {
+	id: string;
 	name: string;
 	path: string;
 	title?: string;

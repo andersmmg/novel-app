@@ -5,18 +5,11 @@
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import type { StoryFile } from "$lib/story";
 	import { renameStoryFile } from "$lib/story/utils";
-	import { BookText, FileText, SquarePenIcon, TrashIcon } from "@lucide/svelte";
-	import {
-		dndzone,
-		overrideItemIdKeyNameBeforeInitialisingDndZones,
-		setDebugMode,
-		type DndEvent,
-        type Item,
-	} from "svelte-dnd-action";
-	import { inputPrompt } from "../input-prompt";
+	import { BookText, SquarePenIcon, TrashIcon } from "@lucide/svelte";
+	import { dndzone, type DndEvent } from "svelte-dnd-action";
 	import { flip } from "svelte/animate";
+	import { inputPrompt } from "../input-prompt";
 	// setDebugMode(true);
-	overrideItemIdKeyNameBeforeInitialisingDndZones("name");
 
 	let {
 		chapters,
@@ -50,16 +43,13 @@
 		items: localChapters,
 		flipDurationMs,
 		type: "chapter",
-		dropTargetStyle: {}
+		dropTargetStyle: {},
 	}}
 	onconsider={handleDndConsider}
 	onfinalize={handleDndFinalize}
 >
-	{#each localChapters as chapter (chapter.name)}
-		<div
-			animate:flip={{ duration: flipDurationMs }}
-			class="outline-none focus-card"
-		>
+	{#each localChapters as chapter (chapter.id)}
+		<div animate:flip={{ duration: flipDurationMs }}>
 			<ContextMenu.Root>
 				<ContextMenu.Trigger
 					onclick={() => openChapter(chapter)}

@@ -80,11 +80,11 @@ const DEFAULT_CONFIG: AppConfig = {
 		enabled: true,
 		intervalMinutes: 5,
 	},
-	theme: "default",
+	theme: "vintage-paper",
 	themeMode: "system",
 	fonts: {
 		ui: "system-ui",
-		editor: "noto-serif",
+		editor: "courier-prime",
 	},
 	editor: {
 		expandWidth: false,

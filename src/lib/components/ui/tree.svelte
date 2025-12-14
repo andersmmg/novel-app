@@ -9,17 +9,16 @@
 	import * as ContextMenu from "$lib/components/ui/context-menu";
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import type { StoryFile, StoryFolder } from "$lib/story/types";
+	import { renameStoryItem } from "$lib/story/utils";
 	import {
-		FileText,
 		Folder,
 		FolderOpen,
 		NotepadText,
 		SquarePenIcon,
 		TrashIcon,
 	} from "@lucide/svelte";
-	import TreeSelf from "./tree.svelte";
 	import { inputPrompt } from "../input-prompt";
-	import { renameStoryItem } from "$lib/story/utils";
+	import Tree from "./tree.svelte";
 
 	let {
 		item,
@@ -88,7 +87,7 @@
 					<Collapsible.Content>
 						<Sidebar.MenuSub class="me-0 pe-0">
 							{#each item.children as subItem (subItem.path || subItem.name)}
-								<TreeSelf item={subItem} level={level + 1} />
+								<Tree item={subItem} level={level + 1} />
 							{/each}
 						</Sidebar.MenuSub>
 					</Collapsible.Content>

@@ -3,10 +3,7 @@ import { nanoid } from "nanoid";
 import { stringify as stringifyYaml } from "yaml";
 import { Story } from "./story-class";
 import type { StoryFile, StoryFolder } from "./types";
-import {
-    addFrontmatterIfNeeded,
-    convertDatesToStrings
-} from "./utils";
+import { addFrontmatterIfNeeded, convertDatesToStrings } from "./utils";
 
 export async function saveStory(story: Story): Promise<Blob> {
 	const zip = new JSZip();
@@ -95,12 +92,17 @@ export function createEmptyStory(title?: string): Story {
 	return story;
 }
 
-export function createChapter(title: string, content: string = "", order?: number): StoryFile {
+export function createChapter(
+	title: string,
+	content: string = "",
+	order?: number,
+): StoryFile {
 	const filename = nanoid() + ".md";
 	const path = `chapters/${filename}`;
 	const now = new Date();
 
 	return {
+		id: nanoid(),
 		name: filename,
 		path,
 		content,
@@ -120,6 +122,7 @@ export function createNote(title: string, content: string = ""): StoryFile {
 	const now = new Date();
 
 	return {
+		id: nanoid(),
 		name: filename,
 		path,
 		content,
@@ -137,6 +140,7 @@ export function createNoteFolder(title: string, name?: string): StoryFolder {
 	const path = `notes/${folderName}/`;
 
 	return {
+		id: nanoid(),
 		name: folderName,
 		path,
 		title,

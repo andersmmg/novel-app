@@ -4,11 +4,11 @@
 		loadAvailableStories,
 		saveCurrentStory,
 	} from "$lib/app-state.svelte";
-	import AppMenubar from "$lib/components/app-menubar.svelte";
-	import AppSidebar from "$lib/components/app-sidebar.svelte";
-	import * as Sidebar from "$lib/components/ui/sidebar";
+	import AppLayout from "$lib/components/app-layout.svelte";
+	import { ConfirmDeleteDialog } from "$lib/components/confirm-delete";
+	import { InputPromptDialog } from "$lib/components/input-prompt";
 	import { Toaster } from "$lib/components/ui/sonner";
-	import { saveConfig, config } from "$lib/config";
+	import { config, saveConfig } from "$lib/config";
 	import { configStore } from "$lib/config/config-store";
 	import { applyFontSettings } from "$lib/fonts/font-settings";
 	import { loadTheme } from "$lib/themes/theme-loader";
@@ -17,8 +17,6 @@
 	import { ModeWatcher, setMode } from "mode-watcher";
 	import { onMount } from "svelte";
 	import "../app.css";
-    import { ConfirmDeleteDialog } from "$lib/components/confirm-delete";
-    import { InputPromptDialog } from "$lib/components/input-prompt";
 
 	let { children } = $props();
 
@@ -77,14 +75,7 @@
 <Toaster />
 <ConfirmDeleteDialog />
 <InputPromptDialog />
-<AppMenubar bind:sidebarOpen />
 
-<Sidebar.Provider
-	open={sidebarOpen}
-	class="min-h-[calc(100svh-2.25rem)] max-h-[calc(100svh-2.25rem)]"
->
-	<AppSidebar />
-	<Sidebar.Inset class="w-full overflow-y-auto max-h-full border-t-0 border-l-0 border-b border-r">
-		{@render children?.()}
-	</Sidebar.Inset>
-</Sidebar.Provider>
+<AppLayout>
+	{@render children?.()}
+</AppLayout>

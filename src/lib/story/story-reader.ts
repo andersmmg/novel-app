@@ -28,6 +28,7 @@ function buildFolderStructure(
 	basePath: string,
 ): { folders: StoryFolder[]; rootFiles: StoryFile[] } {
 	const rootFolder: StoryFolder = {
+		id: "",
 		name: "",
 		path: basePath,
 		children: [],
@@ -54,6 +55,7 @@ function buildFolderStructure(
 
 			if (!nextFolder) {
 				nextFolder = {
+					id: part,
 					name: part,
 					path: basePath + parts.slice(0, i + 1).join("/") + "/",
 					children: [],
@@ -178,6 +180,11 @@ export async function readStoryFile(
 			const metadata = parseMetadata(content);
 
 			const fileData: StoryFile & { isDirectory: boolean } = {
+				id:
+					relativePath
+						.split("/")
+						.pop()
+						?.replace(/\.[^/.]+$/, "") || "",
 				name: relativePath.split("/").pop() || relativePath,
 				path: relativePath,
 				content,
@@ -212,28 +219,34 @@ export async function readStoryFile(
 	const chapters = files.filter(
 		(f) => f.path.startsWith("chapters/") && !f.isDirectory,
 	);
-	
+
 	chapters.sort((a, b) => {
 		const aOrder = a.order ?? a.metadata?.order;
 		const bOrder = b.order ?? b.metadata?.order;
-		
+
 		if (aOrder !== undefined && bOrder !== undefined) {
 			return aOrder - bOrder;
 		}
 		if (aOrder !== undefined) return -1;
 		if (bOrder !== undefined) return 1;
-		
+
 		return a.name.localeCompare(b.name);
 	});
-	
+
 	for (let i = 0; i < chapters.length; i++) {
 		const chapter = chapters[i];
-		if (chapter.order === undefined && chapter.metadata?.order === undefined) {
+		if (
+			chapter.order === undefined &&
+			chapter.metadata?.order === undefined
+		) {
 			chapter.order = i;
-		} else if (chapter.order === undefined && chapter.metadata?.order !== undefined) {
+		} else if (
+			chapter.order === undefined &&
+			chapter.metadata?.order !== undefined
+		) {
 			chapter.order = chapter.metadata.order;
 		}
-		
+
 		const { isDirectory, ...chapterFile } = chapter;
 		story.addChapter(chapterFile);
 	}

@@ -2,6 +2,7 @@
 	import { goto } from "$app/navigation";
 	import {
 		appState,
+		forceSelectedStoryUpdate,
 		selectStoryById,
 		setCurrentEditedFile,
 	} from "$lib/app-state.svelte";
@@ -67,10 +68,7 @@
 		const newChapter = createChapter("Untitled Chapter", "", nextOrder);
 		appState.selectedStory.addChapter(newChapter);
 
-		// Force reactive update
-		const currentStory = appState.selectedStory;
-		appState.selectedStory = null;
-		appState.selectedStory = currentStory;
+		forceSelectedStoryUpdate();
 
 		appState.isDirty = true;
 
@@ -105,9 +103,7 @@
 				appState.selectedStory.chapters[i].metadata.order = i;
 			}
 
-			const currentStory = appState.selectedStory;
-			appState.selectedStory = null;
-			appState.selectedStory = currentStory;
+			forceSelectedStoryUpdate();
 
 			appState.isDirty = true;
 
@@ -115,11 +111,6 @@
 				appState.currentEditedFile = null;
 			}
 		}
-	}
-
-	function renameChapter(chapterPath: string) {
-		// TODO: Implement chapter renaming
-		console.log("Renaming chapter:", chapterPath);
 	}
 </script>
 

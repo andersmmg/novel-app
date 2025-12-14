@@ -2,17 +2,17 @@
 	import { appState, saveCurrentStory } from "$lib/app-state.svelte";
 	import { startAutosave } from "$lib/autosave";
 	import * as Menubar from "$lib/components/ui/menubar";
+	import { useSidebar } from "$lib/components/ui/sidebar";
 	import { isTauriDesktop } from "$lib/is-tauri";
 	import { ctrlShortcut } from "$lib/utils";
 	import PanelLeftIcon from "@lucide/svelte/icons/panel-left";
 	import { getCurrentWindow } from "@tauri-apps/api/window";
-	import { mode, resetMode, setMode } from "mode-watcher";
 	import { onMount } from "svelte";
 	import Time from "svelte-time/Time.svelte";
 	import AppWindowcontrols from "./app-windowcontrols.svelte";
 	import Button from "./ui/button/button.svelte";
 
-	let { sidebarOpen = $bindable(true) } = $props();
+	const sidebar = useSidebar();
 	const appWindow = getCurrentWindow();
 
 	async function handleSave() {
@@ -44,11 +44,7 @@
 
 <Menubar.Root class="rounded-none select-none" data-tauri-drag-region>
 	<div class="flex items-center">
-		<Button
-			variant="ghost"
-			size="icon-sm"
-			onclick={() => (sidebarOpen = !sidebarOpen)}
-		>
+		<Button variant="ghost" size="icon-sm" onclick={() => sidebar.toggle()}>
 			<PanelLeftIcon />
 		</Button>
 		<Menubar.Menu>
