@@ -263,7 +263,7 @@
 
 <div class="flex flex-col h-full w-full">
 	{#if editorState.editor}
-		<div class="p-2 pr-4 bg-background flex gap-2 items-center border-b">
+		<div class="p-2 pr-4 bg-background flex gap-2 items-center border-b max-w-full overflow-x-auto">
 			<!-- Headings -->
 			<ButtonGroup.Root class="empty:hidden">
 				{#if $config?.editor.toolbarItems.heading1}

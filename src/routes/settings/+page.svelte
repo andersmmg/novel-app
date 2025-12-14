@@ -188,7 +188,7 @@
 					</CardDescription>
 				</CardHeader>
 				<CardContent class="space-y-6">
-					<div class="flex gap-1 items-center">
+					<div class="flex gap-1 items-center overflow-x-auto pb-2">
 						<ButtonGroup.Root>
 							<Button
 								tooltipContent="Heading 1"

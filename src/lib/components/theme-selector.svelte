@@ -34,7 +34,7 @@
 	})();
 </script>
 
-<div class="flex items-center gap-2">
+<div class="flex items-start gap-2 flex-wrap">
 	{#each themes as theme}
 		<Button
 			variant={selectedTheme === theme.name ? "default" : "outline"}
