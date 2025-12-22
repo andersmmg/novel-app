@@ -5,10 +5,10 @@ A desktop novel writing application built with Tauri and SvelteKit, combining th
 ## 🚀 Tech Stack
 
 ### Frontend
-- **SvelteKit 2.9.0** - Full-stack web framework
-- **Svelte 5.0.0** - UI framework with modern runes syntax
-- **TypeScript 5.6.2** - Type safety and developer experience
-- **Tailwind CSS 4.1.17** - Utility-first CSS framework
+- **SvelteKit 2.9** - Full-stack web framework
+- **Svelte 5** - UI framework with modern runes syntax
+- **TypeScript** - Type safety and developer experience
+- **Tailwind CSS v4** - Utility-first CSS framework
 - **shadcn-svelte** - High-quality UI component library
 - **mode-watcher** - Dark/light theme management
 
@@ -17,7 +17,7 @@ A desktop novel writing application built with Tauri and SvelteKit, combining th
 - **Rust** - Systems programming for native functionality
 
 ### Development Tools
-- **Vite 6.0.3** - Fast build tool and dev server
+- **Vite 6** - Fast build tool and dev server
 - **Bun** - Modern package manager
 
 ## 📦 Installation
@@ -30,8 +30,8 @@ A desktop novel writing application built with Tauri and SvelteKit, combining th
 ### Setup
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd novel-app-tauri
+git clone git@github.com:andersmmg/novel-app.git
+cd novel-app
 
 # Install dependencies
 bun install
@@ -41,13 +41,13 @@ bun install
 
 ```bash
 # Start development server
-bun run tauri dev
+bun tauri dev
 
 # Type checking
 bun check
 
 # Build for production
-bun run tauri build
+bun tauri build
 ```
 
 ## 🏗️ Project Structure
@@ -74,9 +74,7 @@ static/                # Static assets
 
 - **Cross-platform desktop application** - Windows, macOS, and Linux
 - **Modern UI** - Clean interface with shadcn-svelte components
-- **Theme support** - Dark, light, and system theme modes
-- **Type-safe development** - Full TypeScript support
-- **Fast development** - HMR and optimized build process
+- **Theme support** - Multiple color themes, along with dark and light modes
 
 ## 🧩 UI Components
 
@@ -86,9 +84,7 @@ This project uses shadcn-svelte for UI components. To add new components:
 bun x shadcn-svelte@latest add [component-name] -y
 ```
 
-You can add `-o` to overwrite existing components if needed.
-
-Available components include buttons, forms, dialogs, and more. See [shadcn-svelte documentation](https://shadcn-svelte.com/docs) for details.
+See [shadcn-svelte documentation](https://shadcn-svelte.com/docs) for details.
 
 ## 🔧 Configuration
 
@@ -96,11 +92,26 @@ Available components include buttons, forms, dialogs, and more. See [shadcn-svel
 Main configuration is in `src-tauri/tauri.conf.json` for app settings, permissions, and build options.
 
 ### Theme System
-Theme management is handled by mode-watcher, supporting:
+The app features a dual-layer theme system combining color themes with light/dark modes:
+
+**Color Themes:**
+- Modern (default)
+- Vintage Paper
+- Sci-Fi
+- Kodama
+- Mocha
+- Nature
+- Perpetuity
+
+**Dark/Light Mode:**
 - Light mode
-- Dark mode  
+- Dark mode
 - System preference detection
-- Theme persistence
+- Independent from color themes - any color theme works in both light and dark modes
+
+**Theme Persistence:**
+- Settings are saved to app configuration and persist across sessions
+- Dynamic CSS loading for instant theme switching
 
 ## 📝 Development Notes
 
@@ -124,4 +135,4 @@ TBD
 
 ## Recommended IDE Setup
 
-[Zed](https://zed.dev/) + [Svelte](https://zed.dev/extensions/svelte)
+[Zed](https://zed.dev/) + [Svelte Extension](https://zed.dev/extensions/svelte)
