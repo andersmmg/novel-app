@@ -11,6 +11,7 @@
 	import Time from "svelte-time/Time.svelte";
 	import AppWindowcontrols from "./app-windowcontrols.svelte";
 	import Button from "./ui/button/button.svelte";
+    import { goto } from "$app/navigation";
 
 	const sidebar = useSidebar();
 	const appWindow = getCurrentWindow();
@@ -69,6 +70,14 @@
 				<Menubar.Item>
 					Exit <Menubar.Shortcut>{ctrlShortcut("Q")}</Menubar.Shortcut
 					>
+				</Menubar.Item>
+			</Menubar.Content>
+		</Menubar.Menu>
+		<Menubar.Menu>
+			<Menubar.Trigger>Debug</Menubar.Trigger>
+			<Menubar.Content>
+				<Menubar.Item onclick={() => goto("/test")}>
+					Test Pages
 				</Menubar.Item>
 			</Menubar.Content>
 		</Menubar.Menu>
