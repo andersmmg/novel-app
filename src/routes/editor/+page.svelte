@@ -256,7 +256,7 @@
 						>
 					</div>
 					<button
-						class="flex items-center ms-auto gap-1 cursor-pointer"
+						class="flex items-center gap-1 cursor-pointer"
 						onclick={toggleHemingwayMode}
 					>
 						{#if $config?.editor.hemingway.enabled}
@@ -272,7 +272,7 @@
 	{/if}
 </div>
 <AlertDialog.Root bind:open={confirmDisableHemingway}>
-	<AlertDialog.Content>
+	<AlertDialog.Content interactOutsideBehavior="close">
 		<AlertDialog.Header>
 			<AlertDialog.Title>Are you sure?</AlertDialog.Title>
 			<AlertDialog.Description>
