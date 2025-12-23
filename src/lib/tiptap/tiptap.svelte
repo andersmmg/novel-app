@@ -32,6 +32,7 @@
 	import { Placeholder } from "@tiptap/extensions/placeholder";
 	import { Markdown } from "@tiptap/markdown";
 	import { StarterKit } from "@tiptap/starter-kit";
+	import { Plugin } from "prosemirror-state";
 	import { onDestroy, onMount } from "svelte";
 	import { SearchAndReplace } from "./search-replace";
 
@@ -106,7 +107,57 @@
 					openSearch();
 					return false;
 				},
+				Backspace: () => {
+					if (
+						$config?.editor?.hemingway?.enabled &&
+						fileType === "Chapter"
+					) {
+						return true;
+					}
+					return false;
+				},
+				Delete: () => {
+					if (
+						$config?.editor?.hemingway?.enabled &&
+						fileType === "Chapter"
+					) {
+						return true;
+					}
+					return false;
+				},
 			};
+		},
+		addProseMirrorPlugins() {
+			return [
+				new Plugin({
+					props: {
+						handleTextInput(view) {
+							if (
+								$config?.editor?.hemingway?.enabled &&
+								fileType === "Chapter"
+							) {
+								if (
+									!$config?.editor?.hemingway?.allowAdditions
+								) {
+									const { from, to } = view.state.selection;
+									const doc = view.state.doc;
+									const docLength = doc.content.size;
+
+									const isAtEnd =
+										from === to &&
+										(from === docLength ||
+											from === docLength - 1);
+
+									if (!isAtEnd) {
+										return true;
+									}
+								}
+							}
+							return false;
+						},
+					},
+				}),
+			];
 		},
 	});
 
@@ -263,7 +314,9 @@
 
 <div class="flex flex-col h-full w-full">
 	{#if editorState.editor}
-		<div class="p-2 pr-4 bg-background flex gap-2 items-center border-b max-w-full overflow-x-auto">
+		<div
+			class="p-2 pr-4 bg-background flex gap-2 items-center border-b max-w-full overflow-x-auto"
+		>
 			<!-- Headings -->
 			<ButtonGroup.Root class="empty:hidden">
 				{#if $config?.editor.toolbarItems.heading1}

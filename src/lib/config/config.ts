@@ -68,6 +68,10 @@ export interface AppConfig {
 			fontSize: boolean;
 			expandWidth: boolean;
 		};
+		hemingway: {
+			enabled: boolean;
+			allowAdditions: boolean;
+		};
 	};
 	stats: {
 		minWordsPerParagraph: number;
@@ -107,6 +111,10 @@ const DEFAULT_CONFIG: AppConfig = {
 			find: true,
 			fontSize: true,
 			expandWidth: true,
+		},
+		hemingway: {
+			enabled: false,
+			allowAdditions: true,
 		},
 	},
 	stats: {

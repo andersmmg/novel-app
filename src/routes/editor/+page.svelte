@@ -6,9 +6,9 @@
 	import {
 		addFrontmatterIfNeeded,
 		countWords,
-		separateFrontmatter,
 		getFileTypeFromPath,
 		renameStoryItem,
+		separateFrontmatter,
 		updateStoryFileContent,
 	} from "$lib/story/utils";
 	import Tiptap from "$lib/tiptap/tiptap.svelte";
@@ -239,7 +239,12 @@
 							<span class="text-foreground font-semibold">
 								{debouncedWordCount.toLocaleString()}
 							</span>
-							<span class="font-medium">word{debouncedWordCount === 1 ? '' : 's'}</span>
+							<span class="font-medium"
+								>word{debouncedWordCount === 1 ? "" : "s"}</span
+							>
+						</div>
+						<div class="flex items-center ms-auto">
+							Hemingway Mode
 						</div>
 					</div>
 				</div>

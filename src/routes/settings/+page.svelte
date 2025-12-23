@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { startAutosave } from "$lib/autosave";
 	import FontSelector from "$lib/components/font-selector.svelte";
-	import * as NumberField from "$lib/components/ui/number-field";
 	import ThemeSelector from "$lib/components/theme-selector.svelte";
 	import * as ButtonGroup from "$lib/components/ui/button-group";
 	import Button from "$lib/components/ui/button/button.svelte";
@@ -13,6 +12,7 @@
 	import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
 	import Input from "$lib/components/ui/input/input.svelte";
 	import { Label } from "$lib/components/ui/label";
+	import * as NumberField from "$lib/components/ui/number-field";
 	import * as Select from "$lib/components/ui/select";
 	import { config, type AppConfig } from "$lib/config/config-store";
 	import {
@@ -438,8 +438,7 @@
 				<CardHeader>
 					<CardTitle>Story Statistics</CardTitle>
 					<CardDescription>
-						Where to place the cursor when opening a chapter or
-						note.
+						Where to place cursor when opening a chapter or note.
 					</CardDescription>
 				</CardHeader>
 				<CardContent class="space-y-4">
@@ -462,6 +461,45 @@
 							</NumberField.Group>
 						</NumberField.Root>
 					</div>
+				</CardContent>
+			</Card>
+			<Card>
+				<CardHeader>
+					<CardTitle>Hemingway Mode</CardTitle>
+					<CardDescription>
+						Writing mode that prevents editing previous content to
+						encourage forward momentum. Only applies to chapters.
+					</CardDescription>
+				</CardHeader>
+				<CardContent class="space-y-4">
+					<div class="flex items-center gap-3">
+						<Checkbox
+							id="hemingway-enabled"
+							bind:checked={$config.editor.hemingway.enabled}
+						/>
+						<Label for="hemingway-enabled"
+							>Enable Hemingway mode</Label
+						>
+					</div>
+
+					{#if $config.editor.hemingway.enabled}
+						<div class="flex items-center gap-3">
+							<Checkbox
+								id="hemingway-allow-additions"
+								bind:checked={
+									$config.editor.hemingway.allowAdditions
+								}
+							/>
+							<Label for="hemingway-allow-additions"
+								>Allow additions</Label
+							>
+						</div>
+						<p class="text-xs text-muted-foreground">
+							When enabled, you can only add new text at the end
+							of chapters. Cursor movement is still allowed but
+							typing is restricted.
+						</p>
+					{/if}
 				</CardContent>
 			</Card>
 		</div>
