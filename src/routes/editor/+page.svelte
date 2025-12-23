@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { appState, forceSelectedStoryUpdate } from "$lib/app-state.svelte";
+	import * as AlertDialog from "$lib/components/ui/alert-dialog";
 	import { Badge } from "$lib/components/ui/badge";
 	import { Button } from "$lib/components/ui/button";
+	import { config } from "$lib/config";
 	import {
 		addFrontmatterIfNeeded,
 		countWords,
@@ -12,12 +14,14 @@
 		updateStoryFileContent,
 	} from "$lib/story/utils";
 	import Tiptap from "$lib/tiptap/tiptap.svelte";
+	import { LockKeyholeIcon, LockKeyholeOpenIcon } from "@lucide/svelte";
 
 	let titleInput = $state<HTMLInputElement>();
 	let isEditingTitle = $state(false);
 	let debouncedWordCount = $state(0);
 	let wordCountTimeout: ReturnType<typeof setTimeout> | undefined;
 	let lastFilePath = $state<string | null>(null);
+	let confirmDisableHemingway = $state(false);
 
 	const fileInfo = $derived.by(() => {
 		if (!appState.currentEditedFile) {
@@ -103,6 +107,15 @@
 
 	function goBack() {
 		goto("/");
+	}
+
+	function toggleHemingwayMode() {
+		if (!$config) return;
+		if ($config.editor.hemingway.enabled) {
+			confirmDisableHemingway = true;
+		} else {
+			$config.editor.hemingway.enabled = true;
+		}
 	}
 </script>
 
@@ -234,21 +247,47 @@
 				<div
 					class="flex items-center justify-between text-sm text-muted-foreground"
 				>
-					<div class="flex items-center gap-4">
-						<div class="flex items-center gap-1">
-							<span class="text-foreground font-semibold">
-								{debouncedWordCount.toLocaleString()}
-							</span>
-							<span class="font-medium"
-								>word{debouncedWordCount === 1 ? "" : "s"}</span
-							>
-						</div>
-						<div class="flex items-center ms-auto">
-							Hemingway Mode
-						</div>
+					<div class="flex items-center gap-1">
+						<span class="text-foreground font-semibold">
+							{debouncedWordCount.toLocaleString()}
+						</span>
+						<span class="font-medium"
+							>word{debouncedWordCount === 1 ? "" : "s"}</span
+						>
 					</div>
+					<button
+						class="flex items-center ms-auto gap-1 cursor-pointer"
+						onclick={toggleHemingwayMode}
+					>
+						{#if $config?.editor.hemingway.enabled}
+							<span>Hemingway Mode</span>
+							<LockKeyholeIcon size="16" />
+						{:else}
+							<LockKeyholeOpenIcon size="16" />
+						{/if}
+					</button>
 				</div>
 			</div>
 		</footer>
 	{/if}
 </div>
+<AlertDialog.Root bind:open={confirmDisableHemingway}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Are you sure?</AlertDialog.Title>
+			<AlertDialog.Description>
+				Are you sure you want to turn off Hemingway mode?
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action
+				onclick={() => {
+					if (!$config) return;
+					$config.editor.hemingway.enabled = false;
+					confirmDisableHemingway = false;
+				}}>Turn Off</AlertDialog.Action
+			>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>
