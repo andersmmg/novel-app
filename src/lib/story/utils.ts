@@ -1,6 +1,7 @@
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 import type { StoryMetadata, StoryFile } from "./types";
 import type { Story } from "./story-class";
+import { configStore } from "../config/config-store";
 
 const frontmatterCache = new Map<
 	string,
@@ -130,7 +131,7 @@ export function addFrontmatterIfNeeded(file: {
 	// Parse existing frontmatter if present
 	let existingMetadata: any = {};
 	let contentWithoutFrontmatter = file.content;
-	
+
 	if (file.content.startsWith("---\n")) {
 		const frontmatterMatch = file.content.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
 		if (frontmatterMatch) {
@@ -239,9 +240,43 @@ export function countWords(text: string): number {
 }
 
 /**
+ * Counts quotes in text content, excluding frontmatter
+ */
+export function countQuotes(text: string): number {
+	const { content } = separateFrontmatter(text);
+	const matches = content.match(/"[^"]*"/g);
+	return matches ? matches.length : 0;
+}
+
+/**
+ * Counts paragraphs in text content, excluding frontmatter
+ * A paragraph is defined as a block of text separated by newlines with at least minWordsPerParagraph words
+ */
+export function countParagraphs(text: string, minWords: number = 1): number {
+	const { content } = separateFrontmatter(text);
+
+	// Split by double newlines (paragraph breaks) and filter out empty lines
+	const paragraphs = content
+		.split(/\n\s*\n/)
+		.map(p => p.trim())
+		.filter(p => p.length > 0);
+
+	// Count paragraphs that meet the minimum word count requirement
+	let validParagraphs = 0;
+	for (const paragraph of paragraphs) {
+		const wordCount = paragraph.match(/\b\w+\b/g);
+		if (wordCount && wordCount.length >= minWords) {
+			validParagraphs++;
+		}
+	}
+
+	return validParagraphs;
+}
+
+/**
  * Formats word count for display (e.g., 1500 -> "1.5k", 1500000 -> "1.5M")
  */
-export function formatWordCount(count: number): string {
+export function formatCount(count: number): string {
 	if (count < 1000) {
 		return count.toString();
 	} else if (count < 1000000) {

@@ -86,6 +86,8 @@ export function createEmptyStory(title?: string): Story {
 			created: now,
 			edited: now,
 			wordCount: 0,
+			quoteCount: 0,
+			paragraphCount: 0,
 		},
 		`${nanoid()}.story`,
 	);

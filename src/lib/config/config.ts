@@ -69,6 +69,9 @@ export interface AppConfig {
 			expandWidth: boolean;
 		};
 	};
+	stats: {
+		minWordsPerParagraph: number;
+	};
 }
 
 const CONFIG_PATH = "config.yml";
@@ -105,6 +108,9 @@ const DEFAULT_CONFIG: AppConfig = {
 			fontSize: true,
 			expandWidth: true,
 		},
+	},
+	stats: {
+		minWordsPerParagraph: 1,
 	},
 };
 

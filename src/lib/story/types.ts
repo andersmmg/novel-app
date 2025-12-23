@@ -27,6 +27,8 @@ export interface StoryMetadata {
 	created?: Date;
 	edited?: Date;
 	wordCount?: number;
+	quoteCount?: number;
+	paragraphCount?: number;
 	[key: string]: any;
 }
 
@@ -43,6 +45,8 @@ export interface StoryListItem {
 	id: string;
 	isDirectory: boolean;
 	wordCount?: number;
+	quoteCount?: number;
+	paragraphCount?: number;
 }
 
 export interface StoryData {

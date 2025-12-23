@@ -22,7 +22,7 @@
 	import { createEmptyStory } from "$lib/story";
 	import { saveStory } from "$lib/story/story-writer";
 	import type { StoryListItem } from "$lib/story/types";
-	import { formatWordCount } from "$lib/story/utils";
+	import { formatCount } from "$lib/story/utils";
 	import BookOpenIcon from "@tabler/icons-svelte/icons/book";
 	import CalendarIcon from "@tabler/icons-svelte/icons/calendar";
 	import FileTextIcon from "@tabler/icons-svelte/icons/file-text";
@@ -336,7 +336,7 @@
 								<div class="flex items-center gap-1">
 									<FileTextIcon class="size-3" />
 									<span>
-										{formatWordCount(story.wordCount || 0)} words
+										{formatCount(story.wordCount || 0)} words
 									</span>
 								</div>
 							</div>

@@ -74,18 +74,13 @@ export async function loadAvailableStories() {
 						const metadata = await readStoryFileMetadata(fileData);
 						if (metadata) {
 							const storyItem: StoryListItem = {
-								title:
-									metadata.title ||
-									entry.name.replace(".story", ""),
+								title: metadata.title || "Untitled Story",
 								author: metadata.author,
 								genre: metadata.genre,
 								description: metadata.description,
-								created:
-									metadata.created instanceof Date
-										? metadata.created
-										: new Date(
-												metadata.created || Date.now(),
-											),
+								created: new Date(
+									metadata.created || Date.now(),
+								),
 								edited:
 									metadata.edited instanceof Date
 										? metadata.edited
@@ -93,6 +88,8 @@ export async function loadAvailableStories() {
 												metadata.edited || Date.now(),
 											),
 								wordCount: metadata.wordCount,
+								quoteCount: metadata.quoteCount,
+								paragraphCount: metadata.paragraphCount,
 								path: `${STORIES_DIR}/${entry.name}`,
 								id: entry.name,
 								isDirectory: false,

@@ -12,7 +12,7 @@
 	import * as Field from "$lib/components/ui/field";
 	import { Input } from "$lib/components/ui/input";
 	import { Textarea } from "$lib/components/ui/textarea";
-	import { formatWordCount } from "$lib/story/utils";
+	import { formatCount } from "$lib/story/utils";
 	import { BookOpenIcon } from "@lucide/svelte";
 	import { onMount } from "svelte";
 	import Time from "svelte-time";
@@ -34,6 +34,31 @@
 	const notesWordCount = $derived.by(() => {
 		if (!appState.selectedStory) return 0;
 		return appState.selectedStory.getNotesWordCount();
+	});
+	const chapterQuoteCount = $derived.by(() => {
+		if (!appState.selectedStory) return 0;
+		return appState.selectedStory.getQuoteCount();
+	});
+	const notesQuoteCount = $derived.by(() => {
+		if (!appState.selectedStory) return 0;
+		return appState.selectedStory.getNotesQuoteCount();
+	});
+	let chapterParagraphCount = $state(0);
+	let notesParagraphCount = $state(0);
+
+	// Update paragraph counts when story changes
+	$effect(() => {
+		if (appState.selectedStory) {
+			appState.selectedStory.getParagraphCount().then(count => {
+				chapterParagraphCount = count;
+			});
+			appState.selectedStory.getNotesParagraphCount().then(count => {
+				notesParagraphCount = count;
+			});
+		} else {
+			chapterParagraphCount = 0;
+			notesParagraphCount = 0;
+		}
 	});
 	const totalNotes = $derived.by(() => {
 		if (!appState.selectedStory) return 0;
@@ -290,7 +315,7 @@
 										? chapterWordCount.toLocaleString()
 										: ""}
 								>
-									{formatWordCount(chapterWordCount)}
+									{formatCount(chapterWordCount)}
 								</div>
 								<div class="text-xs text-muted-foreground">
 									Words
@@ -303,7 +328,7 @@
 										? notesWordCount.toLocaleString()
 										: ""}
 								>
-									{formatWordCount(notesWordCount)}
+									{formatCount(notesWordCount)}
 								</div>
 								<div class="text-xs text-muted-foreground">
 									Note Words
@@ -315,6 +340,32 @@
 								</div>
 								<div class="text-xs text-muted-foreground">
 									Notes
+								</div>
+							</div>
+							<div class="text-center p-3 bg-muted rounded-lg">
+								<div
+									class="text-2xl font-bold text-primary"
+									title={chapterQuoteCount + notesQuoteCount > 1000
+										? (chapterQuoteCount + notesQuoteCount).toLocaleString()
+										: ""}
+								>
+									{formatCount(chapterQuoteCount + notesQuoteCount)}
+								</div>
+								<div class="text-xs text-muted-foreground">
+									Quotes
+								</div>
+							</div>
+							<div class="text-center p-3 bg-muted rounded-lg">
+								<div
+									class="text-2xl font-bold text-primary"
+									title={chapterParagraphCount + notesParagraphCount > 1000
+										? (chapterParagraphCount + notesParagraphCount).toLocaleString()
+										: ""}
+								>
+									{formatCount(chapterParagraphCount + notesParagraphCount)}
+								</div>
+								<div class="text-xs text-muted-foreground">
+									Paragraphs
 								</div>
 							</div>
 						</div>

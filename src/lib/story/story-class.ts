@@ -1,5 +1,6 @@
 import type { StoryFile, StoryFolder, StoryMetadata } from "./types";
-import { countWords } from "./utils";
+import { countWords, countQuotes, countParagraphs } from "./utils";
+import { configStore } from "../config/config-store";
 
 export class Story {
 	metadata: StoryMetadata;
@@ -321,5 +322,91 @@ export class Story {
 
 	updateWordCount(): void {
 		this.metadata.wordCount = this.getWordCount();
+		this.metadata.quoteCount = this.getQuoteCount();
+		this.updateParagraphCount();
+	}
+
+	getQuoteCount(): number {
+		let totalQuotes = 0;
+
+		for (const chapter of this.chapters) {
+			totalQuotes += countQuotes(chapter.content);
+		}
+
+		return totalQuotes;
+	}
+
+	getNotesQuoteCount(): number {
+		let totalQuotes = 0;
+
+		for (const note of this.rootNotes) {
+			totalQuotes += countQuotes(note.content);
+		}
+
+		function countQuotesInFolder(folder: StoryFolder): number {
+			let folderQuotes = 0;
+			for (const child of folder.children) {
+				if ("children" in child) {
+					folderQuotes += countQuotesInFolder(child);
+				} else {
+					folderQuotes += countQuotes(child.content);
+				}
+			}
+			return folderQuotes;
+		}
+
+		for (const folder of this.notes) {
+			totalQuotes += countQuotesInFolder(folder);
+		}
+
+		return totalQuotes;
+	}
+
+	updateQuoteCount(): void {
+		this.metadata.quoteCount = this.getQuoteCount();
+	}
+
+	async getParagraphCount(): Promise<number> {
+		const config = await configStore.getConfig();
+		const minWords = config.stats.minWordsPerParagraph;
+		let totalParagraphs = 0;
+
+		for (const chapter of this.chapters) {
+			totalParagraphs += countParagraphs(chapter.content, minWords);
+		}
+
+		return totalParagraphs;
+	}
+
+	async getNotesParagraphCount(): Promise<number> {
+		const config = await configStore.getConfig();
+		const minWords = config.stats.minWordsPerParagraph;
+		let totalParagraphs = 0;
+
+		for (const note of this.rootNotes) {
+			totalParagraphs += countParagraphs(note.content, minWords);
+		}
+
+		async function countParagraphsInFolder(folder: StoryFolder): Promise<number> {
+			let folderParagraphs = 0;
+			for (const child of folder.children) {
+				if ("children" in child) {
+					folderParagraphs += await countParagraphsInFolder(child);
+				} else {
+					folderParagraphs += countParagraphs(child.content, minWords);
+				}
+			}
+			return folderParagraphs;
+		}
+
+		for (const folder of this.notes) {
+			totalParagraphs += await countParagraphsInFolder(folder);
+		}
+
+		return totalParagraphs;
+	}
+
+	async updateParagraphCount(): Promise<void> {
+		this.metadata.paragraphCount = await this.getParagraphCount();
 	}
 }
