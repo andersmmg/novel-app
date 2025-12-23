@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { startAutosave } from "$lib/autosave";
 	import FontSelector from "$lib/components/font-selector.svelte";
+	import * as NumberField from "$lib/components/ui/number-field";
 	import ThemeSelector from "$lib/components/theme-selector.svelte";
 	import * as ButtonGroup from "$lib/components/ui/button-group";
 	import Button from "$lib/components/ui/button/button.svelte";
@@ -390,7 +391,7 @@
 				</CardHeader>
 				<CardContent class="space-y-4">
 					<div class="flex items-center gap-3">
-						<Label for="autosave-enabled">Notes</Label>
+						<Label for="note-open-position">Notes</Label>
 						<Select.Root
 							type="single"
 							bind:value={$config.noteOpenPosition}
@@ -411,7 +412,7 @@
 						</Select.Root>
 					</div>
 					<div class="flex items-center gap-3">
-						<Label for="autosave-enabled">Chapters</Label>
+						<Label for="chapter-open-position">Chapters</Label>
 						<Select.Root
 							type="single"
 							bind:value={$config.chapterOpenPosition}
@@ -430,6 +431,36 @@
 								<Select.Item value="end">End</Select.Item>
 							</Select.Content>
 						</Select.Root>
+					</div>
+				</CardContent>
+			</Card>
+			<Card>
+				<CardHeader>
+					<CardTitle>Story Statistics</CardTitle>
+					<CardDescription>
+						Where to place the cursor when opening a chapter or
+						note.
+					</CardDescription>
+				</CardHeader>
+				<CardContent class="space-y-4">
+					<div class="flex items-center gap-3">
+						<Label for="min-words-per-paragraph"
+							>Minimum Words in Paragraph</Label
+						>
+
+						<NumberField.Root
+							min={1}
+							max={50}
+							bind:value={$config.stats.minWordsPerParagraph}
+						>
+							<NumberField.Group>
+								<NumberField.Decrement />
+								<NumberField.Input
+									id="min-words-per-paragraph"
+								/>
+								<NumberField.Increment />
+							</NumberField.Group>
+						</NumberField.Root>
 					</div>
 				</CardContent>
 			</Card>

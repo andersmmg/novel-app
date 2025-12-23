@@ -1,5 +1,10 @@
 <script lang="ts">
-	import { appState, forceSelectedStoryUpdate, saveCurrentStory } from "$lib/app-state.svelte";
+    import { goto } from "$app/navigation";
+	import {
+		appState,
+		forceSelectedStoryUpdate,
+		saveCurrentStory,
+	} from "$lib/app-state.svelte";
 	import { Badge } from "$lib/components/ui/badge";
 	import { Button } from "$lib/components/ui/button";
 	import {
@@ -13,7 +18,7 @@
 	import { Input } from "$lib/components/ui/input";
 	import { Textarea } from "$lib/components/ui/textarea";
 	import { formatCount } from "$lib/story/utils";
-	import { BookOpenIcon } from "@lucide/svelte";
+	import { BookOpenIcon, WrenchIcon } from "@lucide/svelte";
 	import { onMount } from "svelte";
 	import Time from "svelte-time";
 
@@ -49,10 +54,10 @@
 	// Update paragraph counts when story changes
 	$effect(() => {
 		if (appState.selectedStory) {
-			appState.selectedStory.getParagraphCount().then(count => {
+			appState.selectedStory.getParagraphCount().then((count) => {
 				chapterParagraphCount = count;
 			});
-			appState.selectedStory.getNotesParagraphCount().then(count => {
+			appState.selectedStory.getNotesParagraphCount().then((count) => {
 				notesParagraphCount = count;
 			});
 		} else {
@@ -87,7 +92,8 @@
 			titleInput = appState.selectedStory.metadata.title || "";
 			authorInput = appState.selectedStory.metadata.author || "";
 			genreInput = appState.selectedStory.metadata.genre || "";
-			descriptionInput = appState.selectedStory.metadata.description || "";
+			descriptionInput =
+				appState.selectedStory.metadata.description || "";
 		}
 	});
 
@@ -96,7 +102,8 @@
 			titleInput = appState.selectedStory.metadata.title || "";
 			authorInput = appState.selectedStory.metadata.author || "";
 			genreInput = appState.selectedStory.metadata.genre || "";
-			descriptionInput = appState.selectedStory.metadata.description || "";
+			descriptionInput =
+				appState.selectedStory.metadata.description || "";
 		}
 		isEditing = true;
 	}
@@ -122,7 +129,8 @@
 			titleInput = appState.selectedStory.metadata.title || "";
 			authorInput = appState.selectedStory.metadata.author || "";
 			genreInput = appState.selectedStory.metadata.genre || "";
-			descriptionInput = appState.selectedStory.metadata.description || "";
+			descriptionInput =
+				appState.selectedStory.metadata.description || "";
 		}
 		isEditing = false;
 	}
@@ -295,7 +303,17 @@
 			<div class="space-y-4">
 				<Card>
 					<CardHeader>
-						<CardTitle>Story Statistics</CardTitle>
+						<CardTitle class="flex items-center">
+							<span>Story Statistics</span>
+							<Button
+								variant="outline"
+								size="icon-sm"
+								class="ms-auto"
+								onclick={() => goto("/settings#min-words-per-paragraph")}
+							>
+								<WrenchIcon />
+							</Button></CardTitle
+						>
 						<CardDescription>Track your progress</CardDescription>
 					</CardHeader>
 					<CardContent class="space-y-4">
@@ -345,11 +363,17 @@
 							<div class="text-center p-3 bg-muted rounded-lg">
 								<div
 									class="text-2xl font-bold text-primary"
-									title={chapterQuoteCount + notesQuoteCount > 1000
-										? (chapterQuoteCount + notesQuoteCount).toLocaleString()
+									title={chapterQuoteCount + notesQuoteCount >
+									1000
+										? (
+												chapterQuoteCount +
+												notesQuoteCount
+											).toLocaleString()
 										: ""}
 								>
-									{formatCount(chapterQuoteCount + notesQuoteCount)}
+									{formatCount(
+										chapterQuoteCount + notesQuoteCount,
+									)}
 								</div>
 								<div class="text-xs text-muted-foreground">
 									Quotes
@@ -358,11 +382,19 @@
 							<div class="text-center p-3 bg-muted rounded-lg">
 								<div
 									class="text-2xl font-bold text-primary"
-									title={chapterParagraphCount + notesParagraphCount > 1000
-										? (chapterParagraphCount + notesParagraphCount).toLocaleString()
+									title={chapterParagraphCount +
+										notesParagraphCount >
+									1000
+										? (
+												chapterParagraphCount +
+												notesParagraphCount
+											).toLocaleString()
 										: ""}
 								>
-									{formatCount(chapterParagraphCount + notesParagraphCount)}
+									{formatCount(
+										chapterParagraphCount +
+											notesParagraphCount,
+									)}
 								</div>
 								<div class="text-xs text-muted-foreground">
 									Paragraphs
