@@ -54,7 +54,6 @@ export async function loadAvailableStories() {
 	appState.availableStories = [];
 
 	try {
-		// Ensure the stories directory exists
 		if (!(await ensureStoriesDir())) {
 			return;
 		}
@@ -105,7 +104,6 @@ export async function loadAvailableStories() {
 			}
 		}
 
-		// Sort stories by edited date (most recent first)
 		storyFiles.sort((a, b) => {
 			const aTime =
 				a.edited instanceof Date
@@ -143,16 +141,16 @@ async function readFileAsFile(fileName: string): Promise<File | null> {
 export async function selectStoryById(storyId: string) {
 	info(`AppState: Selecting story by ID: ${storyId}`);
 	const storyPath = `${STORIES_DIR}/${storyId}`;
-	// Check if story is already loaded
+
 	if (appState.selectedStory && appState.selectedStory.path === storyPath) {
 		info(`Story ${storyId} is already loaded`);
 		return;
 	}
-	// If there is a story loaded, save it before loading a new one
+
 	if (appState.selectedStory) {
 		await saveCurrentStory();
 	}
-	// Load story data as Story class
+
 	const storyFile = await readFileAsFile(storyId);
 	if (!storyFile) {
 		logError(`Failed to load story file ${storyId}`);

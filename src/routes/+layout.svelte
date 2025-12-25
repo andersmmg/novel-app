@@ -29,19 +29,17 @@
 	});
 
 	onMount(async () => {
-		// Load theme and fonts from config
 		try {
 			const config = await configStore.getConfig();
 			await loadTheme(config.theme || "default");
 			await applyFontSettings();
 		} catch (themeError) {
 			error("Failed to load theme: {themeError}");
-			// Fallback to default theme
+
 			await loadTheme("default");
 			await applyFontSettings();
 		}
 
-		// Initialize story management after config is loaded
 		try {
 			await loadAvailableStories();
 			info("Story management initialized successfully");
@@ -50,10 +48,8 @@
 			error("Failed to initialize story management: {_error}");
 		}
 
-		// Get the main window
 		const appWindow = new Window("main");
 
-		// Listen for close request
 		await appWindow.onCloseRequested(async () => {
 			try {
 				await saveConfig();
@@ -65,7 +61,7 @@
 			} catch (error) {
 				console.error("Failed to save story before closing:", error);
 			}
-			// Destroy the window to close
+
 			await appWindow.destroy();
 		});
 	});

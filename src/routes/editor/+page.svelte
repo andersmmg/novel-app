@@ -199,7 +199,6 @@
 							appState.selectedStory.metadata.edited = now;
 							appState.isDirty = true;
 
-							// Use the unified content update function
 							updateStoryFileContent(
 								appState.selectedStory,
 								filePath,

@@ -68,7 +68,6 @@
 		if (currentFileChanged) {
 			previousFileId = currentFileId;
 
-			// Separate frontmatter from content
 			const { content: cleanContent } = separateFrontmatter(
 				currentFile?.content || "",
 			);
@@ -162,7 +161,6 @@
 	});
 
 	onMount(() => {
-		// Separate frontmatter from initial content
 		const { content: initialContent } = separateFrontmatter(
 			currentFile?.content || "",
 		);

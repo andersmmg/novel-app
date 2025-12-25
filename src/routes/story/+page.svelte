@@ -36,7 +36,6 @@
 
 	const storyMetadata = $derived(appState.selectedStory?.metadata || {});
 
-	// Calculate stats from the story data
 	const chapterCount = $derived(appState.selectedStory?.chapters.length || 0);
 	const chapterWordCount = $derived.by(() => {
 		if (!appState.selectedStory) return 0;
@@ -56,7 +55,6 @@
 	});
 	let chapterParagraphCount = $state(0);
 
-	// Update paragraph counts when story changes
 	$effect(() => {
 		if (appState.selectedStory) {
 			appState.selectedStory.getParagraphCount().then((count) => {
