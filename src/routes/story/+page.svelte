@@ -5,6 +5,7 @@
 		forceSelectedStoryUpdate,
 		saveCurrentStory,
 	} from "$lib/app-state.svelte";
+	import GoalsDialog from "$lib/components/goals-dialog";
 	import { Badge } from "$lib/components/ui/badge";
 	import { Button } from "$lib/components/ui/button";
 	import {
@@ -137,6 +138,20 @@
 				appState.selectedStory.metadata.description || "";
 		}
 		isEditing = false;
+	}
+
+	async function saveGoals(goals: any) {
+		if (!appState.selectedStory) return;
+
+		appState.selectedStory.updateMetadata({
+			goals: goals,
+		});
+		forceSelectedStoryUpdate();
+		await saveCurrentStory();
+	}
+
+	function getProgress(current: number, target: number): number {
+		return Math.min((current / target) * 100, 100);
 	}
 </script>
 
@@ -309,15 +324,22 @@
 					<CardHeader>
 						<CardTitle class="flex items-center">
 							<span>Story Statistics</span>
-							<Button
-								variant="outline"
-								size="icon-sm"
-								class="ms-auto"
-								onclick={() =>
-									goto("/settings#min-words-per-paragraph")}
-							>
-								<WrenchIcon />
-							</Button></CardTitle
+							<div class="ms-auto flex gap-2">
+								<GoalsDialog
+									metadata={storyMetadata}
+									onSave={saveGoals}
+								/>
+								<Button
+									variant="outline"
+									size="icon-sm"
+									onclick={() =>
+										goto(
+											"/settings#min-words-per-paragraph",
+										)}
+								>
+									<WrenchIcon />
+								</Button>
+							</div></CardTitle
 						>
 						<CardDescription>Track your progress</CardDescription>
 					</CardHeader>
@@ -335,6 +357,28 @@
 									<div class="text-xs text-muted-foreground">
 										Chapters
 									</div>
+									{#if storyMetadata.goals?.chapters?.enabled}
+										<div class="mt-2">
+											<div
+												class="w-full bg-background rounded-full h-1.5"
+											>
+												<div
+													class="bg-primary h-1.5 rounded-full transition-all"
+													style="width: {getProgress(
+														chapterCount,
+														storyMetadata.goals
+															.chapters.target,
+													)}%"
+												></div>
+											</div>
+											<div
+												class="text-xs text-muted-foreground mt-1"
+											>
+												{chapterCount} / {storyMetadata
+													.goals.chapters.target}
+											</div>
+										</div>
+									{/if}
 								</div>
 							{/if}
 							{#if $config?.stats.display.words}
@@ -363,6 +407,32 @@
 											? "Total Words"
 											: "Words"}
 									</div>
+									{#if storyMetadata.goals?.words?.enabled}
+										<div
+											class="mt-2"
+											role="presentation"
+											onclick={(e) => e.stopPropagation()}
+										>
+											<div
+												class="w-full bg-background rounded-full h-1.5"
+											>
+												<div
+													class="bg-primary h-1.5 rounded-full transition-all"
+													style="width: {getProgress(
+														chapterWordCount,
+														storyMetadata.goals
+															.words.target,
+													)}%"
+												></div>
+											</div>
+											<div
+												class="text-xs text-muted-foreground mt-1"
+											>
+												{chapterWordCount.toLocaleString()}
+												/ {storyMetadata.goals.words.target.toLocaleString()}
+											</div>
+										</div>
+									{/if}
 								</button>
 							{/if}
 							{#if $config?.stats.display.notes}
@@ -377,6 +447,28 @@
 									<div class="text-xs text-muted-foreground">
 										Notes
 									</div>
+									{#if storyMetadata.goals?.notes?.enabled}
+										<div class="mt-2">
+											<div
+												class="w-full bg-background rounded-full h-1.5"
+											>
+												<div
+													class="bg-primary h-1.5 rounded-full transition-all"
+													style="width: {getProgress(
+														totalNotes,
+														storyMetadata.goals
+															.notes.target,
+													)}%"
+												></div>
+											</div>
+											<div
+												class="text-xs text-muted-foreground mt-1"
+											>
+												{totalNotes} / {storyMetadata
+													.goals.notes.target}
+											</div>
+										</div>
+									{/if}
 								</div>
 							{/if}
 							{#if $config?.stats.display.quotes}
@@ -406,6 +498,32 @@
 											? "Total Quotes"
 											: "Quotes"}
 									</div>
+									{#if storyMetadata.goals?.quotes?.enabled}
+										<div
+											class="mt-2"
+											role="presentation"
+											onclick={(e) => e.stopPropagation()}
+										>
+											<div
+												class="w-full bg-background rounded-full h-1.5"
+											>
+												<div
+													class="bg-primary h-1.5 rounded-full transition-all"
+													style="width: {getProgress(
+														chapterQuoteCount,
+														storyMetadata.goals
+															.quotes.target,
+													)}%"
+												></div>
+											</div>
+											<div
+												class="text-xs text-muted-foreground mt-1"
+											>
+												{chapterQuoteCount.toLocaleString()}
+												/ {storyMetadata.goals.quotes.target.toLocaleString()}
+											</div>
+										</div>
+									{/if}
 								</button>
 							{/if}
 							{#if $config?.stats.display.paragraphs}
@@ -435,6 +553,32 @@
 											? "Total Paragraphs"
 											: "Paragraphs"}
 									</div>
+									{#if storyMetadata.goals?.paragraphs?.enabled}
+										<div
+											class="mt-2"
+											role="presentation"
+											onclick={(e) => e.stopPropagation()}
+										>
+											<div
+												class="w-full bg-background rounded-full h-1.5"
+											>
+												<div
+													class="bg-primary h-1.5 rounded-full transition-all"
+													style="width: {getProgress(
+														chapterParagraphCount,
+														storyMetadata.goals
+															.paragraphs.target,
+													)}%"
+												></div>
+											</div>
+											<div
+												class="text-xs text-muted-foreground mt-1"
+											>
+												{chapterParagraphCount.toLocaleString()}
+												/ {storyMetadata.goals.paragraphs.target.toLocaleString()}
+											</div>
+										</div>
+									{/if}
 								</button>
 							{/if}
 						</div>

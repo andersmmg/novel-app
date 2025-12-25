@@ -19,6 +19,11 @@ export interface StoryFolder {
 	children: (StoryFile | StoryFolder)[];
 }
 
+export interface StoryGoal {
+	enabled: boolean;
+	target: number;
+}
+
 export interface StoryMetadata {
 	title?: string;
 	author?: string;
@@ -29,6 +34,13 @@ export interface StoryMetadata {
 	wordCount?: number;
 	quoteCount?: number;
 	paragraphCount?: number;
+	goals?: {
+		words?: StoryGoal;
+		chapters?: StoryGoal;
+		notes?: StoryGoal;
+		quotes?: StoryGoal;
+		paragraphs?: StoryGoal;
+	};
 	[key: string]: any;
 }
 
