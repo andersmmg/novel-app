@@ -243,7 +243,7 @@
 		<footer
 			class="border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 cursor-default"
 		>
-			<div class="container px-4 py-2">
+			<div class="px-4 py-2">
 				<div
 					class="flex items-center justify-between text-sm text-muted-foreground"
 				>
