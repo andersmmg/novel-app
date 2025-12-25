@@ -41,6 +41,9 @@
 	let descriptionInput = $state("");
 	let showEmptyWarning = $state(false);
 
+	// Constants
+	const WARNING_HIDE_DELAY = 3000;
+
 	const stories = $derived(appState.availableStories);
 	const canCreateStory = $derived(
 		titleInput.trim() ||
@@ -96,7 +99,7 @@
 	async function handleCreateStory() {
 		if (!canCreateStory) {
 			showEmptyWarning = true;
-			setTimeout(() => (showEmptyWarning = false), 3000);
+			setTimeout(() => (showEmptyWarning = false), WARNING_HIDE_DELAY);
 			return;
 		}
 

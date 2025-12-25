@@ -20,6 +20,9 @@
 	let isEditingTitle = $state(false);
 	let debouncedWordCount = $state(0);
 	let wordCountTimeout: ReturnType<typeof setTimeout> | undefined;
+
+	// Constants
+	const WORD_COUNT_DEBOUNCE_DELAY = 200;
 	let lastFilePath = $state<string | null>(null);
 	let confirmDisableHemingway = $state(false);
 
@@ -61,7 +64,7 @@
 		clearTimeout(wordCountTimeout);
 		wordCountTimeout = setTimeout(() => {
 			debouncedWordCount = countWords(content);
-		}, 200);
+		}, WORD_COUNT_DEBOUNCE_DELAY);
 	});
 
 	function startEditingTitle() {
@@ -101,6 +104,22 @@
 		isEditingTitle = false;
 	}
 
+	function handleTitleInputKeydown(e: KeyboardEvent) {
+		if (e.key === "Enter") {
+			saveTitle();
+		}
+		if (e.key === "Escape") {
+			cancelEditTitle();
+		}
+	}
+
+	function handleTitleButtonKeydown(e: KeyboardEvent) {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault();
+			startEditingTitle();
+		}
+	}
+
 	function cancelEditTitle() {
 		isEditingTitle = false;
 	}
@@ -137,11 +156,7 @@
 									type="text"
 									value={fileInfo.title}
 									onblur={saveTitle}
-									onkeydown={(e) => {
-										if (e.key === "Enter") saveTitle();
-										if (e.key === "Escape")
-											cancelEditTitle();
-									}}
+									onkeydown={handleTitleInputKeydown}
 									class="text-md font-medium bg-transparent border-none outline-none focus:ring-2 focus:ring-ring rounded px-2 py-1 w-full"
 									style="min-height: 2rem;"
 								/>
@@ -150,15 +165,7 @@
 									type="button"
 									class="text-md font-medium cursor-pointer hover:bg-muted rounded px-2 py-1 border-none bg-transparent text-left w-full overflow-hidden text-ellipsis whitespace-nowrap"
 									onclick={startEditingTitle}
-									onkeydown={(e) => {
-										if (
-											e.key === "Enter" ||
-											e.key === " "
-										) {
-											e.preventDefault();
-											startEditingTitle();
-										}
-									}}
+									onkeydown={handleTitleButtonKeydown}
 									style="min-height: 2rem;"
 								>
 									{fileInfo.title}
@@ -217,7 +224,11 @@
 					</p>
 					<Button
 						onclick={() => {
-							goto("/story");
+							try {
+								goto("/story");
+							} catch (error) {
+								console.error("Navigation failed:", error);
+							}
 						}}>Go to Overview</Button
 					>
 				</div>
@@ -232,7 +243,15 @@
 						Please select a story from the home page or sidebar to
 						start editing.
 					</p>
-					<Button onclick={goBack}>Go to Stories</Button>
+					<Button
+						onclick={() => {
+							try {
+								goto('/');
+							} catch (error) {
+								console.error("Navigation failed:", error);
+							}
+						}}
+					>Go to Stories</Button>
 				</div>
 			</div>
 		{/if}
