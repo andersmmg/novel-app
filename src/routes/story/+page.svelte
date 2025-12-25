@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
+	import { goto } from "$app/navigation";
 	import {
 		appState,
 		forceSelectedStoryUpdate,
@@ -17,6 +17,7 @@
 	import * as Field from "$lib/components/ui/field";
 	import { Input } from "$lib/components/ui/input";
 	import { Textarea } from "$lib/components/ui/textarea";
+	import { config } from "$lib/config/config-store";
 	import { formatCount } from "$lib/story/utils";
 	import { BookOpenIcon, WrenchIcon } from "@lucide/svelte";
 	import { onMount } from "svelte";
@@ -27,6 +28,10 @@
 	let authorInput = $state("");
 	let genreInput = $state("");
 	let descriptionInput = $state("");
+	let showingTotalWords = $state(false);
+	let showingTotalQuotes = $state(false);
+	let showingTotalParagraphs = $state(false);
+	let notesParagraphCount = $state(0);
 
 	const storyMetadata = $derived(appState.selectedStory?.metadata || {});
 
@@ -49,7 +54,6 @@
 		return appState.selectedStory.getNotesQuoteCount();
 	});
 	let chapterParagraphCount = $state(0);
-	let notesParagraphCount = $state(0);
 
 	// Update paragraph counts when story changes
 	$effect(() => {
@@ -309,7 +313,8 @@
 								variant="outline"
 								size="icon-sm"
 								class="ms-auto"
-								onclick={() => goto("/settings#min-words-per-paragraph")}
+								onclick={() =>
+									goto("/settings#min-words-per-paragraph")}
 							>
 								<WrenchIcon />
 							</Button></CardTitle
@@ -318,88 +323,120 @@
 					</CardHeader>
 					<CardContent class="space-y-4">
 						<div class="grid grid-cols-2 gap-4">
-							<div class="text-center p-3 bg-muted rounded-lg">
-								<div class="text-2xl font-bold text-primary">
-									{chapterCount}
-								</div>
-								<div class="text-xs text-muted-foreground">
-									Chapters
-								</div>
-							</div>
-							<div class="text-center p-3 bg-muted rounded-lg">
+							{#if $config?.stats.display.chapters}
 								<div
-									class="text-2xl font-bold text-primary"
-									title={chapterWordCount > 1000
-										? chapterWordCount.toLocaleString()
-										: ""}
+									class="text-center p-3 bg-muted rounded-lg"
 								>
-									{formatCount(chapterWordCount)}
+									<div
+										class="text-2xl font-bold text-primary"
+									>
+										{chapterCount}
+									</div>
+									<div class="text-xs text-muted-foreground">
+										Chapters
+									</div>
 								</div>
-								<div class="text-xs text-muted-foreground">
-									Words
-								</div>
-							</div>
-							<div class="text-center p-3 bg-muted rounded-lg">
-								<div
-									class="text-2xl font-bold text-primary"
-									title={notesWordCount > 1000
-										? notesWordCount.toLocaleString()
-										: ""}
+							{/if}
+							{#if $config?.stats.display.words}
+								<button
+									class="text-center p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors w-full"
+									onclick={() =>
+										(showingTotalWords =
+											!showingTotalWords)}
 								>
-									{formatCount(notesWordCount)}
-								</div>
-								<div class="text-xs text-muted-foreground">
-									Note Words
-								</div>
-							</div>
-							<div class="text-center p-3 bg-muted rounded-lg">
-								<div class="text-2xl font-bold text-primary">
-									{totalNotes}
-								</div>
-								<div class="text-xs text-muted-foreground">
-									Notes
-								</div>
-							</div>
-							<div class="text-center p-3 bg-muted rounded-lg">
+									<div
+										class="text-2xl font-bold text-primary"
+										title={(showingTotalWords
+											? chapterWordCount + notesWordCount
+											: chapterWordCount
+										).toLocaleString()}
+									>
+										{formatCount(
+											showingTotalWords
+												? chapterWordCount +
+														notesWordCount
+												: chapterWordCount,
+										)}
+									</div>
+									<div class="text-xs text-muted-foreground">
+										{showingTotalWords
+											? "Total Words"
+											: "Words"}
+									</div>
+								</button>
+							{/if}
+							{#if $config?.stats.display.notes}
 								<div
-									class="text-2xl font-bold text-primary"
-									title={chapterQuoteCount + notesQuoteCount >
-									1000
-										? (
-												chapterQuoteCount +
+									class="text-center p-3 bg-muted rounded-lg"
+								>
+									<div
+										class="text-2xl font-bold text-primary"
+									>
+										{totalNotes}
+									</div>
+									<div class="text-xs text-muted-foreground">
+										Notes
+									</div>
+								</div>
+							{/if}
+							{#if $config?.stats.display.quotes}
+								<button
+									class="text-center p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors w-full"
+									onclick={() =>
+										(showingTotalQuotes =
+											!showingTotalQuotes)}
+								>
+									<div
+										class="text-2xl font-bold text-primary"
+										title={(showingTotalQuotes
+											? chapterQuoteCount +
 												notesQuoteCount
-											).toLocaleString()
-										: ""}
+											: chapterQuoteCount
+										).toLocaleString()}
+									>
+										{formatCount(
+											showingTotalQuotes
+												? chapterQuoteCount +
+														notesQuoteCount
+												: chapterQuoteCount,
+										)}
+									</div>
+									<div class="text-xs text-muted-foreground">
+										{showingTotalQuotes
+											? "Total Quotes"
+											: "Quotes"}
+									</div>
+								</button>
+							{/if}
+							{#if $config?.stats.display.paragraphs}
+								<button
+									class="text-center p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors w-full"
+									onclick={() =>
+										(showingTotalParagraphs =
+											!showingTotalParagraphs)}
 								>
-									{formatCount(
-										chapterQuoteCount + notesQuoteCount,
-									)}
-								</div>
-								<div class="text-xs text-muted-foreground">
-									Quotes
-								</div>
-							</div>
-							<div class="text-center p-3 bg-muted rounded-lg">
-								<div
-									class="text-2xl font-bold text-primary"
-									title={chapterParagraphCount +
-										notesParagraphCount >
-									1000
-										? (
-												chapterParagraphCount +
+									<div
+										class="text-2xl font-bold text-primary"
+										title={(showingTotalParagraphs
+											? chapterParagraphCount +
 												notesParagraphCount
-											).toLocaleString()
-										: ""}
-								>
-									{formatCount(
-										chapterParagraphCount +
-											notesParagraphCount,
-									)}
-								</div>
-								<div class="text-xs text-muted-foreground">
-									Paragraphs
-								</div>
-							</div>
+											: chapterParagraphCount
+										).toLocaleString()}
+									>
+										{formatCount(
+											showingTotalParagraphs
+												? chapterParagraphCount +
+														notesParagraphCount
+												: chapterParagraphCount,
+										)}
+									</div>
+									<div class="text-xs text-muted-foreground">
+										{showingTotalParagraphs
+											? "Total Paragraphs"
+											: "Paragraphs"}
+									</div>
+								</button>
+							{/if}
 						</div>
 					</CardContent>
 				</Card>

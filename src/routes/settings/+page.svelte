@@ -438,11 +438,48 @@
 				<CardHeader>
 					<CardTitle>Story Statistics</CardTitle>
 					<CardDescription>
-						Where to place cursor when opening a chapter or note.
+						Configure statistics to display in the story overview.
 					</CardDescription>
 				</CardHeader>
 				<CardContent class="space-y-4">
-					<div class="flex items-center gap-3">
+					<div class="grid grid-cols-2 gap-4">
+						<div class="flex items-center gap-3">
+							<Checkbox
+								id="stats-chapters"
+								bind:checked={$config.stats.display.chapters}
+							/>
+							<Label for="stats-chapters">Chapters</Label>
+						</div>
+						<div class="flex items-center gap-3">
+							<Checkbox
+								id="stats-words"
+								bind:checked={$config.stats.display.words}
+							/>
+							<Label for="stats-words">Words</Label>
+						</div>
+						<div class="flex items-center gap-3">
+							<Checkbox
+								id="stats-notes"
+								bind:checked={$config.stats.display.notes}
+							/>
+							<Label for="stats-notes">Notes</Label>
+						</div>
+						<div class="flex items-center gap-3">
+							<Checkbox
+								id="stats-quotes"
+								bind:checked={$config.stats.display.quotes}
+							/>
+							<Label for="stats-quotes">Quotes</Label>
+						</div>
+						<div class="flex items-center gap-3">
+							<Checkbox
+								id="stats-paragraphs"
+								bind:checked={$config.stats.display.paragraphs}
+							/>
+							<Label for="stats-paragraphs">Paragraphs</Label>
+						</div>
+					</div>
+					<div class="flex items-center gap-3 pt-2">
 						<Label for="min-words-per-paragraph"
 							>Minimum Words in Paragraph</Label
 						>

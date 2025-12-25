@@ -75,6 +75,13 @@ export interface AppConfig {
 	};
 	stats: {
 		minWordsPerParagraph: number;
+		display: {
+			chapters: boolean;
+			paragraphs: boolean;
+			words: boolean;
+			quotes: boolean;
+			notes: boolean;
+		};
 	};
 }
 
@@ -119,6 +126,13 @@ const DEFAULT_CONFIG: AppConfig = {
 	},
 	stats: {
 		minWordsPerParagraph: 1,
+		display: {
+			chapters: true,
+			paragraphs: true,
+			words: true,
+			quotes: true,
+			notes: false,
+		},
 	},
 };
 
