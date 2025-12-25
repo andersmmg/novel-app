@@ -79,10 +79,6 @@
 	async function selectStory(storyId: string) {
 		console.log("Sidebar: Selecting story with ID:", storyId);
 		await selectStoryById(storyId);
-		console.log(
-			"Sidebar: Story selected, app state:",
-			$state.snapshot(appState),
-		);
 		goto("/story");
 	}
 

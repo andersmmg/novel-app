@@ -17,12 +17,8 @@
 	);
 
 	async function handleFontChange(fontName: string) {
-		console.log(`FontSelector: Changing ${category} font to: ${fontName}`);
 		try {
 			await updateFontSetting(category, fontName);
-			console.log(
-				`FontSelector: Successfully updated ${category} font to: ${fontName}`,
-			);
 		} catch (error) {
 			console.error(
 				`FontSelector: Failed to update ${category} font:`,

@@ -1,7 +1,7 @@
-import { Context } from 'runed';
-import type { ReadableBoxedValues, WritableBoxedValues } from 'svelte-toolbelt';
-import type { ButtonElementProps } from '../button';
-import { useRamp, type UseRampOptions } from '$lib/hooks/use-ramp.svelte';
+import { useRamp, type UseRampOptions } from "$lib/hooks/use-ramp.svelte";
+import { Context } from "runed";
+import type { ReadableBoxedValues, WritableBoxedValues } from "svelte-toolbelt";
+import type { ButtonProps } from "../button";
 
 type NumberFieldRootProps = WritableBoxedValues<{
 	value: number;
@@ -10,7 +10,7 @@ type NumberFieldRootProps = WritableBoxedValues<{
 		step: number;
 		min?: number;
 		max?: number;
-		rampSettings: Omit<UseRampOptions, 'increment' | 'canRamp'>;
+		rampSettings: Omit<UseRampOptions, "increment" | "canRamp">;
 	}>;
 
 export class NumberFieldRootContext {
@@ -21,14 +21,17 @@ export class NumberFieldRootContext {
 		const min = this.opts.min?.current;
 		const max = this.opts.max?.current;
 
-		return (min === undefined || value >= min) && (max === undefined || value <= max);
+		return (
+			(min === undefined || value >= min) &&
+			(max === undefined || value <= max)
+		);
 	});
 }
 
 export class NumberFieldInputContext {
 	constructor(readonly rootState: NumberFieldRootContext) {}
 
-	oninput(e: Parameters<NonNullable<HTMLInputElement['oninput']>>[0]) {
+	oninput(e: Parameters<NonNullable<HTMLInputElement["oninput"]>>[0]) {
 		const value = (e.currentTarget as HTMLInputElement).value;
 
 		if (
@@ -46,23 +49,23 @@ export class NumberFieldInputContext {
 	}
 
 	props = $derived.by(() => ({
-		type: 'number',
+		type: "number",
 		oninput: this.oninput.bind(this),
 		min: this.rootState.opts.min?.current,
 		max: this.rootState.opts.max?.current,
-		'aria-invalid': !this.rootState.valid,
-		step: this.rootState.opts.step.current
+		"aria-invalid": !this.rootState.valid,
+		step: this.rootState.opts.step.current,
 	}));
 }
 
 type NumberFieldButtonProps = {
-	direction: 'up' | 'down';
+	direction: "up" | "down";
 } & ReadableBoxedValues<{
-	onpointerdown: ButtonElementProps['onpointerdown'];
-	onpointerup: ButtonElementProps['onpointerup'];
-	onpointerleave: ButtonElementProps['onpointerleave'];
-	onpointercancel: ButtonElementProps['onpointercancel'];
-	onclick: ButtonElementProps['onclick'];
+	onpointerdown: ButtonProps["onpointerdown"];
+	onpointerup: ButtonProps["onpointerup"];
+	onpointerleave: ButtonProps["onpointerleave"];
+	onpointercancel: ButtonProps["onpointercancel"];
+	onclick: ButtonProps["onclick"];
 	disabled: boolean;
 }>;
 
@@ -70,17 +73,17 @@ export class NumberFieldButton {
 	rampState: ReturnType<typeof useRamp>;
 	constructor(
 		readonly rootState: NumberFieldRootContext,
-		readonly opts: NumberFieldButtonProps
+		readonly opts: NumberFieldButtonProps,
 	) {
 		this.increment = this.increment.bind(this);
 		this.rampState = useRamp({
 			increment: () => this.increment(),
 			canRamp: () => this.enabled,
-			...this.rootState.opts.rampSettings.current
+			...this.rootState.opts.rampSettings.current,
 		});
 	}
 
-	onpointerdown(e: Parameters<NonNullable<ButtonElementProps['onpointerdown']>>[0]) {
+	onpointerdown(e: Parameters<NonNullable<ButtonProps["onpointerdown"]>>[0]) {
 		this.increment();
 
 		this.rampState.start();
@@ -88,23 +91,27 @@ export class NumberFieldButton {
 		this.opts.onpointerdown.current?.(e);
 	}
 
-	onpointerup(e: Parameters<NonNullable<ButtonElementProps['onpointerup']>>[0]) {
+	onpointerup(e: Parameters<NonNullable<ButtonProps["onpointerup"]>>[0]) {
 		// we do this so that the click event is not triggered if the button was being held
 		setTimeout(() => this.rampState.reset());
 		this.opts.onpointerup.current?.(e);
 	}
 
-	onpointerleave(e: Parameters<NonNullable<ButtonElementProps['onpointerleave']>>[0]) {
+	onpointerleave(
+		e: Parameters<NonNullable<ButtonProps["onpointerleave"]>>[0],
+	) {
 		this.rampState.reset();
 		this.opts.onpointerleave.current?.(e);
 	}
 
-	onpointercancel(e: Parameters<NonNullable<ButtonElementProps['onpointercancel']>>[0]) {
+	onpointercancel(
+		e: Parameters<NonNullable<ButtonProps["onpointercancel"]>>[0],
+	) {
 		this.rampState.reset();
 		this.opts.onpointercancel.current?.(e);
 	}
 
-	onclick(e: Parameters<NonNullable<ButtonElementProps['onclick']>>[0]) {
+	onclick(e: Parameters<NonNullable<ButtonProps["onclick"]>>[0]) {
 		if (this.rampState.active) return;
 
 		this.increment();
@@ -114,7 +121,7 @@ export class NumberFieldButton {
 
 	increment() {
 		const step =
-			this.opts.direction === 'up'
+			this.opts.direction === "up"
 				? this.rootState.opts.step.current
 				: -this.rootState.opts.step.current;
 		this.rootState.opts.value.current += step;
@@ -122,7 +129,7 @@ export class NumberFieldButton {
 
 	enabled = $derived.by(() => {
 		const step =
-			this.opts.direction === 'up'
+			this.opts.direction === "up"
 				? this.rootState.opts.step.current
 				: -this.rootState.opts.step.current;
 
@@ -151,7 +158,7 @@ export class NumberFieldButton {
 		onpointerup: this.onpointerup.bind(this),
 		onpointerleave: this.onpointerleave.bind(this),
 		onpointercancel: this.onpointercancel.bind(this),
-		onclick: this.onclick.bind(this)
+		onclick: this.onclick.bind(this),
 	}));
 
 	destroy() {
@@ -159,7 +166,7 @@ export class NumberFieldButton {
 	}
 }
 
-const ctx = new Context<NumberFieldRootContext>('number-field-root');
+const ctx = new Context<NumberFieldRootContext>("number-field-root");
 
 export function useNumberField(props: NumberFieldRootProps) {
 	return ctx.set(new NumberFieldRootContext(props));

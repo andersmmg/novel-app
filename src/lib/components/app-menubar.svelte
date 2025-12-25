@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import { appState, saveCurrentStory } from "$lib/app-state.svelte";
 	import { startAutosave } from "$lib/autosave";
 	import * as Menubar from "$lib/components/ui/menubar";
@@ -10,8 +11,8 @@
 	import { onMount } from "svelte";
 	import Time from "svelte-time/Time.svelte";
 	import AppWindowcontrols from "./app-windowcontrols.svelte";
+	import ExportDialog from "./export-dialog/export-dialog.svelte";
 	import Button from "./ui/button/button.svelte";
-    import { goto } from "$app/navigation";
 
 	const sidebar = useSidebar();
 	const appWindow = getCurrentWindow();
@@ -23,10 +24,20 @@
 		}
 	}
 
+	let showExportDialog = $state(false);
+
+	async function handleExport() {
+		if (!appState.selectedStory) return;
+		showExportDialog = true;
+	}
+
 	function handleKeydown(e: KeyboardEvent) {
 		if ((e.ctrlKey || e.metaKey) && e.key === "s") {
 			e.preventDefault();
 			handleSave();
+		} else if ((e.ctrlKey || e.metaKey) && e.key === "e") {
+			e.preventDefault();
+			handleExport();
 		} else if ((e.ctrlKey || e.metaKey) && e.key === "q") {
 			e.preventDefault();
 			appWindow.close();
@@ -61,7 +72,7 @@
 				</Menubar.Item>
 				<Menubar.Item
 					disabled={!appState.selectedStory}
-					onclick={() => {}}
+					onclick={handleExport}
 				>
 					Export Story <Menubar.Shortcut
 						>{ctrlShortcut("E")}</Menubar.Shortcut
@@ -106,5 +117,12 @@
 	</div>
 	{#if isTauriDesktop}
 		<AppWindowcontrols />
+	{/if}
+
+	{#if showExportDialog && appState.selectedStory}
+		<ExportDialog
+			story={appState.selectedStory}
+			onClose={() => (showExportDialog = false)}
+		/>
 	{/if}
 </Menubar.Root>
