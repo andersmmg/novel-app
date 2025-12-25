@@ -6,7 +6,9 @@
 	import * as Select from "$lib/components/ui/select";
 	import type { Story } from "$lib/story";
 	import { saveStory } from "$lib/story";
+	import { separateFrontmatter } from "$lib/story/utils";
 	import { save } from "@tauri-apps/plugin-dialog";
+	import { toast } from "svelte-sonner";
 
 	interface Props {
 		story: Story;
@@ -18,11 +20,49 @@
 	let isOpen = $state(true);
 	let selectedFormat = $state("story");
 
+	async function exportStoryAsMarkdown(story: Story): Promise<Uint8Array> {
+		const lines: string[] = [];
+
+		if (story.metadata.title) {
+			lines.push(`# ${story.metadata.title}`);
+		}
+		if (story.metadata.author) {
+			lines.push(`*By ${story.metadata.author}*`);
+		}
+		lines.push("");
+
+		const sortedChapters = [...story.chapters].sort(
+			(a, b) => (a.order ?? 0) - (b.order ?? 0),
+		);
+
+		for (const chapter of sortedChapters) {
+			const chapterOrder = (chapter.order ?? 0) + 1;
+			const chapterTitle =
+				chapter.metadata?.title || `Chapter ${chapterOrder}`;
+			lines.push(`## ${chapterTitle}`);
+			lines.push("");
+
+			const { content: chapterContent } = separateFrontmatter(
+				chapter.content || "",
+			);
+			lines.push(chapterContent);
+			lines.push("");
+		}
+
+		const markdown = lines.join("\n");
+		return new TextEncoder().encode(markdown);
+	}
+
 	const exportFormats = [
 		{
 			value: "story",
 			label: "Story Format (.story)",
 			description: "Native app format with all metadata",
+		},
+		{
+			value: "md",
+			label: "Markdown (.md)",
+			description: "Plain text format for chapter content",
 		},
 	];
 
@@ -32,16 +72,25 @@
 		try {
 			await saveCurrentStory();
 
-			const storyBlob = await saveStory(story);
-			const arrayBuffer = await storyBlob.arrayBuffer();
-			const uint8Array = new Uint8Array(arrayBuffer);
+			let content: Uint8Array;
+			let filterName: string;
+
+			if (selectedFormat === "md") {
+				content = await exportStoryAsMarkdown(story);
+				filterName = "Markdown Files";
+			} else {
+				const storyBlob = await saveStory(story);
+				const arrayBuffer = await storyBlob.arrayBuffer();
+				content = new Uint8Array(arrayBuffer);
+				filterName = "Story Files";
+			}
 
 			const selectedPath = await save({
 				title: "Export Story",
 				defaultPath: `${story.metadata.title || "story"}.${selectedFormat}`,
 				filters: [
 					{
-						name: "Story Files",
+						name: filterName,
 						extensions: [selectedFormat] as string[],
 					},
 				],
@@ -49,7 +98,13 @@
 
 			if (selectedPath) {
 				const { writeFile } = await import("@tauri-apps/plugin-fs");
-				await writeFile(selectedPath, uint8Array);
+				await writeFile(selectedPath, content);
+
+				const filename = selectedPath.split(/[/\\]/).pop() || "file";
+				toast.success(`Successfully exported "${filename}"`, {
+					description: "Your story has been saved successfully.",
+				});
+
 				onClose();
 			}
 		} catch (error) {
