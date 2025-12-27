@@ -5,10 +5,10 @@
 	import { Label } from "$lib/components/ui/label";
 	import * as Select from "$lib/components/ui/select";
 	import type { Story } from "$lib/story";
-	import { saveStory } from "$lib/story";
-	import { separateFrontmatter } from "$lib/story/utils";
+	import { documentDir, join } from "@tauri-apps/api/path";
 	import { save } from "@tauri-apps/plugin-dialog";
 	import { toast } from "svelte-sonner";
+	import { exporters } from "./exporters";
 
 	interface Props {
 		story: Story;
@@ -20,74 +20,26 @@
 	let isOpen = $state(true);
 	let selectedFormat = $state("story");
 
-	async function exportStoryAsMarkdown(story: Story): Promise<Uint8Array> {
-		const lines: string[] = [];
-
-		if (story.metadata.title) {
-			lines.push(`# ${story.metadata.title}`);
-		}
-		if (story.metadata.author) {
-			lines.push(`*By ${story.metadata.author}*`);
-		}
-		lines.push("");
-
-		const sortedChapters = [...story.chapters].sort(
-			(a, b) => (a.order ?? 0) - (b.order ?? 0),
-		);
-
-		for (const chapter of sortedChapters) {
-			const chapterOrder = (chapter.order ?? 0) + 1;
-			const chapterTitle =
-				chapter.metadata?.title || `Chapter ${chapterOrder}`;
-			lines.push(`## ${chapterTitle}`);
-			lines.push("");
-
-			const { content: chapterContent } = separateFrontmatter(
-				chapter.content || "",
-			);
-			lines.push(chapterContent);
-			lines.push("");
-		}
-
-		const markdown = lines.join("\n");
-		return new TextEncoder().encode(markdown);
-	}
-
-	const exportFormats = [
-		{
-			value: "story",
-			label: "Story Format (.story)",
-			description: "Native app format with all metadata",
-		},
-		{
-			value: "md",
-			label: "Markdown (.md)",
-			description: "Plain text format for chapter content",
-		},
-	];
-
 	async function handleExport() {
 		if (!story) return;
 
 		try {
 			await saveCurrentStory();
 
-			let content: Uint8Array;
-			let filterName: string;
-
-			if (selectedFormat === "md") {
-				content = await exportStoryAsMarkdown(story);
-				filterName = "Markdown Files";
-			} else {
-				const storyBlob = await saveStory(story);
-				const arrayBuffer = await storyBlob.arrayBuffer();
-				content = new Uint8Array(arrayBuffer);
-				filterName = "Story Files";
+			const exporter = exporters.find((e) => e.format === selectedFormat);
+			if (!exporter) {
+				throw new Error(`Unknown export format: ${selectedFormat}`);
 			}
+
+			const content = await exporter.export(story);
+			const filterName = exporter.label.split(" ")[0] + " Files";
 
 			const selectedPath = await save({
 				title: "Export Story",
-				defaultPath: `${story.metadata.title || "story"}.${selectedFormat}`,
+				defaultPath: await join(
+					await documentDir(),
+					`${story.metadata.title || "story"}.${selectedFormat}`,
+				),
 				filters: [
 					{
 						name: filterName,
@@ -109,6 +61,14 @@
 			}
 		} catch (error) {
 			console.error("Export failed:", error);
+
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: "Unknown error occurred";
+			toast.error("Export failed", {
+				description: errorMessage,
+			});
 		}
 	}
 </script>
@@ -128,18 +88,17 @@
 				<Select.Root bind:value={selectedFormat} type="single">
 					<Select.Trigger id="format" class="w-full">
 						<span
-							>{exportFormats.find(
-								(f) => f.value === selectedFormat,
-							)?.label || "Select export format"}</span
+							>{exporters.find((e) => e.format === selectedFormat)
+								?.label || "Select export format"}</span
 						>
 					</Select.Trigger>
 					<Select.Content>
-						{#each exportFormats as format}
-							<Select.Item value={format.value}>
+						{#each exporters as exporter}
+							<Select.Item value={exporter.format}>
 								<div class="flex flex-col">
-									<span>{format.label}</span>
+									<span>{exporter.label}</span>
 									<span class="text-xs text-muted-foreground"
-										>{format.description}</span
+										>{exporter.description}</span
 									>
 								</div>
 							</Select.Item>
