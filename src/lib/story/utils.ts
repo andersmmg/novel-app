@@ -235,7 +235,7 @@ export function combineFrontmatter(
  */
 export function countWords(text: string): number {
 	const { content } = separateFrontmatter(text);
-	const matches = content.match(/\b\w+\b/g);
+	const matches = content.match(/\b\S+\b/g);
 	return matches ? matches.length : 0;
 }
 
