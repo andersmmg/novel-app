@@ -1,4 +1,4 @@
-# Novel Writing App
+# Novelipu
 
 A desktop novel writing application built with Tauri and SvelteKit, combining the power of native desktop functionality with modern web technologies.
 
@@ -30,8 +30,8 @@ A desktop novel writing application built with Tauri and SvelteKit, combining th
 ### Setup
 ```bash
 # Clone the repository
-git clone git@github.com:andersmmg/novel-app.git
-cd novel-app
+git clone git@github.com:andersmmg/novelipu.git
+cd novelipu
 
 # Install dependencies
 bun install
