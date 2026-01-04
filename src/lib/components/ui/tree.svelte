@@ -69,31 +69,32 @@
 {#if isFolder(item)}
 	<!-- Folder -->
 	<ContextMenu.Root>
-		<ContextMenu.Trigger>
-			<Sidebar.MenuItem>
-				<Collapsible.Root
-					class="group/collapsible [&[data-state=open]>button>svg:first-child]:hidden [&[data-state=closed]>button>svg:nth-child(2)]:hidden"
-					open={false}
-				>
-					<Collapsible.Trigger>
-						{#snippet child({ props })}
+		<Sidebar.MenuItem>
+			<Collapsible.Root
+				class="group/collapsible [&[data-state=open]>div>button>svg:first-child]:hidden [&[data-state=closed]>div>button>svg:nth-child(2)]:hidden"
+				open={false}
+			>
+				<Collapsible.Trigger>
+					{#snippet child({ props })}
+						<ContextMenu.Trigger>
 							<Sidebar.MenuButton {...props}>
 								<Folder />
 								<FolderOpen />
 								<span>{getItemName(item)}</span>
 							</Sidebar.MenuButton>
-						{/snippet}
-					</Collapsible.Trigger>
-					<Collapsible.Content>
-						<Sidebar.MenuSub class="me-0 pe-0">
-							{#each item.children as subItem (subItem.path || subItem.name)}
-								<Tree item={subItem} level={level + 1} />
-							{/each}
-						</Sidebar.MenuSub>
-					</Collapsible.Content>
-				</Collapsible.Root>
-			</Sidebar.MenuItem>
-		</ContextMenu.Trigger>
+						</ContextMenu.Trigger>
+					{/snippet}
+				</Collapsible.Trigger>
+				<Collapsible.Content>
+					<Sidebar.MenuSub class="me-0 pe-0">
+						{#each item.children as subItem (subItem.path || subItem.name)}
+							<Tree item={subItem} level={level + 1} />
+						{/each}
+					</Sidebar.MenuSub>
+				</Collapsible.Content>
+			</Collapsible.Root>
+		</Sidebar.MenuItem>
+
 		<ContextMenu.Content>
 			<ContextMenu.Item
 				onclick={() =>
