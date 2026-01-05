@@ -15,7 +15,7 @@
 	import { Label } from "$lib/components/ui/label";
 	import * as NumberField from "$lib/components/ui/number-field";
 	import * as Select from "$lib/components/ui/select";
-	import { config, type AppConfig } from "$lib/config";
+	import { config, saveConfig, type AppConfig } from "$lib/config";
 	import {
 		ArrowDownToLine,
 		ArrowUpToLine,
@@ -34,6 +34,7 @@
 		UnderlineIcon,
 		UnfoldHorizontalIcon,
 	} from "@lucide/svelte";
+	import { onMount } from "svelte";
 
 	function handleIntervalChange(event: Event) {
 		if (!$config) return;
@@ -51,6 +52,12 @@
 			$config.themeMode = mode;
 		}
 	}
+
+	onMount(() => {
+		return () => {
+			saveConfig();
+		};
+	});
 </script>
 
 <div class="container mx-auto p-6">
