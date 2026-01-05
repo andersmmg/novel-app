@@ -22,7 +22,7 @@ export async function startAutosave(): Promise<void> {
 	);
 
 	autosaveInterval = setInterval(async () => {
-		if (appState.selectedStory) {
+		if (appState.selectedStory && appState.isDirty) {
 			try {
 				const success = await saveCurrentStory();
 				if (success) {

@@ -34,6 +34,7 @@
 	import { StarterKit } from "@tiptap/starter-kit";
 	import { Plugin } from "prosemirror-state";
 	import { onDestroy, onMount } from "svelte";
+	import { SpellCheck, setupSuggestions } from "./spellcheck";
 	import { SearchAndReplace } from "./search-replace";
 
 	let {
@@ -58,6 +59,7 @@
 	let searchQuery = $state<string>("");
 	let searchElement = $state<HTMLInputElement>();
 	let searchOpen = $state(false);
+	let currentLanguage = $state<string>("en_US");
 
 	$effect(() => {
 		if (!editorState.editor) return;
@@ -172,6 +174,9 @@
 				SearchAndReplace,
 				OfficePaste,
 				Markdown,
+				SpellCheck.configure({
+					language: $config?.spellcheck?.language || "en_US"
+				}),
 				Placeholder.configure({
 					placeholder: "Start writing...",
 				}),
@@ -225,6 +230,22 @@
 
 		previousFileId = currentFile?.path || null;
 		focusOpenPosition();
+
+		const suggestionHandlers = setupSuggestions(editorState.editor);
+		(window as any).showSpellSuggestions = suggestionHandlers.showSuggestions;
+
+		$effect(() => {
+			if ($config?.spellcheck?.language && editorState.editor) {
+				const newLanguage = $config.spellcheck.language;
+				if (newLanguage !== currentLanguage) {
+					currentLanguage = newLanguage;
+					const storage = editorState.editor.storage as any;
+					if (storage.spellCheck?.switchLanguage) {
+						storage.spellCheck.switchLanguage(newLanguage);
+					}
+				}
+			}
+		});
 	});
 
 	function toggleExpandWidth() {
@@ -306,6 +327,7 @@
 	onDestroy(() => {
 		clearTimeout(updateTimeout);
 		clearTimeout(searchTimeout);
+		delete (window as any).showSpellSuggestions;
 		editorState.editor?.destroy();
 	});
 </script>
@@ -584,6 +606,7 @@
 							editorState.editor.chain().focus("end").run();
 					}
 				}}
+				onclick={(window as any).showSpellSuggestions}
 			></div>
 		</div>
 	</div>

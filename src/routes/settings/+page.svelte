@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { startAutosave } from "$lib/autosave";
 	import FontSelector from "$lib/components/font-selector.svelte";
+	import { LanguageSelector } from "$lib/components/language-selector";
 	import ThemeSelector from "$lib/components/theme-selector.svelte";
 	import * as ButtonGroup from "$lib/components/ui/button-group";
 	import Button from "$lib/components/ui/button/button.svelte";
@@ -163,7 +164,7 @@
 				<CardHeader>
 					<CardTitle>Fonts</CardTitle>
 					<CardDescription>
-						Customize the fonts used throughout the application.
+						Customize fonts used throughout application.
 					</CardDescription>
 				</CardHeader>
 				<CardContent class="space-y-6">
@@ -179,6 +180,29 @@
 							bind:value={$config.fonts.editor}
 						/>
 					{/if}
+				</CardContent>
+			</Card>
+			<Card>
+				<CardHeader>
+					<CardTitle>Spellcheck</CardTitle>
+					<CardDescription>
+						Choose the language for spell checking.
+					</CardDescription>
+				</CardHeader>
+				<CardContent class="space-y-4">
+					<div class="flex flex-col gap-2">
+						<Label for="spellcheck-language">Language</Label>
+						<LanguageSelector
+							id="spellcheck-language"
+							availableLanguages={["en_US", "tok"]}
+							currentLanguage={$config?.spellcheck?.language || "en_US"}
+							onLanguageChange={(newLang) => {
+								if ($config) {
+									$config.spellcheck.language = newLang;
+								}
+							}}
+						/>
+					</div>
 				</CardContent>
 			</Card>
 			<Card>
@@ -390,14 +414,14 @@
 					</CardDescription>
 				</CardHeader>
 				<CardContent class="space-y-4">
-					<div class="flex items-center gap-3">
+					<div class="flex flex-col gap-2">
 						<Label for="note-open-position">Notes</Label>
 						<Select.Root
 							type="single"
 							bind:value={$config.noteOpenPosition}
 						>
 							<Select.Trigger
-								class="w-[180px]"
+								class="w-45"
 								id="note-open-position"
 								><span
 									>{$config.noteOpenPosition == "start"
@@ -411,14 +435,14 @@
 							</Select.Content>
 						</Select.Root>
 					</div>
-					<div class="flex items-center gap-3">
+					<div class="flex flex-col gap-2">
 						<Label for="chapter-open-position">Chapters</Label>
 						<Select.Root
 							type="single"
 							bind:value={$config.chapterOpenPosition}
 						>
 							<Select.Trigger
-								class="w-[180px]"
+								class="w-45"
 								id="chapter-open-position"
 								><span
 									>{$config.chapterOpenPosition == "start"

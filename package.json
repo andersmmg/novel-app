@@ -15,6 +15,7 @@
 	},
 	"license": "MIT",
 	"dependencies": {
+		"@farscrl/tiptap-extension-spellchecker": "^2.0.0",
 		"@intevation/tiptap-extension-office-paste": "^0.1.2",
 		"@mohtasham/md-to-docx": "^2.5.1",
 		"@tabler/icons-svelte": "^3.36.1",

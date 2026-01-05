@@ -65,7 +65,8 @@
 	}
 	.tiptap {
 		/* Headings */
-		h1, h2 {
+		h1,
+		h2 {
 			margin: 1rem 0 1rem 0 !important;
 		}
 		/* Lists */
@@ -103,7 +104,8 @@
 				}
 			}
 
-			li label, input[type="checkbox"] {
+			li label,
+			input[type="checkbox"] {
 				cursor: pointer;
 			}
 
@@ -117,6 +119,29 @@
 		}
 		.search-result-current {
 			@apply bg-green-200 dark:bg-green-500/50;
+		}
+		.spell-error {
+			@apply underline decoration-red-500 decoration-3;
+		}
+	}
+	#suggestions-box {
+		@apply fixed bg-popover border border-border rounded-md shadow-lg z-50 min-w-40 max-w-60;
+		ul {
+			@apply p-1 m-0 block;
+		}
+		li {
+			@apply cursor-default list-none px-2 py-1 rounded text-sm text-foreground hover:bg-accent hover:text-accent-foreground;
+		}
+		li.suggestion-item:before {
+			content: "→";
+			@apply text-muted-foreground mr-2;
+		}
+		li:last-child {
+			@apply border-t border-border mt-1 pt-1;
+		}
+		li:last-child:before {
+			content: "+";
+			@apply text-muted-foreground mr-2;
 		}
 	}
 }

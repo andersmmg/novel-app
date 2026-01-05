@@ -49,6 +49,9 @@ export interface AppConfig {
 		ui: string;
 		editor: string;
 	};
+	spellcheck: {
+		language: string;
+	};
 	editor: {
 		expandWidth: boolean;
 		fontSize: number;
@@ -99,6 +102,9 @@ const DEFAULT_CONFIG: AppConfig = {
 	fonts: {
 		ui: "system-ui",
 		editor: "courier-prime",
+	},
+	spellcheck: {
+		language: "en_US",
 	},
 	editor: {
 		expandWidth: false,

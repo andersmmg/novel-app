@@ -257,7 +257,7 @@
 		{/if}
 	</main>
 
-	{#if appState.currentEditedFile}
+		{#if appState.currentEditedFile}
 		<footer
 			class="border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 cursor-default"
 		>
@@ -287,7 +287,7 @@
 				</div>
 			</div>
 		</footer>
-	{/if}
+		{/if}
 </div>
 <AlertDialog.Root bind:open={confirmDisableHemingway}>
 	<AlertDialog.Content interactOutsideBehavior="close">

@@ -1,0 +1,453 @@
+452
+Pingo/kc/ns
+a/kc po:particle
+akesi/kc po:noun
+ala/kc po:adjective
+alasa/kc po:verb
+ale/kc po:adjective po:noun po:number
+ali/kc po:adjective po:noun po:number
+anpa/kc po:adjective
+ante/kc po:adjective
+anu/kc po:particle
+apeja/kc/ns
+awen/kc po:adjective
+e/kc po:particle
+en/kc po:particle
+epiku/kc/ns
+esun/kc po:noun
+ete/kc/ns
+ewe/kc/ns
+ijo/kc po:noun
+ike/kc po:adjective
+ilo/kc po:noun
+insa/kc po:noun
+isipin/kc/ns
+jaki/kc po:adjective
+jan/kc po:noun
+jasima/kc/ns
+jelo/kc po:adjective
+jo/kc po:verb
+ju/kc/ns
+kala/kc po:noun
+kalamARR/kc/ns
+kalama/kc po:verb
+kama/kc po:adjective po:preverb
+kamalawala/kc/ns
+kan/kc/ns
+kapesi/kc/ns
+kasi/kc po:noun
+ke/kc/ns
+ken/kc po:preverb po:adjective
+kepeken/kc po:preposition
+kese/kc/ns
+kijetesantakalu/kc
+kiki/kc/ns
+kili/kc po:noun
+kin/kc po:particle
+kipisi/kc
+kiwen/kc po:noun
+ko/kc po:noun
+kokosila/kc/ns
+kon/kc po:noun
+ku/kc
+kule/kc po:adjective
+kulijo/kc/ns
+kulupu/kc po:noun
+kuntu/kc/ns
+kute/kc po:noun po:verb
+la/kc po:particle
+lanpan/kc/ns
+lape/kc po:adjective
+laso/kc po:adjective
+lawa/kc po:adjective po:verb
+leko/kc
+len/kc po:noun
+lete/kc po:adjective
+li/kc po:particle
+likujo/kc/ns
+lili/kc po:adjective
+linja/kc po:noun
+linluwi/kc/ns
+lipu/kc po:noun
+loje/kc po:adjective
+loka/kc/ns
+lon/kc po:preposition
+lu/kc/ns
+luka/kc po:noun po:number
+lukin/kc po:noun po:verb po:preverb
+lupa/kc po:noun
+ma/kc po:noun
+majuna/kc/ns
+mama/kc po:noun
+mani/kc po:noun
+meli/kc po:noun
+meso/kc/ns
+mi/kc po:noun
+mije/kc po:noun
+misa/kc/ns
+misikeke/kc/ns
+moku/kc po:verb
+moli/kc po:adjective
+monsi/kc po:noun
+monsuta/kc
+mu/kc po:particle
+mulapisu/kc/ns
+mun/kc po:noun
+musi/kc po:adjective
+mute/kc po:adjective po:noun
+n/kc
+namako/kc po:adjective
+nanpa/kc po:particle po:noun
+nasa/kc po:adjective
+nasin/kc po:noun
+neja/kc/ns
+nena/kc po:noun
+ni/kc po:adjective
+nimi/kc po:noun
+nimisin/kc/ns
+noka/kc po:noun
+nu/kc/ns
+o/kc po:particle
+oke/kc/ns
+oko/kc/ns po:noun po:verb po:preverb
+olin/kc po:verb
+ona/kc po:noun
+open/kc po:verb
+pakala/kc po:adjective
+pake/kc/ns
+pali/kc po:verb
+palisa/kc po:noun
+pan/kc po:noun
+pana/kc po:verb
+pata/kc/ns
+peto/kc/ns
+pi/kc po:particle
+pilin/kc po:noun po:adjective
+pimeja/kc po:adjective
+pini/kc po:adjective
+pipi/kc po:noun
+po/kc/ns
+poka/kc po:noun
+poki/kc po:noun
+polinpin/kc/ns
+pomotolo/kc/ns
+pona/kc po:adjective
+powe/kc/ns
+pu/kc po:adjective
+sama/kc po:adjective po:preposition
+samu/kc/ns
+san/kc/ns
+seli/kc po:noun
+selo/kc po:noun
+seme/kc po:particle
+sewi/kc po:noun po:adjective
+sijelo/kc po:noun
+sike/kc po:noun po:adjective
+sin/kc po:adjective
+sina/kc po:noun
+sinpin/kc po:noun
+sitelen/kc po:noun
+soko/kc/ns
+sona/kc po:verb po:preverb
+soto/kc/ns
+soweli/kc po:noun
+su/kc/ns
+suke/kc/ns
+suli/kc po:adjective
+suno/kc po:noun
+supa/kc po:noun
+sutopatikuna/kc/ns
+suwi/kc po:adjective
+taki/kc/ns
+tan/kc po:preposition
+taso/kc po:particle po:adjective
+tawa/kc po:preposition po:adjective
+te/kc/ns
+teje/kc/ns
+telo/kc po:noun
+tenpo/kc po:noun
+to/kc/ns
+toki/kc po:verb
+toma/kc/ns
+tomo/kc po:noun
+tonsi/kc
+tu/kc po:number
+tuli/kc/ns
+u/kc/ns
+umesu/kc/ns
+unpa/kc po:verb
+unu/kc/ns
+usawi/kc/ns
+uta/kc po:noun
+utala/kc po:verb
+wa/kc/ns
+waleja/kc/ns
+walo/kc po:adjective
+wan/kc po:adjective po:number
+waso/kc po:noun
+wasoweli/kc/ns
+wawa/kc po:adjective
+weka/kc po:adjective
+wile/kc po:preverb
+yupekosi/kc/ns
+Amelika/kc po:name
+Antasika/kc po:name
+Apika/kc po:name
+Asija/kc po:name
+Elopa/kc po:name
+Osejanija/kc po:name
+Ankola/kc po:name
+Eliteja/kc po:name
+Isijopija/kc po:name
+Kamelun/kc po:name
+Kana/kc po:name
+Kanpija/kc po:name
+Kapon/kc po:name
+Kenja/kc po:name
+Kilipasi/kc po:name
+Kine/kc po:name
+Kinejekatolija/kc po:name
+Kinepisa/kc po:name
+Komo/kc po:name
+Konko/kc po:name
+Kosiwa/kc po:name
+Lapewija/kc po:name
+Lesoto/kc po:name
+Lipija/kc po:name
+Luwanta/kc po:name
+Malakasi/kc po:name
+Malawi/kc po:name
+Mali/kc po:name
+Malipe/kc po:name
+Masu/kc po:name
+Mosanpi/kc po:name
+Mowisi/kc po:name
+Mulitanija/kc po:name
+Namipija/kc po:name
+Naselija/kc po:name
+Nise/kc po:name
+Penen/kc po:name
+Posuwana/kc po:name
+Pukinapaso/kc po:name
+Sanpija/kc po:name
+Santapiken/kc po:name
+Sasali/kc po:name
+Sate/kc po:name
+Sawasi/kc po:name
+Seneka/kc po:name
+Setapika/kc po:name
+Sijelalijon/kc po:name
+Sinpapuwe/kc po:name
+Sipusi/kc po:name
+Somalija/kc po:name
+Sutan/kc po:name
+Tansanija/kc po:name
+Toko/kc po:name
+Tunisi/kc po:name
+Ukanta/kc po:name
+Alensina/kc po:name
+Awisi/kc po:name
+Ekato/kc po:name
+Kalalinuna/kc po:name
+Kanata/kc po:name
+Katemala/kc po:name
+Kenata/kc po:name
+Kosalika/kc po:name
+Kupa/kc po:name
+Mesiko/kc po:name
+Mewika/kc po:name
+Ontula/kc po:name
+Palakawi/kc po:name
+Panama/kc po:name
+Papeto/kc po:name
+Pasila/kc po:name
+Pawama/kc po:name
+Pelu/kc po:name
+Pemuta/kc po:name
+Penesuwela/kc po:name
+Sameka/kc po:name
+Sile/kc po:name
+Sinita/kc po:name
+Tominika/kc po:name
+Ulukawi/kc po:name
+Aja/kc po:name
+Akanisan/kc po:name
+Anku/kc po:name
+Ilakija/kc po:name
+Ilan/kc po:name
+Intonesija/kc po:name
+Isale/kc po:name
+Jamanija/kc po:name
+Kanpusi/kc po:name
+Katelo/kc po:name
+Kuli/kc po:name
+Kusala/kc po:name
+Kuwasi/kc po:name
+Lanka/kc po:name
+Losi/kc po:name
+Lunpan/kc po:name
+Malasija/kc po:name
+Masu/kc po:name
+Mijama/kc po:name
+Nijon/kc po:name
+Pakisan/kc po:name
+Palani/kc po:name
+Palata/kc po:name
+Panla/kc po:name
+Pilipina/kc po:name
+Pilisin/kc po:name
+Po/kc po:name
+Sawusi/kc po:name
+Sonko/kc po:name
+Sulija/kc po:name
+Tawi/kc po:name
+Tuki/kc po:name
+Uman/kc po:name
+Utun/kc po:name
+Wije/kc po:name
+Alan/kc po:name
+Antola/kc po:name
+Elena/kc po:name
+Epanja/kc po:name
+Esalasi/kc po:name
+Esi/kc po:name
+Esuka/kc po:name
+Inli/kc po:name
+Isilan/kc po:name
+Italija/kc po:name
+Juke/kc po:name
+Kalalinuna/kc po:name
+Kanse/kc po:name
+Katala/kc po:name
+Katelo/kc po:name
+Kinla/kc po:name
+Kiposi/kc po:name
+Lawi/kc po:name
+Lijatuwa/kc po:name
+Lisensan/kc po:name
+Lomani/kc po:name
+Losi/kc po:name
+Lowasi/kc po:name
+Lowenki/kc po:name
+Lowensina/kc po:name
+Lusepu/kc po:name
+Maketonija/kc po:name
+Mosijo/kc po:name
+Motowa/kc po:name
+Netelan/kc po:name
+Nosiki/kc po:name
+Pelalusi/kc po:name
+Pesije/kc po:name
+Peson/kc po:name
+Pokasi/kc po:name
+Posan/kc po:name
+Posuka/kc po:name
+Potuke/kc po:name
+Samalino/kc po:name
+Seki/kc po:name
+Sipe/kc po:name
+Sopisi/kc po:name
+Sukosi/kc po:name
+Sumi/kc po:name
+Suwasi/kc po:name
+Tansi/kc po:name
+Tosi/kc po:name
+Tuki/kc po:name
+Ukawina/kc po:name
+Wasikano/kc po:name
+Wensa/kc po:name
+Intonesija/kc po:name
+Nusilan/kc po:name
+Oselija/kc po:name
+Papuwanijukini/kc po:name
+Pisi/kc po:name
+Samowa/kc po:name
+Tona/kc po:name
+Tuwalu/kc po:name
+Wanuwatu/kc po:name
+Alapi/kc po:name
+Apikan/kc po:name
+Awasa/kc po:name
+Awisi/kc po:name
+Elena/kc po:name
+Epanja/kc po:name
+Esi/kc po:name
+Esuka/kc po:name
+Inli/kc po:name
+Insi/kc po:name
+Intonesija/kc po:name
+Inu/kc po:name
+Ipo/kc po:name
+Isilan/kc po:name
+Italija/kc po:name
+Iwisi/kc po:name
+Jolupa/kc po:name
+Kalike/kc po:name
+Kanse/kc po:name
+Kantun/kc po:name
+Kinla/kc po:name
+Lasina/kc po:name
+Lomani/kc po:name
+Losi/kc po:name
+Lowasi/kc po:name
+Mosijo/kc po:name
+Netelan/kc po:name
+Nijon/kc po:name
+Nosiki/kc po:name
+Panla/kc po:name
+Peson/kc po:name
+Pokasi/kc po:name
+Posan/kc po:name
+Potuke/kc po:name
+Sameka/kc po:name
+Seki/kc po:name
+Sesi/kc po:name
+Sikipe/kc po:name
+Sonko/kc po:name
+Sopisi/kc po:name
+Sumi/kc po:name
+Tansi/kc po:name
+Topisin/kc po:name
+Tosi/kc po:name
+Kanse/kc po:name
+Kepeka/kc po:name
+Mewika/kc po:name
+Oselija/kc po:name
+Piten/kc po:name
+Sonko/kc po:name
+Tosi/kc po:name
+Inli/kc po:name
+Apiwili/kc po:name
+Epelanto/kc po:name
+Inli/kc po:name
+Inota/kc po:name
+Intelinwa/kc po:name
+Ito/kc po:name
+Kuwenja/kc po:name
+Latan/kc po:name
+Losupan/kc po:name
+Mansi/kc po:name
+Nawi/kc po:name
+Olapi/kc po:name
+Palepelen/kc po:name
+Pasiki/kc po:name
+Selen/kc po:name
+Semisi/kc po:name
+Sinan/kc po:name
+Sintalin/kc po:name
+Anlasi/kc po:name
+Pisinpo/kc po:name
+Soleso/kc po:name
+Soma/kc po:name
+Tolome/kc po:name
+Tosulaki/kc po:name
+Asi/kc po:name
+Juli/kc po:name
+Kali/kc po:name
+Komi/kc po:name
+Lope/kc po:name
+Ne/kc po:name
+Sa/kc po:name
+Sonja/kc po:name
+Tepo/kc po:name
+Wintu/kc po:name
