@@ -34,8 +34,8 @@
 	import { StarterKit } from "@tiptap/starter-kit";
 	import { Plugin } from "prosemirror-state";
 	import { onDestroy, onMount } from "svelte";
-	import { SpellCheck, setupSuggestions } from "./spellcheck";
 	import { SearchAndReplace } from "./search-replace";
+	import { SpellCheck, setupSuggestions } from "./spellcheck";
 
 	let {
 		currentFile,
@@ -54,12 +54,109 @@
 	let element = $state<HTMLElement>();
 	let editorState = $state({ editor: null as Editor | null });
 	let previousFileId = $state<string | null>(null);
+	let previousSpellcheckState = $state<boolean>(false);
 	let updateTimeout: ReturnType<typeof setTimeout> | undefined;
 	let searchTimeout: ReturnType<typeof setTimeout> | undefined;
 	let searchQuery = $state<string>("");
 	let searchElement = $state<HTMLInputElement>();
 	let searchOpen = $state(false);
 	let currentLanguage = $state<string>("en_US");
+
+	$effect(() => {
+		console.log($config);
+	});
+
+	const spellcheckEnabled = $derived(
+		($config?.spellcheck?.enabled ?? false) &&
+			!(
+				$config?.editor?.hemingway?.enabled &&
+				!$config?.editor?.hemingway?.spellcheck
+			),
+	);
+
+	function createEditor() {
+		if (editorState.editor) {
+			editorState.editor.destroy();
+		}
+
+		const { content: initialContent } = separateFrontmatter(
+			currentFile?.content || "",
+		);
+
+		const extensions = [
+			ShortcutsExtension,
+			SearchAndReplace,
+			OfficePaste,
+			Markdown,
+			...(spellcheckEnabled
+				? [
+						SpellCheck.configure({
+							language: $config?.spellcheck?.language || "en_US",
+						}),
+					]
+				: []),
+			Placeholder.configure({
+				placeholder: "Start writing...",
+			}),
+			TaskList,
+			TaskItem.configure({
+				nested: true,
+			}),
+			StarterKit.configure({
+				horizontalRule: {
+					HTMLAttributes: {
+						class: "border-t border-border",
+					},
+				},
+			}),
+		];
+
+		editorState.editor = new Editor({
+			element: element,
+			extensions,
+			editorProps: {
+				attributes: {
+					class: "px-4 outline-none min-h-full max-h-full overflow-y-hidden",
+					style: "min-height: 100%;",
+				},
+				scrollMargin: 80,
+				scrollThreshold: 80,
+			},
+			content: initialContent,
+			contentType: "markdown",
+			onTransaction: ({ editor }) => {
+				editorState = { editor };
+			},
+			onUpdate: ({ editor }) => {
+				if (onContentChange && currentFile) {
+					clearTimeout(updateTimeout);
+					updateTimeout = setTimeout(() => {
+						const newContent = editor.getMarkdown();
+						const { frontmatter, metadata } = separateFrontmatter(
+							currentFile.content || "",
+						);
+
+						const updatedFullContent = combineFrontmatter(
+							frontmatter,
+							newContent,
+						);
+						onContentChange(
+							updatedFullContent,
+							frontmatter,
+							metadata,
+						);
+					}, 200);
+				}
+			},
+		});
+
+		previousFileId = currentFile?.path || null;
+		focusOpenPosition();
+
+		const suggestionHandlers = setupSuggestions(editorState.editor);
+		(window as any).showSpellSuggestions =
+			suggestionHandlers.showSuggestions;
+	}
 
 	$effect(() => {
 		if (!editorState.editor) return;
@@ -163,79 +260,21 @@
 	});
 
 	onMount(() => {
-		const { content: initialContent } = separateFrontmatter(
-			currentFile?.content || "",
-		);
-
-		editorState.editor = new Editor({
-			element: element,
-			extensions: [
-				ShortcutsExtension,
-				SearchAndReplace,
-				OfficePaste,
-				Markdown,
-				SpellCheck.configure({
-					language: $config?.spellcheck?.language || "en_US"
-				}),
-				Placeholder.configure({
-					placeholder: "Start writing...",
-				}),
-				TaskList,
-				TaskItem.configure({
-					nested: true,
-				}),
-				StarterKit.configure({
-					horizontalRule: {
-						HTMLAttributes: {
-							class: "border-t border-border",
-						},
-					},
-				}),
-			],
-			editorProps: {
-				attributes: {
-					class: "px-4 outline-none min-h-full max-h-full overflow-y-hidden",
-					style: "min-height: 100%;",
-				},
-				scrollMargin: 80,
-				scrollThreshold: 80,
-			},
-			content: initialContent,
-			contentType: "markdown",
-			onTransaction: ({ editor }) => {
-				editorState = { editor };
-			},
-			onUpdate: ({ editor }) => {
-				if (onContentChange && currentFile) {
-					clearTimeout(updateTimeout);
-					updateTimeout = setTimeout(() => {
-						const newContent = editor.getMarkdown();
-						const { frontmatter, metadata } = separateFrontmatter(
-							currentFile.content || "",
-						);
-
-						const updatedFullContent = combineFrontmatter(
-							frontmatter,
-							newContent,
-						);
-						onContentChange(
-							updatedFullContent,
-							frontmatter,
-							metadata,
-						);
-					}, 200);
-				}
-			},
-		});
-
-		previousFileId = currentFile?.path || null;
-		focusOpenPosition();
-
-		const suggestionHandlers = setupSuggestions(editorState.editor);
-		(window as any).showSpellSuggestions = suggestionHandlers.showSuggestions;
+		createEditor();
 
 		$effect(() => {
-			if ($config?.spellcheck?.language && editorState.editor) {
+			if (previousSpellcheckState !== spellcheckEnabled && element) {
+				previousSpellcheckState = spellcheckEnabled;
+				createEditor();
+			}
+		});
+
+		$effect(() => {
+			if (
+				$config?.spellcheck?.language &&
+				editorState.editor &&
+				spellcheckEnabled
+			) {
 				const newLanguage = $config.spellcheck.language;
 				if (newLanguage !== currentLanguage) {
 					currentLanguage = newLanguage;

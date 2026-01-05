@@ -1,5 +1,5 @@
-import { writable, type Writable } from "svelte/store";
 import {
+	deepMerge,
 	loadConfig,
 	saveConfig as saveConfigFile,
 	type AppConfig,
@@ -9,6 +9,7 @@ class ConfigStore {
 	private config: AppConfig | null = null;
 	private promise: Promise<AppConfig> | null = null;
 	private listeners: Set<(config: AppConfig) => void> = new Set();
+	private saveTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	async getConfig(): Promise<AppConfig> {
 		if (this.config) {
@@ -35,11 +36,27 @@ class ConfigStore {
 
 	async updateConfig(updates: Partial<AppConfig>): Promise<void> {
 		const config = await this.getConfig();
-		Object.assign(config, updates);
+		this.config = deepMerge(config, updates);
 		this.notifyListeners();
+		this.debouncedSave();
+	}
+
+	private debouncedSave() {
+		if (this.saveTimeout) {
+			clearTimeout(this.saveTimeout);
+		}
+		this.saveTimeout = setTimeout(async () => {
+			if (this.config) {
+				await saveConfigFile(this.config);
+			}
+		}, 500);
 	}
 
 	async saveConfig(): Promise<void> {
+		if (this.saveTimeout) {
+			clearTimeout(this.saveTimeout);
+			this.saveTimeout = null;
+		}
 		if (!this.config) {
 			throw new Error("No config loaded to save");
 		}
@@ -70,16 +87,6 @@ class ConfigStore {
 }
 
 export const configStore = new ConfigStore();
-
-export const config: Writable<AppConfig | null> = writable(null);
-
-configStore.getConfig().then((initialConfig) => {
-	config.set(initialConfig);
-});
-
-configStore.subscribe((newConfig) => {
-	config.set(newConfig);
-});
 
 export async function updateConfig(updates: Partial<AppConfig>): Promise<void> {
 	await configStore.updateConfig(updates);

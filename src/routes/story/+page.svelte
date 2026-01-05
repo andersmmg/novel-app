@@ -18,7 +18,7 @@
 	import * as Field from "$lib/components/ui/field";
 	import { Input } from "$lib/components/ui/input";
 	import { Textarea } from "$lib/components/ui/textarea";
-	import { config } from "$lib/config/config-store";
+	import { config } from "$lib/config";
 	import { formatCount } from "$lib/story/utils";
 	import { BookOpenIcon, WrenchIcon } from "@lucide/svelte";
 	import { onMount } from "svelte";

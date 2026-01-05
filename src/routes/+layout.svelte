@@ -8,6 +8,7 @@
 	import { ConfirmDeleteDialog } from "$lib/components/confirm-delete";
 	import { InputPromptDialog } from "$lib/components/input-prompt";
 	import { Toaster } from "$lib/components/ui/sonner";
+	import type { AppConfig } from "$lib/config";
 	import { config, saveConfig } from "$lib/config";
 	import { configStore } from "$lib/config/config-store";
 	import { applyFontSettings } from "$lib/fonts/font-settings";
@@ -22,7 +23,7 @@
 
 	let sidebarOpen = $state(true);
 
-	config.subscribe((value) => {
+	config.subscribe((value: AppConfig | null) => {
 		if (value?.themeMode) {
 			setMode(value.themeMode);
 		}

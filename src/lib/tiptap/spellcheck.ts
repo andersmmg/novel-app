@@ -505,7 +505,7 @@ export const SpellCheck = Extension.create({
 									} catch (e) {
 										console.error("Check text failed:", e);
 									}
-								}, 500);
+								}, 300);
 							}
 						},
 						destroy: () => {

@@ -15,7 +15,7 @@
 	import { Label } from "$lib/components/ui/label";
 	import * as NumberField from "$lib/components/ui/number-field";
 	import * as Select from "$lib/components/ui/select";
-	import { config, type AppConfig } from "$lib/config/config-store";
+	import { config, type AppConfig } from "$lib/config";
 	import {
 		ArrowDownToLine,
 		ArrowUpToLine,
@@ -186,23 +186,34 @@
 				<CardHeader>
 					<CardTitle>Spellcheck</CardTitle>
 					<CardDescription>
-						Choose the language for spell checking.
+						Configure the spellcheck system.
 					</CardDescription>
 				</CardHeader>
 				<CardContent class="space-y-4">
-					<div class="flex flex-col gap-2">
-						<Label for="spellcheck-language">Language</Label>
-						<LanguageSelector
-							id="spellcheck-language"
-							availableLanguages={["en_US", "tok"]}
-							currentLanguage={$config?.spellcheck?.language || "en_US"}
-							onLanguageChange={(newLang) => {
-								if ($config) {
-									$config.spellcheck.language = newLang;
-								}
-							}}
+					<div class="flex items-center gap-3">
+						<Checkbox
+							id="spellcheck-enabled"
+							bind:checked={$config.spellcheck.enabled}
 						/>
+						<Label for="spellcheck-enabled">Enable Spellcheck</Label
+						>
 					</div>
+					{#if $config.spellcheck.enabled}
+						<div class="flex flex-col gap-2">
+							<Label for="spellcheck-language">Language</Label>
+							<LanguageSelector
+								id="spellcheck-language"
+								availableLanguages={["en_US", "tok"]}
+								currentLanguage={$config?.spellcheck
+									?.language || "en_US"}
+								onLanguageChange={(newLang) => {
+									if ($config) {
+										$config.spellcheck.language = newLang;
+									}
+								}}
+							/>
+						</div>
+					{/if}
 				</CardContent>
 			</Card>
 			<Card>
@@ -420,9 +431,7 @@
 							type="single"
 							bind:value={$config.noteOpenPosition}
 						>
-							<Select.Trigger
-								class="w-45"
-								id="note-open-position"
+							<Select.Trigger class="w-45" id="note-open-position"
 								><span
 									>{$config.noteOpenPosition == "start"
 										? "Start"
@@ -559,6 +568,20 @@
 							When enabled, you can only add new text at the end
 							of chapters. Cursor movement is still allowed but
 							typing is restricted.
+						</p>
+
+						<div class="flex items-center gap-3">
+							<Checkbox
+								id="hemingway-spellcheck"
+								bind:checked={
+									$config.editor.hemingway.spellcheck
+								}
+							/>
+							<Label for="hemingway-spellcheck">Spellcheck</Label>
+						</div>
+						<p class="text-xs text-muted-foreground">
+							Spellcheck is disabled in Hemingway mode by default,
+							but you can enable it here.
 						</p>
 					{/if}
 				</CardContent>

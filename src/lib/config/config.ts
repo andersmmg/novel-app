@@ -9,7 +9,7 @@ import {
 import { info, warn } from "@tauri-apps/plugin-log";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 
-function deepMerge<T extends Record<string, any>>(
+export function deepMerge<T extends Record<string, any>>(
 	target: T,
 	source: Partial<T>,
 ): T {
@@ -50,6 +50,7 @@ export interface AppConfig {
 		editor: string;
 	};
 	spellcheck: {
+		enabled: boolean;
 		language: string;
 	};
 	editor: {
@@ -74,6 +75,7 @@ export interface AppConfig {
 		hemingway: {
 			enabled: boolean;
 			allowAdditions: boolean;
+			spellcheck: boolean;
 		};
 	};
 	stats: {
@@ -104,6 +106,7 @@ const DEFAULT_CONFIG: AppConfig = {
 		editor: "courier-prime",
 	},
 	spellcheck: {
+		enabled: true,
 		language: "en_US",
 	},
 	editor: {
@@ -128,6 +131,7 @@ const DEFAULT_CONFIG: AppConfig = {
 		hemingway: {
 			enabled: false,
 			allowAdditions: true,
+			spellcheck: false,
 		},
 	},
 	stats: {
