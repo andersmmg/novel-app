@@ -62,10 +62,6 @@
 	let searchOpen = $state(false);
 	let currentLanguage = $state<string>("en_US");
 
-	$effect(() => {
-		console.log($config);
-	});
-
 	const spellcheckEnabled = $derived(
 		($config?.spellcheck?.enabled ?? false) &&
 			!(
@@ -88,13 +84,10 @@
 			SearchAndReplace,
 			OfficePaste,
 			Markdown,
-			...(spellcheckEnabled
-				? [
-						SpellCheck.configure({
-							language: $config?.spellcheck?.language || "en_US",
-						}),
-					]
-				: []),
+			SpellCheck.configure({
+				language: $config?.spellcheck?.language || "en_US",
+				enabled: spellcheckEnabled,
+			}),
 			Placeholder.configure({
 				placeholder: "Start writing...",
 			}),
@@ -259,15 +252,18 @@
 		},
 	});
 
+	$effect(() => {
+		if (
+			previousSpellcheckState !== spellcheckEnabled &&
+			editorState.editor
+		) {
+			previousSpellcheckState = spellcheckEnabled;
+			editorState.editor.commands.setSpellcheckEnabled(spellcheckEnabled);
+		}
+	});
+
 	onMount(() => {
 		createEditor();
-
-		$effect(() => {
-			if (previousSpellcheckState !== spellcheckEnabled && element) {
-				previousSpellcheckState = spellcheckEnabled;
-				createEditor();
-			}
-		});
 
 		$effect(() => {
 			if (
@@ -279,7 +275,10 @@
 				if (newLanguage !== currentLanguage) {
 					currentLanguage = newLanguage;
 					const storage = editorState.editor.storage as any;
-					if (storage.spellCheck?.switchLanguage) {
+					if (
+						storage.spellCheck?.switchLanguage &&
+						storage.spellCheck.enabled
+					) {
 						storage.spellCheck.switchLanguage(newLanguage);
 					}
 				}

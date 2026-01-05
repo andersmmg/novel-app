@@ -1,9 +1,35 @@
 import { Editor, Extension } from "@tiptap/core";
-import { Decoration, DecorationSet, EditorView } from "@tiptap/pm/view";
+import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { Mapping } from "@tiptap/pm/transform";
 import { invoke } from "@tauri-apps/api/core";
-import { resolveResource } from "@tauri-apps/api/path";
+
+declare module "@tiptap/core" {
+	interface Commands<ReturnType> {
+		spellCheck: {
+			/**
+			 * @description Toggle spellcheck on/off.
+			 */
+			toggleSpellcheck: () => ReturnType;
+			/**
+			 * @description Set spellcheck enabled state.
+			 */
+			setSpellcheckEnabled: (enabled: boolean) => ReturnType;
+		};
+	}
+	interface Storage {
+		spellCheck: {
+			errorCount: number;
+			customWords: string[];
+			getSuggestions: (word: string) => Promise<string[]>;
+			addWord: (word: string) => void;
+			proofreader: Proofreader | null;
+			getAvailableLanguages: () => Promise<string[]>;
+			switchLanguage: (language: string) => Promise<void>;
+			enabled: boolean;
+		};
+	}
+}
 
 export interface WordList {
 	[word: string]: number;
@@ -187,6 +213,7 @@ export const SpellCheck = Extension.create({
 		return {
 			language: "en_US",
 			dictionaryPath: "dictionaries",
+			enabled: true,
 		};
 	},
 
@@ -199,6 +226,108 @@ export const SpellCheck = Extension.create({
 			proofreader: null as Proofreader | null,
 			getAvailableLanguages: () => Promise.resolve([] as string[]),
 			switchLanguage: (_language: string) => Promise.resolve(),
+			enabled: true,
+		};
+	},
+
+	addCommands() {
+		return {
+			toggleSpellcheck:
+				() =>
+				({ editor }) => {
+					const storage = editor.storage.spellCheck;
+					storage.enabled = !storage.enabled;
+					
+					if (storage.enabled) {
+						// Re-initialize spellchecking when enabled
+						const { view } = editor;
+						const requestId = Date.now().toString();
+						const { text, map } = extractTextWithMap(view.state.doc);
+						view.dispatch(
+							view.state.tr.setMeta("spellCheckStart", requestId),
+						);
+
+						if (storage.proofreader) {
+							storage.proofreader.proofreadText(text).then((result: any) => {
+								view.dispatch(
+									view.state.tr.setMeta("spellCheckResult", {
+										id: requestId,
+										errors: result.map((err: any) => ({
+											word: err.word,
+											index: err.offset,
+											length: err.length,
+										})),
+										textMap: map,
+									}),
+								);
+								storage.errorCount = result.length;
+							});
+						}
+					} else {
+						// Clear decorations when disabled
+						const { view } = editor;
+						view.dispatch(
+							view.state.tr.setMeta("spellCheckResult", {
+								id: Date.now().toString(),
+								errors: [],
+								textMap: [],
+								clearDecorations: true,
+							}),
+						);
+						storage.errorCount = 0;
+					}
+
+					return true;
+				},
+			setSpellcheckEnabled:
+				(enabled: boolean) =>
+				({ editor }) => {
+					const storage = editor.storage.spellCheck;
+					if (storage.enabled !== enabled) {
+						storage.enabled = enabled;
+						
+						if (enabled) {
+							// Re-initialize spellchecking when enabled
+							const { view } = editor;
+							const requestId = Date.now().toString();
+							const { text, map } = extractTextWithMap(view.state.doc);
+							view.dispatch(
+								view.state.tr.setMeta("spellCheckStart", requestId),
+							);
+
+							if (storage.proofreader) {
+								storage.proofreader.proofreadText(text).then((result: any) => {
+									view.dispatch(
+										view.state.tr.setMeta("spellCheckResult", {
+											id: requestId,
+											errors: result.map((err: any) => ({
+												word: err.word,
+												index: err.offset,
+												length: err.length,
+											})),
+											textMap: map,
+										}),
+									);
+									storage.errorCount = result.length;
+								});
+							}
+						} else {
+							// Clear decorations when disabled
+							const { view } = editor;
+							view.dispatch(
+								view.state.tr.setMeta("spellCheckResult", {
+									id: Date.now().toString(),
+									errors: [],
+									textMap: [],
+									clearDecorations: true,
+								}),
+							);
+							storage.errorCount = 0;
+						}
+					}
+
+					return true;
+				},
 		};
 	},
 
@@ -240,10 +369,14 @@ export const SpellCheck = Extension.create({
 
 						const result = tr.getMeta("spellCheckResult");
 						if (result) {
-							const { id, errors, textMap } = result;
+							const { id, errors, textMap, clearDecorations } = result;
 							const mapping = newPendingRequests.get(id);
 
-							if (mapping) {
+							if (clearDecorations) {
+								// Force clear all decorations
+								decorations = DecorationSet.empty;
+								newPendingRequests.clear();
+							} else if (mapping) {
 								newPendingRequests.delete(id);
 								const decos: Decoration[] = [];
 
@@ -311,6 +444,9 @@ export const SpellCheck = Extension.create({
 					},
 				},
 				view: (view) => {
+					// Set initial enabled state from options
+					this.storage.enabled = this.options.enabled;
+					
 					if (!this.storage.proofreader) {
 						console.log(
 							"SpellCheck language option:",
@@ -326,33 +462,35 @@ export const SpellCheck = Extension.create({
 							await this.storage.proofreader.initialize();
 							console.log("Rust SpellCheck initialized");
 
-							const requestId = (requestIdCounter++).toString();
-							const { text, map } = extractTextWithMap(
-								view.state.doc,
-							);
-							view.dispatch(
-								view.state.tr.setMeta(
-									"spellCheckStart",
-									requestId,
-								),
-							);
-
-							const result =
-								await this.storage.proofreader.proofreadText(
-									text,
+							if (this.storage.enabled) {
+								const requestId = (requestIdCounter++).toString();
+								const { text, map } = extractTextWithMap(
+									view.state.doc,
 								);
-							view.dispatch(
-								view.state.tr.setMeta("spellCheckResult", {
-									id: requestId,
-									errors: result.map((err: any) => ({
-										word: err.word,
-										index: err.offset,
-										length: err.length,
-									})),
-									textMap: map,
-								}),
-							);
-							this.storage.errorCount = result.length;
+								view.dispatch(
+									view.state.tr.setMeta(
+										"spellCheckStart",
+										requestId,
+									),
+								);
+
+								const result =
+									await this.storage.proofreader.proofreadText(
+										text,
+									);
+								view.dispatch(
+									view.state.tr.setMeta("spellCheckResult", {
+										id: requestId,
+										errors: result.map((err: any) => ({
+											word: err.word,
+											index: err.offset,
+											length: err.length,
+										})),
+										textMap: map,
+									}),
+								);
+								this.storage.errorCount = result.length;
+							}
 						} catch (e) {
 							console.error(
 								"Failed to init Rust spell check:",
@@ -462,7 +600,7 @@ export const SpellCheck = Extension.create({
 								prevState.doc,
 							);
 
-							if (docChanged) {
+							if (docChanged && this.storage.enabled) {
 								if (debounceTimeout)
 									clearTimeout(debounceTimeout);
 
