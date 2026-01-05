@@ -11,10 +11,12 @@
 	import CardTitle from "$lib/components/ui/card/card-title.svelte";
 	import Card from "$lib/components/ui/card/card.svelte";
 	import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
+	import * as Dialog from "$lib/components/ui/dialog";
 	import Input from "$lib/components/ui/input/input.svelte";
 	import { Label } from "$lib/components/ui/label";
 	import * as NumberField from "$lib/components/ui/number-field";
 	import * as Select from "$lib/components/ui/select";
+	import * as Table from "$lib/components/ui/table";
 	import { config, saveConfig, type AppConfig } from "$lib/config";
 	import {
 		ArrowDownToLine,
@@ -31,10 +33,13 @@
 		PlusIcon,
 		SettingsIcon,
 		TextSearchIcon,
+		TrashIcon,
 		UnderlineIcon,
 		UnfoldHorizontalIcon,
 	} from "@lucide/svelte";
 	import { onMount } from "svelte";
+
+	let manageCustomWordsOpen = $state(false);
 
 	function handleIntervalChange(event: Event) {
 		if (!$config) return;
@@ -220,6 +225,11 @@
 								}}
 							/>
 						</div>
+						<Button
+							variant="secondary"
+							onclick={() => (manageCustomWordsOpen = true)}
+							>Manage Custom Words</Button
+						>
 					{/if}
 				</CardContent>
 			</Card>
@@ -599,3 +609,52 @@
 		v{__APP_VERSION__}
 	</div>
 </div>
+<Dialog.Root bind:open={manageCustomWordsOpen}>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>Custom Words</Dialog.Title>
+			<Dialog.Description>
+				Manage your custom dictionary for spellchecking.
+			</Dialog.Description>
+		</Dialog.Header>
+		<div class="grid grid-rows-[auto_1fr] max-h-60">
+			<Table.Root>
+				<Table.Header class="border-b">
+					<Table.Row>
+						<Table.Head>Word</Table.Head>
+						<Table.Head class="text-end">Actions</Table.Head>
+					</Table.Row>
+				</Table.Header>
+			</Table.Root>
+			<div class="overflow-auto">
+				<Table.Root>
+					<Table.Body>
+						{#each $config?.spellcheck.customWords as word}
+							<Table.Row>
+								<Table.Cell>{word}</Table.Cell>
+								<Table.Cell class="text-end">
+									<Button
+										variant="secondary"
+										size="icon"
+										onclick={() => {
+											if (
+												!$config?.spellcheck.customWords
+											)
+												return;
+											$config.spellcheck.customWords =
+												$config?.spellcheck.customWords.filter(
+													(w) => w !== word,
+												);
+										}}
+									>
+										<TrashIcon />
+									</Button>
+								</Table.Cell>
+							</Table.Row>
+						{/each}
+					</Table.Body>
+				</Table.Root>
+			</div>
+		</div>
+	</Dialog.Content>
+</Dialog.Root>
