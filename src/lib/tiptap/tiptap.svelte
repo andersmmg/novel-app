@@ -2,7 +2,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import * as ButtonGroup from "$lib/components/ui/button-group";
 	import { Input } from "$lib/components/ui/input";
-	import { config } from "$lib/config/config-store.svelte";
+	import { config } from "$lib/config";
 	import type { StoryFile } from "$lib/story";
 	import { combineFrontmatter, separateFrontmatter } from "$lib/story/utils";
 	import OfficePaste from "@intevation/tiptap-extension-office-paste";
@@ -87,6 +87,7 @@
 			SpellCheck.configure({
 				language: $config?.spellcheck?.language || "en_US",
 				enabled: spellcheckEnabled,
+				customWords: $config?.spellcheck?.customWords || [],
 			}),
 			Placeholder.configure({
 				placeholder: "Start writing...",

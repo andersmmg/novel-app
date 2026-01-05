@@ -52,6 +52,7 @@ export interface AppConfig {
 	spellcheck: {
 		enabled: boolean;
 		language: string;
+		customWords: string[];
 	};
 	editor: {
 		expandWidth: boolean;
@@ -108,6 +109,7 @@ const DEFAULT_CONFIG: AppConfig = {
 	spellcheck: {
 		enabled: true,
 		language: "en_US",
+		customWords: [],
 	},
 	editor: {
 		expandWidth: false,

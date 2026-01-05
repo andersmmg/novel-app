@@ -1,8 +1,9 @@
-import { Editor, Extension } from "@tiptap/core";
-import { Decoration, DecorationSet } from "@tiptap/pm/view";
+import { configStore } from "$lib/config";
+import { invoke } from "@tauri-apps/api/core";
+import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { Mapping } from "@tiptap/pm/transform";
-import { invoke } from "@tauri-apps/api/core";
+import { Decoration, DecorationSet } from "@tiptap/pm/view";
 
 declare module "@tiptap/core" {
 	interface Commands<ReturnType> {
@@ -48,7 +49,6 @@ export class Proofreader {
 
 	constructor(language: string = "en_US") {
 		this.language = language;
-		this.loadCustomWords();
 	}
 
 	get initialized() {
@@ -81,6 +81,8 @@ export class Proofreader {
 		try {
 			const affPath = `dictionaries/${this.language}.aff`;
 			const dicPath = `dictionaries/${this.language}.dic`;
+
+			await this.loadCustomWords();
 
 			await invoke("init_spell_check", {
 				affPath,
@@ -151,11 +153,13 @@ export class Proofreader {
 		}
 	}
 
-	private loadCustomWords(): void {
-		const savedWords = localStorage.getItem("customDictionary");
+	private async loadCustomWords(): Promise<void> {
+		const savedWords = (await configStore.getConfig()).spellcheck
+			.customWords;
 		if (savedWords) {
 			try {
-				this.customWords = JSON.parse(savedWords);
+				this.customWords = savedWords;
+				console.log(savedWords);
 			} catch (e) {
 				console.error("Failed to load custom words:", e);
 				this.customWords = [];
@@ -163,12 +167,16 @@ export class Proofreader {
 		}
 	}
 
-	private saveCustomWords(): void {
+	private async saveCustomWords(): Promise<void> {
+		const currentConfig = (await configStore.getConfig()).spellcheck;
 		try {
-			localStorage.setItem(
-				"customDictionary",
-				JSON.stringify(this.customWords),
-			);
+			await configStore.updateConfig({
+				spellcheck: {
+					customWords: this.customWords,
+					enabled: currentConfig.enabled,
+					language: currentConfig.language,
+				},
+			});
 		} catch (e) {
 			console.error("Failed to save custom words:", e);
 		}
@@ -237,31 +245,40 @@ export const SpellCheck = Extension.create({
 				({ editor }) => {
 					const storage = editor.storage.spellCheck;
 					storage.enabled = !storage.enabled;
-					
+
 					if (storage.enabled) {
 						// Re-initialize spellchecking when enabled
 						const { view } = editor;
 						const requestId = Date.now().toString();
-						const { text, map } = extractTextWithMap(view.state.doc);
+						const { text, map } = extractTextWithMap(
+							view.state.doc,
+						);
 						view.dispatch(
 							view.state.tr.setMeta("spellCheckStart", requestId),
 						);
 
 						if (storage.proofreader) {
-							storage.proofreader.proofreadText(text).then((result: any) => {
-								view.dispatch(
-									view.state.tr.setMeta("spellCheckResult", {
-										id: requestId,
-										errors: result.map((err: any) => ({
-											word: err.word,
-											index: err.offset,
-											length: err.length,
-										})),
-										textMap: map,
-									}),
-								);
-								storage.errorCount = result.length;
-							});
+							storage.proofreader
+								.proofreadText(text)
+								.then((result: any) => {
+									view.dispatch(
+										view.state.tr.setMeta(
+											"spellCheckResult",
+											{
+												id: requestId,
+												errors: result.map(
+													(err: any) => ({
+														word: err.word,
+														index: err.offset,
+														length: err.length,
+													}),
+												),
+												textMap: map,
+											},
+										),
+									);
+									storage.errorCount = result.length;
+								});
 						}
 					} else {
 						// Clear decorations when disabled
@@ -285,31 +302,43 @@ export const SpellCheck = Extension.create({
 					const storage = editor.storage.spellCheck;
 					if (storage.enabled !== enabled) {
 						storage.enabled = enabled;
-						
+
 						if (enabled) {
 							// Re-initialize spellchecking when enabled
 							const { view } = editor;
 							const requestId = Date.now().toString();
-							const { text, map } = extractTextWithMap(view.state.doc);
+							const { text, map } = extractTextWithMap(
+								view.state.doc,
+							);
 							view.dispatch(
-								view.state.tr.setMeta("spellCheckStart", requestId),
+								view.state.tr.setMeta(
+									"spellCheckStart",
+									requestId,
+								),
 							);
 
 							if (storage.proofreader) {
-								storage.proofreader.proofreadText(text).then((result: any) => {
-									view.dispatch(
-										view.state.tr.setMeta("spellCheckResult", {
-											id: requestId,
-											errors: result.map((err: any) => ({
-												word: err.word,
-												index: err.offset,
-												length: err.length,
-											})),
-											textMap: map,
-										}),
-									);
-									storage.errorCount = result.length;
-								});
+								storage.proofreader
+									.proofreadText(text)
+									.then((result: any) => {
+										view.dispatch(
+											view.state.tr.setMeta(
+												"spellCheckResult",
+												{
+													id: requestId,
+													errors: result.map(
+														(err: any) => ({
+															word: err.word,
+															index: err.offset,
+															length: err.length,
+														}),
+													),
+													textMap: map,
+												},
+											),
+										);
+										storage.errorCount = result.length;
+									});
 							}
 						} else {
 							// Clear decorations when disabled
@@ -369,7 +398,8 @@ export const SpellCheck = Extension.create({
 
 						const result = tr.getMeta("spellCheckResult");
 						if (result) {
-							const { id, errors, textMap, clearDecorations } = result;
+							const { id, errors, textMap, clearDecorations } =
+								result;
 							const mapping = newPendingRequests.get(id);
 
 							if (clearDecorations) {
@@ -446,7 +476,7 @@ export const SpellCheck = Extension.create({
 				view: (view) => {
 					// Set initial enabled state from options
 					this.storage.enabled = this.options.enabled;
-					
+
 					if (!this.storage.proofreader) {
 						console.log(
 							"SpellCheck language option:",
@@ -460,10 +490,11 @@ export const SpellCheck = Extension.create({
 					const initBackend = async () => {
 						try {
 							await this.storage.proofreader.initialize();
-							console.log("Rust SpellCheck initialized");
+							console.log("Initializing spellcheck backend");
 
 							if (this.storage.enabled) {
-								const requestId = (requestIdCounter++).toString();
+								const requestId =
+									(requestIdCounter++).toString();
 								const { text, map } = extractTextWithMap(
 									view.state.doc,
 								);

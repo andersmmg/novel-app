@@ -1,2 +1,7 @@
 export type { AppConfig } from "./config";
-export { config, saveConfig, updateConfig } from "./config-store.svelte";
+export {
+	config,
+	configStore,
+	saveConfig,
+	updateConfig,
+} from "./config-store.svelte";

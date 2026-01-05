@@ -42,51 +42,12 @@ fn get_available_languages() -> Result<Vec<String>, String> {
 
 #[tauri::command]
 fn init_spell_check(
-    app: tauri::AppHandle,
     state: State<'_, SpellCheckState>,
     aff_path: String,
     dic_path: String,
     custom_words: Vec<String>,
 ) -> Result<(), String> {
     println!("Init Spell Check: aff={}, dic={}", aff_path, dic_path);
-
-    use tauri::path::BaseDirectory;
-
-    let dict_file_path = app
-        .path()
-        .resolve("custom_dictionary.txt", BaseDirectory::AppConfig)
-        .map_err(|e| format!("Failed to resolve config path: {}", e))?;
-
-    if let Some(parent) = dict_file_path.parent() {
-        std::fs::create_dir_all(parent)
-            .map_err(|e| format!("Failed to create config directory: {}", e))?;
-    }
-
-    let mut persistent_words: Vec<String> = Vec::new();
-    if dict_file_path.exists() {
-        let content = std::fs::read_to_string(&dict_file_path)
-            .map_err(|e| format!("Failed to read custom dictionary: {}", e))?;
-        persistent_words = content
-            .lines()
-            .map(|s| s.trim().to_string())
-            .filter(|s| !s.is_empty())
-            .collect();
-    }
-
-    let mut merged_words = persistent_words;
-    let mut changed = false;
-    for word in custom_words {
-        if !merged_words.contains(&word) {
-            merged_words.push(word);
-            changed = true;
-        }
-    }
-
-    if changed || !dict_file_path.exists() {
-        let content = merged_words.join("\n");
-        std::fs::write(&dict_file_path, content)
-            .map_err(|e| format!("Failed to write custom dictionary: {}", e))?;
-    }
 
     let language = aff_path
         .split('/')
@@ -137,7 +98,7 @@ fn init_spell_check(
         .custom_words
         .lock()
         .map_err(|_| "Failed to lock mutex")?;
-    *state_custom = merged_words;
+    *state_custom = custom_words.clone();
 
     let mut state_lang = state
         .current_language
@@ -155,34 +116,14 @@ fn init_spell_check(
 }
 
 #[tauri::command]
-fn add_custom_word(
-    app: tauri::AppHandle,
-    state: State<'_, SpellCheckState>,
-    word: String,
-) -> Result<(), String> {
+fn add_custom_word(state: State<'_, SpellCheckState>, word: String) -> Result<(), String> {
     let mut custom = state
         .custom_words
         .lock()
         .map_err(|_| "Failed to lock mutex")?;
 
     if !custom.contains(&word) {
-        custom.push(word.clone());
-
-        use std::io::Write;
-        use tauri::path::BaseDirectory;
-
-        let dict_file_path = app
-            .path()
-            .resolve("custom_dictionary.txt", BaseDirectory::AppConfig)
-            .map_err(|e| format!("Failed to resolve config path: {}", e))?;
-
-        let mut file = std::fs::OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(dict_file_path)
-            .map_err(|e| format!("Failed to open dictionary file: {}", e))?;
-
-        writeln!(file, "{}", word).map_err(|e| format!("Failed to append to dictionary: {}", e))?;
+        custom.push(word);
     }
 
     Ok(())
