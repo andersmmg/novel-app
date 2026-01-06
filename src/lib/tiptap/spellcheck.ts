@@ -1,5 +1,6 @@
 import { configStore } from "$lib/config";
 import { invoke } from "@tauri-apps/api/core";
+import { resolveResource } from "@tauri-apps/api/path";
 import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { Mapping } from "@tiptap/pm/transform";
@@ -79,8 +80,9 @@ export class Proofreader {
 		if (this.isInitialized) return;
 
 		try {
-			const affPath = `dictionaries/${this.language}.aff`;
-			const dicPath = `dictionaries/${this.language}.dic`;
+			let resourcePath = await resolveResource("dictionaries");
+			const affPath = `${resourcePath}/${this.language}.aff`;
+			const dicPath = `${resourcePath}/${this.language}.dic`;
 
 			await this.loadCustomWords();
 
