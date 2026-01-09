@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MinusIcon from '@lucide/svelte/icons/minus';
+	import MinusIcon from 'virtual:icons/lucide/minus';
 	import { Button } from '../button';
 	import { useNumberFieldButton } from './number-field.svelte.js';
 	import type { NumberFieldButtonProps } from './types.js';

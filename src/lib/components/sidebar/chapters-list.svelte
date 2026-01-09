@@ -5,7 +5,11 @@
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import type { StoryFile } from "$lib/story";
 	import { renameStoryFile } from "$lib/story/utils";
-	import { BookText, SquarePenIcon, TrashIcon } from "@lucide/svelte";
+
+	import BookText from "virtual:icons/lucide/book-text";
+	import SquarePenIcon from "virtual:icons/lucide/square-pen";
+	import TrashIcon from "virtual:icons/lucide/trash";
+
 	import { dndzone, type DndEvent } from "svelte-dnd-action";
 	import { flip } from "svelte/animate";
 	import { inputPrompt } from "../input-prompt";

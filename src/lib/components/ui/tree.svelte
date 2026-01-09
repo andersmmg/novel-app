@@ -10,13 +10,13 @@
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import type { StoryFile, StoryFolder } from "$lib/story/types";
 	import { renameStoryItem } from "$lib/story/utils";
-	import {
-		Folder,
-		FolderOpen,
-		NotepadText,
-		SquarePenIcon,
-		TrashIcon,
-	} from "@lucide/svelte";
+
+	import FolderIcon from "virtual:icons/lucide/folder";
+	import FolderOpenIcon from "virtual:icons/lucide/folder-open";
+	import NotepadTextIcon from "virtual:icons/lucide/notepad-text";
+	import SquarePenIcon from "virtual:icons/lucide/square-pen";
+	import TrashIcon from "virtual:icons/lucide/trash";
+
 	import { inputPrompt } from "../input-prompt";
 	import Tree from "./tree.svelte";
 
@@ -78,8 +78,8 @@
 					{#snippet child({ props })}
 						<ContextMenu.Trigger>
 							<Sidebar.MenuButton {...props}>
-								<Folder />
-								<FolderOpen />
+								<FolderIcon />
+								<FolderOpenIcon />
 								<span>{getItemName(item)}</span>
 							</Sidebar.MenuButton>
 						</ContextMenu.Trigger>
@@ -127,7 +127,7 @@
 					onclick={() => openItem(item)}
 					isActive={appState.currentEditedFile?.path === item.path}
 				>
-					<NotepadText />
+					<NotepadTextIcon />
 					<span>{getItemName(item)}</span>
 				</Sidebar.MenuButton>
 			</Sidebar.MenuItem>

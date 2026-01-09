@@ -14,7 +14,9 @@
 		updateStoryFileContent,
 	} from "$lib/story/utils";
 	import Tiptap from "$lib/tiptap/tiptap.svelte";
-	import { LockKeyholeIcon, LockKeyholeOpenIcon } from "@lucide/svelte";
+
+	import LockKeyholeIcon from "virtual:icons/lucide/lock-keyhole";
+	import LockKeyholeOpenIcon from "virtual:icons/lucide/lock-keyhole-open";
 
 	let titleInput = $state<HTMLInputElement>();
 	let isEditingTitle = $state(false);
@@ -246,18 +248,18 @@
 					<Button
 						onclick={() => {
 							try {
-								goto('/');
+								goto("/");
 							} catch (error) {
 								console.error("Navigation failed:", error);
 							}
-						}}
-					>Go to Stories</Button>
+						}}>Go to Stories</Button
+					>
 				</div>
 			</div>
 		{/if}
 	</main>
 
-		{#if appState.currentEditedFile}
+	{#if appState.currentEditedFile}
 		<footer
 			class="border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 cursor-default"
 		>
@@ -287,7 +289,7 @@
 				</div>
 			</div>
 		</footer>
-		{/if}
+	{/if}
 </div>
 <AlertDialog.Root bind:open={confirmDisableHemingway}>
 	<AlertDialog.Content interactOutsideBehavior="close">

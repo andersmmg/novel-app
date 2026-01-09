@@ -13,16 +13,16 @@
 	import { createChapter } from "$lib/story/story-writer";
 	import type { StoryFile } from "$lib/story/types";
 	import { cn } from "$lib/utils";
-	import {
-		Book,
-		BookOpenIcon,
-		ChevronDownIcon,
-		FilePlusIcon,
-		FolderPlusIcon,
-		LibraryIcon,
-		PlusIcon,
-		Settings,
-	} from "@lucide/svelte";
+
+	import BookIcon from "virtual:icons/lucide/book";
+	import BookOpenIcon from "virtual:icons/lucide/book-open";
+	import ChevronDownIcon from "virtual:icons/lucide/chevron-down";
+	import FilePlusIcon from "virtual:icons/lucide/file-plus";
+	import FolderPlusIcon from "virtual:icons/lucide/folder-plus";
+	import LibraryIcon from "virtual:icons/lucide/library";
+	import PlusIcon from "virtual:icons/lucide/plus";
+	import SettingsIcon from "virtual:icons/lucide/settings";
+
 	import ChaptersList from "./sidebar/chapters-list.svelte";
 	import { Button } from "./ui/button";
 
@@ -119,7 +119,7 @@
 						{#snippet child({ props })}
 							<Sidebar.MenuButton size="lg" {...props}>
 								{#if appState.selectedStory}
-									<Book />
+									<BookIcon />
 									<div
 										class="flex flex-col gap-0.5 leading-none"
 									>
@@ -148,7 +148,7 @@
 							<DropdownMenu.Item
 								onclick={() => selectStory(story.id)}
 							>
-								<Book class="size-4" />
+								<BookIcon class="size-4" />
 								<span>{story.title}</span>
 							</DropdownMenu.Item>
 						{:else}
@@ -289,7 +289,7 @@
 				<Sidebar.MenuButton>
 					{#snippet child({ props })}
 						<a href="/settings" {...props}>
-							<Settings class="size-4" />
+							<SettingsIcon class="size-4" />
 							<span>Settings</span>
 						</a>
 					{/snippet}

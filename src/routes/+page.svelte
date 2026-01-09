@@ -23,10 +23,10 @@
 	import { saveStory } from "$lib/story/story-writer";
 	import type { StoryListItem } from "$lib/story/types";
 	import { formatCount } from "$lib/story/utils";
-	import BookOpenIcon from "@tabler/icons-svelte/icons/book";
-	import CalendarIcon from "@tabler/icons-svelte/icons/calendar";
-	import FileTextIcon from "@tabler/icons-svelte/icons/file-text";
-	import UserIcon from "@tabler/icons-svelte/icons/user";
+	import BookOpenIcon from "virtual:icons/tabler/book";
+	import CalendarIcon from "virtual:icons/tabler/calendar";
+	import FileTextIcon from "virtual:icons/tabler/file-text";
+	import UserIcon from "virtual:icons/tabler/user";
 	import { BaseDirectory, exists, writeFile } from "@tauri-apps/plugin-fs";
 	import { info } from "@tauri-apps/plugin-log";
 	import { nanoid } from "nanoid";
@@ -163,7 +163,7 @@
 		}
 	}}
 >
-	<Dialog.Content class="sm:max-w-[425px]">
+	<Dialog.Content class="sm:max-w-106.25">
 		<Field.Set>
 			<Dialog.Header>
 				<Dialog.Title>Create Story</Dialog.Title>

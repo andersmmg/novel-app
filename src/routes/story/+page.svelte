@@ -20,7 +20,10 @@
 	import { Textarea } from "$lib/components/ui/textarea";
 	import { config } from "$lib/config";
 	import { formatCount } from "$lib/story/utils";
-	import { BookOpenIcon, WrenchIcon } from "@lucide/svelte";
+
+	import BookOpenIcon from "virtual:icons/lucide/book-open";
+	import WrenchIcon from "virtual:icons/lucide/wrench";
+
 	import { onMount } from "svelte";
 	import Time from "svelte-time";
 

@@ -1,5 +1,8 @@
 <script lang="ts">
-	import { Maximize2Icon, MinusIcon, XIcon } from "@lucide/svelte";
+	import Maximize2Icon from "virtual:icons/lucide/maximize2";
+	import MinusIcon from "virtual:icons/lucide/minus";
+	import XIcon from "virtual:icons/lucide/x";
+
 	import { getCurrentWindow } from "@tauri-apps/api/window";
 	import Button from "./ui/button/button.svelte";
 

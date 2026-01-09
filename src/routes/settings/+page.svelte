@@ -18,25 +18,25 @@
 	import * as Select from "$lib/components/ui/select";
 	import * as Table from "$lib/components/ui/table";
 	import { config, saveConfig, type AppConfig } from "$lib/config";
-	import {
-		ArrowDownToLine,
-		ArrowUpToLine,
-		BoldIcon,
-		Heading1Icon,
-		Heading2Icon,
-		ItalicIcon,
-		ListIcon,
-		ListOrderedIcon,
-		ListTodoIcon,
-		MinusIcon,
-		PilcrowIcon,
-		PlusIcon,
-		SettingsIcon,
-		TextSearchIcon,
-		TrashIcon,
-		UnderlineIcon,
-		UnfoldHorizontalIcon,
-	} from "@lucide/svelte";
+
+	import ArrowDownToLineIcon from "virtual:icons/lucide/arrow-down-to-line";
+	import ArrowUpToLineIcon from "virtual:icons/lucide/arrow-up-to-line";
+	import BoldIcon from "virtual:icons/lucide/bold";
+	import Heading1Icon from "virtual:icons/lucide/heading-1";
+	import Heading2Icon from "virtual:icons/lucide/heading-2";
+	import ItalicIcon from "virtual:icons/lucide/italic";
+	import ListIcon from "virtual:icons/lucide/list";
+	import ListOrderedIcon from "virtual:icons/lucide/list-ordered";
+	import ListTodoIcon from "virtual:icons/lucide/list-todo";
+	import MinusIcon from "virtual:icons/lucide/minus";
+	import PilcrowIcon from "virtual:icons/lucide/pilcrow";
+	import PlusIcon from "virtual:icons/lucide/plus";
+	import SettingsIcon from "virtual:icons/lucide/settings";
+	import TextSearchIcon from "virtual:icons/lucide/text-search";
+	import TrashIcon from "virtual:icons/lucide/trash";
+	import UnderlineIcon from "virtual:icons/lucide/underline";
+	import UnfoldHorizontalIcon from "virtual:icons/lucide/unfold-horizontal";
+
 	import { onMount } from "svelte";
 
 	let manageCustomWordsOpen = $state(false);
@@ -372,7 +372,7 @@
 								onclick={() => {
 									$config.editor.toolbarItems.top =
 										!$config.editor.toolbarItems.top;
-								}}><ArrowUpToLine /></Button
+								}}><ArrowUpToLineIcon /></Button
 							>
 							<Button
 								tooltipContent="Jump to End"
@@ -384,7 +384,7 @@
 								onclick={() => {
 									$config.editor.toolbarItems.bottom =
 										!$config.editor.toolbarItems.bottom;
-								}}><ArrowDownToLine /></Button
+								}}><ArrowDownToLineIcon /></Button
 							>
 							<Button
 								tooltipContent="Find"

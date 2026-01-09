@@ -6,7 +6,7 @@
 	import { useSidebar } from "$lib/components/ui/sidebar";
 	import { isTauriDesktop } from "$lib/is-tauri";
 	import { ctrlShortcut } from "$lib/utils";
-	import PanelLeftIcon from "@lucide/svelte/icons/panel-left";
+	import PanelLeftIcon from "virtual:icons/lucide/panel-left";
 	import { getCurrentWindow } from "@tauri-apps/api/window";
 	import { onMount } from "svelte";
 	import Time from "svelte-time/Time.svelte";

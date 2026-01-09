@@ -6,7 +6,7 @@
 	import Input from "$lib/components/ui/input/input.svelte";
 	import { Label } from "$lib/components/ui/label";
 	import type { StoryMetadata } from "$lib/story/types";
-	import { GoalIcon } from "@lucide/svelte";
+	import GoalIcon from "virtual:icons/lucide/goal"
 
 	interface Props {
 		metadata: StoryMetadata;

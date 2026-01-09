@@ -6,27 +6,27 @@
 	import type { StoryFile } from "$lib/story";
 	import { combineFrontmatter, separateFrontmatter } from "$lib/story/utils";
 	import OfficePaste from "@intevation/tiptap-extension-office-paste";
-	import {
-		ArrowDownToLine,
-		ArrowUpToLine,
-		BoldIcon,
-		CaseSensitiveIcon,
-		ChevronLeftIcon,
-		ChevronRightIcon,
-		Heading1Icon,
-		Heading2Icon,
-		ItalicIcon,
-		ListIcon,
-		ListOrderedIcon,
-		ListTodoIcon,
-		MinusIcon,
-		Pilcrow,
-		PlusIcon,
-		TextSearchIcon,
-		UnderlineIcon,
-		UnfoldHorizontalIcon,
-		XIcon,
-	} from "@lucide/svelte";
+
+	import ArrowDownToLineIcon from "virtual:icons/lucide/arrow-down-to-line";
+	import ArrowUpToLineIcon from "virtual:icons/lucide/arrow-up-to-line";
+	import BoldIcon from "virtual:icons/lucide/bold";
+	import CaseSensitiveIcon from "virtual:icons/lucide/case-sensitive";
+	import ChevronLeftIcon from "virtual:icons/lucide/chevron-left";
+	import ChevronRightIcon from "virtual:icons/lucide/chevron-right";
+	import Heading1Icon from "virtual:icons/lucide/heading-1";
+	import Heading2Icon from "virtual:icons/lucide/heading-2";
+	import ItalicIcon from "virtual:icons/lucide/italic";
+	import ListIcon from "virtual:icons/lucide/list";
+	import ListOrderedIcon from "virtual:icons/lucide/list-ordered";
+	import ListTodoIcon from "virtual:icons/lucide/list-todo";
+	import MinusIcon from "virtual:icons/lucide/minus";
+	import PilcrowIcon from "virtual:icons/lucide/pilcrow";
+	import PlusIcon from "virtual:icons/lucide/plus";
+	import TextSearchIcon from "virtual:icons/lucide/text-search";
+	import UnderlineIcon from "virtual:icons/lucide/underline";
+	import UnfoldHorizontalIcon from "virtual:icons/lucide/unfold-horizontal";
+	import XIcon from "virtual:icons/lucide/x";
+
 	import { Editor, Extension } from "@tiptap/core";
 	import { TaskItem, TaskList } from "@tiptap/extension-list";
 	import { Placeholder } from "@tiptap/extensions/placeholder";
@@ -430,7 +430,7 @@
 								.editor!.chain()
 								.focus()
 								.setParagraph()
-								.run()}><Pilcrow /></Button
+								.run()}><PilcrowIcon /></Button
 					>
 				{/if}
 			</ButtonGroup.Root>
@@ -552,7 +552,7 @@
 						variant="outline"
 						onclick={() =>
 							editorState.editor!.chain().focus("start").run()}
-						><ArrowUpToLine /></Button
+						><ArrowUpToLineIcon /></Button
 					>
 				{/if}
 				{#if $config?.editor.toolbarItems.bottom}
@@ -563,7 +563,7 @@
 						variant="outline"
 						onclick={() =>
 							editorState.editor!.chain().focus("end").run()}
-						><ArrowDownToLine /></Button
+						><ArrowDownToLineIcon /></Button
 					>
 				{/if}
 				{#if $config?.editor.toolbarItems.find}
