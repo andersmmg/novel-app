@@ -1,9 +1,10 @@
 <script lang="ts" module>
 	class InputPromptDialogState {
 		open = $state(false);
-		inputText = $state('');
+		inputText = $state("");
 		options = $state<InputPromptOptions | null>(null);
 		loading = $state(false);
+		inputRef = $state<HTMLInputElement | null>(null);
 
 		constructor() {
 			this.confirm = this.confirm.bind(this);
@@ -13,13 +14,24 @@
 		newInputPrompt(options: InputPromptOptions) {
 			this.reset();
 			this.options = options;
-			this.inputText = options.input?.initialValue ?? '';
+			this.inputText = options.input?.initialValue ?? "";
 			this.open = true;
+
+			setTimeout(() => {
+				if (
+					this.inputRef &&
+					(!options.input ||
+						options.input?.autofocus === undefined ||
+						options.input?.autofocus === true)
+				) {
+					this.inputRef.focus();
+				}
+			}, 50);
 		}
 
 		reset() {
 			this.open = false;
-			this.inputText = '';
+			this.inputText = "";
 			this.options = null;
 		}
 
@@ -49,8 +61,9 @@
 		title: string;
 		description: string;
 		input?: {
-			initialValue: string;
+			initialValue?: string;
 			placeholder?: string;
+			autofocus?: boolean;
 		};
 		confirm?: {
 			text?: string;
@@ -68,8 +81,8 @@
 </script>
 
 <script lang="ts">
-	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import { Input } from '$lib/components/ui/input';
+	import * as AlertDialog from "$lib/components/ui/alert-dialog";
+	import { Input } from "$lib/components/ui/input";
 </script>
 
 <AlertDialog.Root bind:open={dialogState.open}>
@@ -90,27 +103,28 @@
 					{dialogState.options?.description}
 				</AlertDialog.Description>
 			</AlertDialog.Header>
-				<Input
-					bind:value={dialogState.inputText}
-					placeholder={dialogState.options?.input?.placeholder ?? ''}
-					onkeydown={(e) => {
-						if (e.key === 'Enter') {
-							// for some reason without this the form will submit and the dialog will close immediately
-							e.preventDefault();
-							dialogState.confirm();
-						}
-					}}
-				/>
+			<Input
+				bind:value={dialogState.inputText}
+				placeholder={dialogState.options?.input?.placeholder ?? ""}
+				bind:ref={dialogState.inputRef}
+				onkeydown={(e) => {
+					if (e.key === "Enter") {
+						// for some reason without this the form will submit and the dialog will close immediately
+						e.preventDefault();
+						dialogState.confirm();
+					}
+				}}
+			/>
 			<AlertDialog.Footer>
 				<AlertDialog.Cancel type="button" onclick={dialogState.cancel}>
-					{dialogState.options?.cancel?.text ?? 'Cancel'}
+					{dialogState.options?.cancel?.text ?? "Cancel"}
 				</AlertDialog.Cancel>
 				<AlertDialog.Action
 					type="submit"
 					loading={dialogState.loading}
 					disabled={dialogState.inputText.trim().length === 0}
 				>
-					{dialogState.options?.confirm?.text ?? 'Confirm'}
+					{dialogState.options?.confirm?.text ?? "Confirm"}
 				</AlertDialog.Action>
 			</AlertDialog.Footer>
 		</form>

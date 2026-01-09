@@ -6,7 +6,7 @@
 	import Input from "$lib/components/ui/input/input.svelte";
 	import { Label } from "$lib/components/ui/label";
 	import type { StoryMetadata } from "$lib/story/types";
-	import GoalIcon from "virtual:icons/lucide/goal"
+	import GoalIcon from "virtual:icons/lucide/goal";
 
 	interface Props {
 		metadata: StoryMetadata;
@@ -52,7 +52,7 @@
 	>
 		<GoalIcon class="w-4 h-4" />
 	</Button>
-	<Dialog.Content class="sm:max-w-[425px]">
+	<Dialog.Content class="sm:max-w-106.25">
 		<Dialog.Header>
 			<Dialog.Title>Story Goals</Dialog.Title>
 			<Dialog.Description>

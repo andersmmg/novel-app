@@ -9,14 +9,17 @@
 	import * as ContextMenu from "$lib/components/ui/context-menu";
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import type { StoryFile, StoryFolder } from "$lib/story/types";
+	import { createNote } from "$lib/story/story-writer";
 	import { renameStoryItem } from "$lib/story/utils";
 
+	import FilePlusIcon from "virtual:icons/lucide/file-plus";
 	import FolderIcon from "virtual:icons/lucide/folder";
 	import FolderOpenIcon from "virtual:icons/lucide/folder-open";
 	import NotepadTextIcon from "virtual:icons/lucide/notepad-text";
 	import SquarePenIcon from "virtual:icons/lucide/square-pen";
 	import TrashIcon from "virtual:icons/lucide/trash";
 
+	import { confirmDelete } from "../confirm-delete";
 	import { inputPrompt } from "../input-prompt";
 	import Tree from "./tree.svelte";
 
@@ -99,6 +102,25 @@
 			<ContextMenu.Item
 				onclick={() =>
 					inputPrompt({
+						title: "Create Note",
+						description: "Enter a name for the note",
+						onConfirm: async (value) => {
+							if (!appState.selectedStory) return;
+							const newNote = createNote(value);
+							appState.selectedStory.addNoteToFolder(
+								item.path,
+								newNote,
+							);
+							setCurrentEditedFile(newNote);
+							goto(`/editor`);
+							forceSelectedStoryUpdate();
+							appState.isDirty = true;
+						},
+					})}><FilePlusIcon /> Create Note</ContextMenu.Item
+			>
+			<ContextMenu.Item
+				onclick={() =>
+					inputPrompt({
 						title: "Rename Folder",
 						description: "Enter a new name for this folder",
 						input: {
@@ -115,7 +137,29 @@
 						},
 					})}><SquarePenIcon /> Rename</ContextMenu.Item
 			>
-			<ContextMenu.Item><TrashIcon /> Delete</ContextMenu.Item>
+			<ContextMenu.Item
+				onclick={() =>
+					confirmDelete({
+						title: "Delete Folder",
+						description: `Are you sure you want to delete "${getItemName(item)}" and all its contents?`,
+						input: {
+							confirmationText: "DELETE",
+						},
+						onConfirm: async () => {
+							if (!appState.selectedStory) return;
+							const isCurrentlyOpen =
+								appState.currentEditedFile?.path === item.path;
+							if (appState.selectedStory.deleteNote(item.path)) {
+								if (isCurrentlyOpen) {
+									setCurrentEditedFile(null);
+									goto(`/story`);
+								}
+								forceSelectedStoryUpdate();
+								appState.isDirty = true;
+							}
+						},
+					})}><TrashIcon /> Delete</ContextMenu.Item
+			>
 		</ContextMenu.Content>
 	</ContextMenu.Root>
 {:else}
@@ -152,7 +196,29 @@
 						},
 					})}><SquarePenIcon /> Rename</ContextMenu.Item
 			>
-			<ContextMenu.Item><TrashIcon /> Delete</ContextMenu.Item>
+			<ContextMenu.Item
+				onclick={() =>
+					confirmDelete({
+						title: "Delete Note",
+						description: `Are you sure you want to delete "${getItemName(item)}"?`,
+						input: {
+							confirmationText: "DELETE",
+						},
+						onConfirm: async () => {
+							if (!appState.selectedStory) return;
+							const isCurrentlyOpen =
+								appState.currentEditedFile?.path === item.path;
+							if (appState.selectedStory.deleteNote(item.path)) {
+								if (isCurrentlyOpen) {
+									setCurrentEditedFile(null);
+									goto(`/story`);
+								}
+								forceSelectedStoryUpdate();
+								appState.isDirty = true;
+							}
+						},
+					})}><TrashIcon /> Delete</ContextMenu.Item
+			>
 		</ContextMenu.Content>
 	</ContextMenu.Root>
 {/if}

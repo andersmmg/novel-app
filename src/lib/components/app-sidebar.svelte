@@ -10,7 +10,7 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import Tree from "$lib/components/ui/tree.svelte";
-	import { createChapter } from "$lib/story/story-writer";
+	import { createChapter, createNote } from "$lib/story/story-writer";
 	import type { StoryFile } from "$lib/story/types";
 	import { cn } from "$lib/utils";
 
@@ -23,6 +23,7 @@
 	import PlusIcon from "virtual:icons/lucide/plus";
 	import SettingsIcon from "virtual:icons/lucide/settings";
 
+	import { inputPrompt } from "./input-prompt";
 	import ChaptersList from "./sidebar/chapters-list.svelte";
 	import { Button } from "./ui/button";
 
@@ -250,6 +251,26 @@
 								<Button
 									class="size-7 rounded-full"
 									variant="ghost"
+									onclick={() =>
+										inputPrompt({
+											title: "Create Note",
+											description:
+												"Enter a name for the note",
+											onConfirm: async (value) => {
+												if (!appState.selectedStory)
+													return;
+
+												const newNote =
+													createNote(value);
+												appState.selectedStory.addRootNote(
+													newNote,
+												);
+												setCurrentEditedFile(newNote);
+												goto(`/editor`);
+												forceSelectedStoryUpdate();
+												appState.isDirty = true;
+											},
+										})}
 								>
 									<FilePlusIcon />
 								</Button>

@@ -210,9 +210,11 @@ export class Story {
 
 	reorderChapters(newOrder: StoryFile[]): boolean {
 		if (newOrder.length !== this.chapters.length) return false;
-		
+
 		for (let i = 0; i < newOrder.length; i++) {
-			const chapter = this.chapters.find(c => c.path === newOrder[i].path);
+			const chapter = this.chapters.find(
+				(c) => c.path === newOrder[i].path,
+			);
 			if (!chapter) return false;
 			chapter.order = i;
 			if (!chapter.metadata) {
@@ -220,7 +222,7 @@ export class Story {
 			}
 			chapter.metadata.order = i;
 		}
-		
+
 		this.sortChapters();
 		return true;
 	}
@@ -236,16 +238,22 @@ export class Story {
 		}
 
 		function deleteFromFolder(folder: StoryFolder): boolean {
-			const index = folder.children.findIndex((child) => {
+			for (let i = 0; i < folder.children.length; i++) {
+				const child = folder.children[i];
 				if ("children" in child) {
-					return child.path === path || deleteFromFolder(child);
+					if (child.path === path) {
+						// This is a folder being deleted
+						folder.children.splice(i, 1);
+						return true;
+					} else if (deleteFromFolder(child)) {
+						// Found and deleted in a subfolder
+						return true;
+					}
+				} else if (child.path === path) {
+					// Found the note to delete
+					folder.children.splice(i, 1);
+					return true;
 				}
-				return child.path === path;
-			});
-
-			if (index !== -1) {
-				folder.children.splice(index, 1);
-				return true;
 			}
 			return false;
 		}
@@ -387,13 +395,18 @@ export class Story {
 			totalParagraphs += countParagraphs(note.content, minWords);
 		}
 
-		async function countParagraphsInFolder(folder: StoryFolder): Promise<number> {
+		async function countParagraphsInFolder(
+			folder: StoryFolder,
+		): Promise<number> {
 			let folderParagraphs = 0;
 			for (const child of folder.children) {
 				if ("children" in child) {
 					folderParagraphs += await countParagraphsInFolder(child);
 				} else {
-					folderParagraphs += countParagraphs(child.content, minWords);
+					folderParagraphs += countParagraphs(
+						child.content,
+						minWords,
+					);
 				}
 			}
 			return folderParagraphs;
