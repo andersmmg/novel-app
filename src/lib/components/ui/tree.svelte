@@ -9,7 +9,7 @@
 	import * as ContextMenu from "$lib/components/ui/context-menu";
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import type { StoryFile, StoryFolder } from "$lib/story/types";
-	import { createNote } from "$lib/story/story-writer";
+	import { createNote, createNoteFolder } from "$lib/story/story-writer";
 	import { renameStoryItem } from "$lib/story/utils";
 
 	import FilePlusIcon from "virtual:icons/lucide/file-plus";
@@ -117,6 +117,23 @@
 							appState.isDirty = true;
 						},
 					})}><FilePlusIcon /> Create Note</ContextMenu.Item
+			>
+			<ContextMenu.Item
+				onclick={() =>
+					inputPrompt({
+						title: "Create Subfolder",
+						description: "Enter a name for the subfolder",
+						onConfirm: async (value) => {
+							if (!appState.selectedStory) return;
+							const newSubfolder = createNoteFolder(value);
+							appState.selectedStory.addSubfolderToFolder(
+								item.path,
+								newSubfolder,
+							);
+							forceSelectedStoryUpdate();
+							appState.isDirty = true;
+						},
+					})}><FolderIcon /> Create Subfolder</ContextMenu.Item
 			>
 			<ContextMenu.Item
 				onclick={() =>

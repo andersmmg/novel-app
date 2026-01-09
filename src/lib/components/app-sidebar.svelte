@@ -10,7 +10,11 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import Tree from "$lib/components/ui/tree.svelte";
-	import { createChapter, createNote } from "$lib/story/story-writer";
+	import {
+		createChapter,
+		createNote,
+		createNoteFolder,
+	} from "$lib/story/story-writer";
 	import type { StoryFile } from "$lib/story/types";
 	import { cn } from "$lib/utils";
 
@@ -245,6 +249,24 @@
 								<Button
 									class="size-7 rounded-full"
 									variant="ghost"
+									onclick={() =>
+										inputPrompt({
+											title: "Create Folder",
+											description:
+												"Enter a name for the folder",
+											onConfirm: async (value) => {
+												if (!appState.selectedStory)
+													return;
+
+												const newFolder =
+													createNoteFolder(value);
+												appState.selectedStory.addNoteFolder(
+													newFolder,
+												);
+												forceSelectedStoryUpdate();
+												appState.isDirty = true;
+											},
+										})}
 								>
 									<FolderPlusIcon />
 								</Button>

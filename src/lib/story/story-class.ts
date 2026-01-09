@@ -56,6 +56,22 @@ export class Story {
 		return false;
 	}
 
+	addSubfolderToFolder(folderPath: string, subfolder: StoryFolder): boolean {
+		const folder = this.findNoteByPath(folderPath);
+		if (folder && "children" in folder) {
+			const folderName = subfolder.path
+				.replace("notes/", "")
+				.replace("/", "");
+			subfolder.path = folderPath + folderName + "/";
+			subfolder.name = folderName;
+
+			folder.children.push(subfolder);
+			this.updateWordCount();
+			return true;
+		}
+		return false;
+	}
+
 	getChapterByPath(path: string): StoryFile | undefined {
 		return this.chapters.find((chapter) => chapter.path === path);
 	}
