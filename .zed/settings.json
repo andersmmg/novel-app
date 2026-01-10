@@ -6,8 +6,13 @@
 	"languages": {
 		"CSS": {
 			"language_servers": ["tailwindcss-language-server"]
-		}
+		},
+		"JSON": {}
 	},
+	"formatter": [
+		{ "code_action": "source.fixAll.eslint" }
+	],
+	"format_on_save": "on",
 	"hard_tabs": true,
 	"tab_size": 4
 }

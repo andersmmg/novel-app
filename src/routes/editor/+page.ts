@@ -1,9 +1,9 @@
-import { appState } from "$lib/app-state.svelte";
-import { redirect } from "@sveltejs/kit";
-import type { PageLoad } from "./$types";
+import type { PageLoad } from './$types'
+import { appState } from '$lib/app-state.svelte'
+import { redirect } from '@sveltejs/kit'
 
-export const load: PageLoad = ({ params }) => {
+export const load: PageLoad = () => {
 	if (!appState.currentEditedFile) {
-		redirect(307, "/");
+		redirect(307, '/')
 	}
-};
+}

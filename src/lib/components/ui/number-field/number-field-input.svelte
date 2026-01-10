@@ -1,20 +1,20 @@
-<script lang="ts">
-	import { cn } from '$lib/utils.js';
-	import { useNumberFieldInput } from './number-field.svelte.js';
-	import type { NumberFieldInputProps } from './types.js';
+<script lang='ts'>
+	import type { NumberFieldInputProps } from './types.js'
+	import { cn } from '$lib/utils.js'
+	import { useNumberFieldInput } from './number-field.svelte.js'
 
-	let { ref = $bindable(null), class: className, ...rest }: NumberFieldInputProps = $props();
+	let { ref = $bindable(null), class: className, ...rest }: NumberFieldInputProps = $props()
 
-	const inputState = useNumberFieldInput();
+	const inputState = useNumberFieldInput()
 </script>
 
 <input
 	class={cn(
 		'aria-invalid:border-destructive border-border h-9 flex-1 rounded-md border px-4 text-center outline-none',
-		className
+		className,
 	)}
 	bind:this={ref}
-	data-slot="number-field-input"
+	data-slot='number-field-input'
 	bind:value={inputState.rootState.opts.value.current}
 	{...inputState.props}
 	{...rest}

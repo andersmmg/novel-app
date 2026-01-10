@@ -1,11 +1,11 @@
-<script lang="ts">
-	import PlusIcon from 'virtual:icons/lucide/plus';
-	import { Button } from '../button';
-	import { useNumberFieldButton } from './number-field.svelte.js';
-	import type { NumberFieldButtonProps } from './types.js';
-	import { cn } from '$lib/utils';
-	import { box } from 'svelte-toolbelt';
-	import { onDestroy } from 'svelte';
+<script lang='ts'>
+	import type { NumberFieldButtonProps } from './types.js'
+	import { cn } from '$lib/utils'
+	import { onDestroy } from 'svelte'
+	import { box } from 'svelte-toolbelt'
+	import PlusIcon from 'virtual:icons/lucide/plus'
+	import { Button } from '../button'
+	import { useNumberFieldButton } from './number-field.svelte.js'
 
 	let {
 		ref = $bindable(null),
@@ -21,7 +21,7 @@
 		onclick,
 		tabindex = -1,
 		...rest
-	}: NumberFieldButtonProps = $props();
+	}: NumberFieldButtonProps = $props()
 
 	const buttonState = useNumberFieldButton({
 		direction: 'up',
@@ -30,10 +30,10 @@
 		onpointerleave: box.with(() => onpointerleave),
 		onpointercancel: box.with(() => onpointercancel),
 		onclick: box.with(() => onclick),
-		disabled: box.with(() => disabled)
-	});
+		disabled: box.with(() => disabled),
+	})
 
-	onDestroy(() => buttonState.destroy());
+	onDestroy(() => buttonState.destroy())
 </script>
 
 <Button
@@ -41,8 +41,8 @@
 	{size}
 	{tabindex}
 	bind:ref
-	data-slot="number-field-increment"
-	aria-label="Increase"
+	data-slot='number-field-increment'
+	aria-label='Increase'
 	class={cn(className)}
 	{...buttonState.props}
 	{...rest}

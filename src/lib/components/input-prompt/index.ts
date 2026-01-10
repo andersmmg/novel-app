@@ -1,6 +1,7 @@
+import type { InputPromptOptions } from './input-prompt.svelte'
 import InputPromptDialog, {
 	inputPrompt,
-	type InputPromptOptions,
-} from "./input-prompt.svelte";
 
-export { inputPrompt, InputPromptDialog, type InputPromptOptions };
+} from './input-prompt.svelte'
+
+export { inputPrompt, InputPromptDialog, type InputPromptOptions }

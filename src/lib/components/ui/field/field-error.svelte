@@ -1,7 +1,8 @@
-<script lang="ts">
-	import { cn, type WithElementRef } from "$lib/utils.js";
-	import type { HTMLAttributes } from "svelte/elements";
-	import type { Snippet } from "svelte";
+<script lang='ts'>
+	import type { WithElementRef } from '$lib/utils.js'
+	import type { Snippet } from 'svelte'
+	import type { HTMLAttributes } from 'svelte/elements'
+	import { cn } from '$lib/utils.js'
 
 	let {
 		ref = $bindable(null),
@@ -10,35 +11,37 @@
 		errors,
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
-		children?: Snippet;
-		errors?: { message?: string }[];
-	} = $props();
+		children?: Snippet
+		errors?: { message?: string }[]
+	} = $props()
 
 	const hasContent = $derived.by(() => {
 		// has slotted error
-		if (children) return true;
+		if (children)
+			return true
 
 		// no errors
-		if (!errors) return false;
+		if (!errors)
+			return false
 
 		// has an error but no message
 		if (errors.length === 1 && !errors[0]?.message) {
-			return false;
+			return false
 		}
 
-		return true;
-	});
+		return true
+	})
 
-	const isMultipleErrors = $derived(errors && errors.length > 1);
-	const singleErrorMessage = $derived(errors && errors.length === 1 && errors[0]?.message);
+	const isMultipleErrors = $derived(errors && errors.length > 1)
+	const singleErrorMessage = $derived(errors && errors.length === 1 && errors[0]?.message)
 </script>
 
 {#if hasContent}
 	<div
 		bind:this={ref}
-		role="alert"
-		data-slot="field-error"
-		class={cn("text-destructive text-sm font-normal", className)}
+		role='alert'
+		data-slot='field-error'
+		class={cn('text-destructive text-sm font-normal', className)}
 		{...restProps}
 	>
 		{#if children}
@@ -46,7 +49,7 @@
 		{:else if singleErrorMessage}
 			{singleErrorMessage}
 		{:else if isMultipleErrors}
-			<ul class="ms-4 flex list-disc flex-col gap-1">
+			<ul class='ms-4 flex list-disc flex-col gap-1'>
 				{#each errors ?? [] as error, index (index)}
 					{#if error?.message}
 						<li>{error.message}</li>

@@ -1,3 +1,3 @@
-import ExportDialog from "./export-dialog.svelte";
+import ExportDialog from './export-dialog.svelte'
 
-export { ExportDialog as default, ExportDialog };
+export { ExportDialog as default, ExportDialog }

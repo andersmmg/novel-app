@@ -2,8 +2,8 @@
 	Installed from github/ieedan/shadcn-svelte-extras
 */
 
-import { page } from "$app/state";
-import { untrack } from "svelte";
+import { page } from '$app/state'
+import { untrack } from 'svelte'
 
 export interface Options {
 	/**
@@ -11,56 +11,56 @@ export interface Options {
 	 *
 	 * @default true
 	 */
-	activeForSubdirectories?: boolean;
+	activeForSubdirectories?: boolean
 	/**
 	 * Determines if the href of the `<a/>` tag is a `#` route
 	 *
 	 *  @default false
 	 */
-	isHash?: boolean;
-	url: URL;
+	isHash?: boolean
+	url: URL
 }
 
 /** Sets the `data-active` attribute on an `<a/>` tag based on its 'active' state. */
 export function active(
 	node: HTMLAnchorElement,
-	opts: Omit<Options, "url"> = {},
+	opts: Omit<Options, 'url'> = {},
 ) {
-	checkIsActive(node.href, { ...opts, url: page.url }).toString();
+	checkIsActive(node.href, { ...opts, url: page.url }).toString()
 
 	$effect(() => {
 		// eslint-disable-next-line ts/no-unused-expressions
-		page.url;
+		page.url
 
 		untrack(() => {
 			node.setAttribute(
-				"data-active",
+				'data-active',
 				checkIsActive(node.href, { ...opts, url: page.url }).toString(),
-			);
-		});
-	});
+			)
+		})
+	})
 }
 
 export function checkIsActive(
 	nodeHref: string,
 	{ activeForSubdirectories, url, isHash }: Options,
 ): boolean {
-	let href: string = new URL(nodeHref).pathname;
+	let href: string = new URL(nodeHref).pathname
 
 	if (isHash) {
-		href = new URL(nodeHref).hash;
+		href = new URL(nodeHref).hash
 	}
 
-	const samePath = href === url.pathname;
+	const samePath = href === url.pathname
 
-	const isParentRoute: boolean =
-		(activeForSubdirectories === undefined || activeForSubdirectories) &&
-		url.pathname.startsWith(href ?? "");
+	const isParentRoute: boolean
+		= (activeForSubdirectories === undefined || activeForSubdirectories)
+			&& url.pathname.startsWith(href ?? '')
 
-	const isHashRoute: boolean =
-		isHash === true &&
-		(url.hash === href ||
-			((href === "#" || href === "#/") && url.hash === ""));
+	const isHashRoute: boolean
+		= isHash === true
+			&& (url.hash === href
+				|| ((href === '#' || href === '#/') && url.hash === ''))
 
-	return samePath || isParentRoute || isHashRoute;
+	return samePath || isParentRoute || isHashRoute
 }

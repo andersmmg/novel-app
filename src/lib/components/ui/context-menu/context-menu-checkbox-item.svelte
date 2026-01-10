@@ -1,8 +1,9 @@
-<script lang="ts">
-	import { ContextMenu as ContextMenuPrimitive } from "bits-ui";
-	import CheckIcon from "virtual:icons/lucide/check";
-	import { cn, type WithoutChildrenOrChild } from "$lib/utils.js";
-	import type { Snippet } from "svelte";
+<script lang='ts'>
+	import type { WithoutChildrenOrChild } from '$lib/utils.js'
+	import type { Snippet } from 'svelte'
+	import { cn } from '$lib/utils.js'
+	import { ContextMenu as ContextMenuPrimitive } from 'bits-ui'
+	import CheckIcon from 'virtual:icons/lucide/check'
 
 	let {
 		ref = $bindable(null),
@@ -12,27 +13,27 @@
 		children: childrenProp,
 		...restProps
 	}: WithoutChildrenOrChild<ContextMenuPrimitive.CheckboxItemProps> & {
-		children?: Snippet;
-	} = $props();
+		children?: Snippet
+	} = $props()
 </script>
 
 <ContextMenuPrimitive.CheckboxItem
 	bind:ref
 	bind:checked
 	bind:indeterminate
-	data-slot="context-menu-checkbox-item"
+	data-slot='context-menu-checkbox-item'
 	class={cn(
-		"data-highlighted:bg-accent data-highlighted:text-accent-foreground outline-hidden relative flex cursor-default select-none items-center gap-2 rounded-sm py-1.5 pe-2 ps-8 text-sm data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-		className
+		'data-highlighted:bg-accent data-highlighted:text-accent-foreground outline-hidden relative flex cursor-default select-none items-center gap-2 rounded-sm py-1.5 pe-2 ps-8 text-sm data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg:not([class*=\'size-\'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0',
+		className,
 	)}
 	{...restProps}
 >
 	{#snippet children({ checked })}
 		<span
-			class="pointer-events-none absolute start-2 flex size-3.5 items-center justify-center"
+			class='pointer-events-none absolute start-2 flex size-3.5 items-center justify-center'
 		>
 			{#if checked}
-				<CheckIcon class="size-4" />
+				<CheckIcon class='size-4' />
 			{/if}
 		</span>
 		{@render childrenProp?.()}

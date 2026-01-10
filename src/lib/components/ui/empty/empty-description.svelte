@@ -1,21 +1,22 @@
-<script lang="ts">
-	import { cn, type WithElementRef } from "$lib/utils.js";
-	import type { HTMLAttributes } from "svelte/elements";
+<script lang='ts'>
+	import type { WithElementRef } from '$lib/utils.js'
+	import type { HTMLAttributes } from 'svelte/elements'
+	import { cn } from '$lib/utils.js'
 
 	let {
 		ref = $bindable(null),
 		class: className,
 		children,
 		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props()
 </script>
 
 <div
 	bind:this={ref}
-	data-slot="empty-description"
+	data-slot='empty-description'
 	class={cn(
-		"text-muted-foreground [&>a:hover]:text-primary text-sm/relaxed [&>a]:underline [&>a]:underline-offset-4",
-		className
+		'text-muted-foreground [&>a:hover]:text-primary text-sm/relaxed [&>a]:underline [&>a]:underline-offset-4',
+		className,
 	)}
 	{...restProps}
 >

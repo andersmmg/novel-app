@@ -1,3 +1,3 @@
-import GoalsDialog from "./goals-dialog.svelte";
+import GoalsDialog from './goals-dialog.svelte'
 
-export { GoalsDialog as default, GoalsDialog };
+export { GoalsDialog as default, GoalsDialog }

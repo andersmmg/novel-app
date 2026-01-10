@@ -1,115 +1,115 @@
 export interface FontFamily {
-	name: string;
-	displayName: string;
-	categories: ("ui" | "editor")[];
+	name: string
+	displayName: string
+	categories: ('ui' | 'editor')[]
 	fonts: {
-		regular?: string;
-		italic?: string;
-		bold?: string;
-		semiBold?: string;
-		boldItalic?: string;
-		variable?: string;
-		variableItalic?: string;
-	};
-	fallbacks: string[];
+		regular?: string
+		italic?: string
+		bold?: string
+		semiBold?: string
+		boldItalic?: string
+		variable?: string
+		variableItalic?: string
+	}
+	fallbacks: string[]
 }
 
 export const availableFonts: FontFamily[] = [
 	{
-		name: "system-ui",
-		displayName: "System UI",
-		categories: ["ui", "editor"],
+		name: 'system-ui',
+		displayName: 'System UI',
+		categories: ['ui', 'editor'],
 		fonts: {},
 		fallbacks: [
-			"system-ui",
-			"-apple-system",
-			"BlinkMacSystemFont",
-			"Segoe UI",
-			"sans-serif",
+			'system-ui',
+			'-apple-system',
+			'BlinkMacSystemFont',
+			'Segoe UI',
+			'sans-serif',
 		],
 	},
 	{
-		name: "jua",
-		displayName: "Jua",
-		categories: ["ui"],
+		name: 'jua',
+		displayName: 'Jua',
+		categories: ['ui'],
 		fonts: {
-			regular: "/fonts/Jua.ttf",
+			regular: '/fonts/Jua.ttf',
 		},
-		fallbacks: ["Jua", "system-ui", "sans-serif"],
+		fallbacks: ['Jua', 'system-ui', 'sans-serif'],
 	},
 	{
-		name: "noto-sans",
-		displayName: "Noto Sans",
-		categories: ["ui", "editor"],
+		name: 'noto-sans',
+		displayName: 'Noto Sans',
+		categories: ['ui', 'editor'],
 		fonts: {
-			regular: "/fonts/NotoSans-Regular.ttf",
-			italic: "/fonts/NotoSans-Italic.ttf",
-			bold: "/fonts/NotoSans-Bold.ttf",
-			semiBold: "/fonts/NotoSans-Medium.ttf",
-			boldItalic: "/fonts/NotoSans-BoldItalic.ttf",
+			regular: '/fonts/NotoSans-Regular.ttf',
+			italic: '/fonts/NotoSans-Italic.ttf',
+			bold: '/fonts/NotoSans-Bold.ttf',
+			semiBold: '/fonts/NotoSans-Medium.ttf',
+			boldItalic: '/fonts/NotoSans-BoldItalic.ttf',
 		},
-		fallbacks: ["Noto Sans", "system-ui", "sans-serif"],
+		fallbacks: ['Noto Sans', 'system-ui', 'sans-serif'],
 	},
 	{
-		name: "noto-serif",
-		displayName: "Noto Serif",
-		categories: ["ui", "editor"],
+		name: 'noto-serif',
+		displayName: 'Noto Serif',
+		categories: ['ui', 'editor'],
 		fonts: {
-			variable: "/fonts/NotoSerif.ttf",
+			variable: '/fonts/NotoSerif.ttf',
 		},
-		fallbacks: ["Noto Serif", "Georgia", "serif"],
+		fallbacks: ['Noto Serif', 'Georgia', 'serif'],
 	},
 	{
-		name: "nunito",
-		displayName: "Nunito",
-		categories: ["ui", "editor"],
+		name: 'nunito',
+		displayName: 'Nunito',
+		categories: ['ui', 'editor'],
 		fonts: {
-			regular: "/fonts/Nunito.ttf",
-			italic: "/fonts/Nunito-Italic.ttf",
+			regular: '/fonts/Nunito.ttf',
+			italic: '/fonts/Nunito-Italic.ttf',
 		},
-		fallbacks: ["Nunito", "system-ui", "sans-serif"],
+		fallbacks: ['Nunito', 'system-ui', 'sans-serif'],
 	},
 	{
-		name: "courier-prime",
-		displayName: "Courier Prime",
-		categories: ["ui", "editor"],
+		name: 'courier-prime',
+		displayName: 'Courier Prime',
+		categories: ['ui', 'editor'],
 		fonts: {
-			regular: "/fonts/CourierPrime-Regular.ttf",
-			italic: "/fonts/CourierPrime-Italic.ttf",
-			bold: "/fonts/CourierPrime-Bold.ttf",
-			boldItalic: "/fonts/CourierPrime-BoldItalic.ttf",
+			regular: '/fonts/CourierPrime-Regular.ttf',
+			italic: '/fonts/CourierPrime-Italic.ttf',
+			bold: '/fonts/CourierPrime-Bold.ttf',
+			boldItalic: '/fonts/CourierPrime-BoldItalic.ttf',
 		},
-		fallbacks: ["Courier Prime", "Courier New", "monospace"],
+		fallbacks: ['Courier Prime', 'Courier New', 'monospace'],
 	},
 	{
-		name: "patrick-hand",
-		displayName: "Patrick Hand",
-		categories: ["ui", "editor"],
+		name: 'patrick-hand',
+		displayName: 'Patrick Hand',
+		categories: ['ui', 'editor'],
 		fonts: {
-			regular: "/fonts/PatrickHand-Regular.ttf",
+			regular: '/fonts/PatrickHand-Regular.ttf',
 		},
-		fallbacks: ["Patrick Hand", "sans-serif"],
+		fallbacks: ['Patrick Hand', 'sans-serif'],
 	},
 	{
-		name: "opendyslexic",
-		displayName: "OpenDyslexic",
-		categories: ["ui", "editor"],
+		name: 'opendyslexic',
+		displayName: 'OpenDyslexic',
+		categories: ['ui', 'editor'],
 		fonts: {
-			regular: "/fonts/OpenDyslexic-Regular.ttf",
-			bold: "/fonts/OpenDyslexic-Bold.ttf",
-			italic: "/fonts/OpenDyslexic-Italic.ttf",
-			boldItalic: "/fonts/OpenDyslexic-BoldItalic.ttf",
+			regular: '/fonts/OpenDyslexic-Regular.ttf',
+			bold: '/fonts/OpenDyslexic-Bold.ttf',
+			italic: '/fonts/OpenDyslexic-Italic.ttf',
+			boldItalic: '/fonts/OpenDyslexic-BoldItalic.ttf',
 		},
-		fallbacks: ["OpenDyslexic", "sans-serif"],
+		fallbacks: ['OpenDyslexic', 'sans-serif'],
 	},
-];
+]
 
 export function getFontFamily(fontName: string): FontFamily | undefined {
-	return availableFonts.find((font) => font.name === fontName);
+	return availableFonts.find(font => font.name === fontName)
 }
 
 export function generateFontFace(font: FontFamily): string {
-	let css = "";
+	let css = ''
 
 	if (font.fonts.variable) {
 		css += `
@@ -118,7 +118,7 @@ export function generateFontFace(font: FontFamily): string {
   src: url('${font.fonts.variable}') format('truetype');
   font-weight: 400 500 700;
 }
-`;
+`
 	}
 
 	if (font.fonts.variableItalic) {
@@ -129,7 +129,7 @@ export function generateFontFace(font: FontFamily): string {
   font-weight: 400 500 700;
   font-style: italic;
 }
-`;
+`
 	}
 
 	if (font.fonts.regular) {
@@ -141,7 +141,7 @@ export function generateFontFace(font: FontFamily): string {
   font-style: normal;
   font-display: auto;
 }
-`;
+`
 	}
 
 	if (font.fonts.italic) {
@@ -153,7 +153,7 @@ export function generateFontFace(font: FontFamily): string {
   font-style: italic;
   font-display: auto;
 }
-`;
+`
 	}
 
 	if (font.fonts.bold) {
@@ -165,7 +165,7 @@ export function generateFontFace(font: FontFamily): string {
   font-style: normal;
   font-display: auto;
 }
-`;
+`
 	}
 
 	if (font.fonts.semiBold) {
@@ -177,7 +177,7 @@ export function generateFontFace(font: FontFamily): string {
   font-style: normal;
   font-display: auto;
 }
-`;
+`
 	}
 
 	if (font.fonts.boldItalic) {
@@ -189,12 +189,12 @@ export function generateFontFace(font: FontFamily): string {
   font-style: italic;
   font-display: auto;
 }
-`;
+`
 	}
 
-	return css;
+	return css
 }
 
 export function generateFontStack(font: FontFamily): string {
-	return `'${font.name}', ${font.fallbacks.join(", ")}`;
+	return `'${font.name}', ${font.fallbacks.join(', ')}`
 }

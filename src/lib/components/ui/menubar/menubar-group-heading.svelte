@@ -1,7 +1,7 @@
-<script lang="ts">
-	import { cn } from "$lib/utils.js";
-	import { Menubar as MenubarPrimitive } from "bits-ui";
-	import type { ComponentProps } from "svelte";
+<script lang='ts'>
+	import type { ComponentProps } from 'svelte'
+	import { cn } from '$lib/utils.js'
+	import { Menubar as MenubarPrimitive } from 'bits-ui'
 
 	let {
 		ref = $bindable(null),
@@ -9,14 +9,14 @@
 		class: className,
 		...restProps
 	}: ComponentProps<typeof MenubarPrimitive.GroupHeading> & {
-		inset?: boolean;
-	} = $props();
+		inset?: boolean
+	} = $props()
 </script>
 
 <MenubarPrimitive.GroupHeading
 	bind:ref
-	data-slot="menubar-group-heading"
+	data-slot='menubar-group-heading'
 	data-inset={inset}
-	class={cn("px-2 py-1.5 text-sm font-medium data-[inset]:ps-8", className)}
+	class={cn('px-2 py-1.5 text-sm font-medium data-[inset]:ps-8', className)}
 	{...restProps}
 />

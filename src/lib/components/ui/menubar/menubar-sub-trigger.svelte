@@ -1,7 +1,8 @@
-<script lang="ts">
-	import { Menubar as MenubarPrimitive } from "bits-ui";
-	import ChevronRightIcon from "virtual:icons/lucide/chevron-right";
-	import { cn, type WithoutChild } from "$lib/utils.js";
+<script lang='ts'>
+	import type { WithoutChild } from '$lib/utils.js'
+	import { cn } from '$lib/utils.js'
+	import { Menubar as MenubarPrimitive } from 'bits-ui'
+	import ChevronRightIcon from 'virtual:icons/lucide/chevron-right'
 
 	let {
 		ref = $bindable(null),
@@ -10,20 +11,20 @@
 		children,
 		...restProps
 	}: WithoutChild<MenubarPrimitive.SubTriggerProps> & {
-		inset?: boolean;
-	} = $props();
+		inset?: boolean
+	} = $props()
 </script>
 
 <MenubarPrimitive.SubTrigger
 	bind:ref
-	data-slot="menubar-sub-trigger"
+	data-slot='menubar-sub-trigger'
 	data-inset={inset}
 	class={cn(
-		"focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[inset]:ps-8",
-		className
+		'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[inset]:ps-8',
+		className,
 	)}
 	{...restProps}
 >
 	{@render children?.()}
-	<ChevronRightIcon class="ms-auto size-4" />
+	<ChevronRightIcon class='ms-auto size-4' />
 </MenubarPrimitive.SubTrigger>

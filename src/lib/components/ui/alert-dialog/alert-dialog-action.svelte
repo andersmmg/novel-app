@@ -1,26 +1,28 @@
-<script lang="ts">
+<script lang='ts'>
+	import type { ButtonProps } from '$lib/components/ui/button'
 	import {
 		Button,
+
 		buttonVariants,
-		type ButtonProps,
-	} from "$lib/components/ui/button";
-	import { cn } from "$lib/utils.js";
-	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
+	} from '$lib/components/ui/button'
+	import { cn } from '$lib/utils.js'
+	import { AlertDialog as AlertDialogPrimitive } from 'bits-ui'
+
 	let {
 		ref = $bindable(null),
-		variant = "default",
+		variant = 'default',
 		class: className,
 		children,
 		...restProps
 	}: AlertDialogPrimitive.ActionProps & {
-		variant?: ButtonProps["variant"];
-		loading?: boolean;
-	} = $props();
+		variant?: ButtonProps['variant']
+		loading?: boolean
+	} = $props()
 </script>
 
 <AlertDialogPrimitive.Action
 	bind:ref
-	data-slot="alert-dialog-action"
+	data-slot='alert-dialog-action'
 	class={cn(buttonVariants({ variant }), className)}
 	{...restProps}
 >
